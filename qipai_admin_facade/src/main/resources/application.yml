@@ -1,0 +1,544 @@
+spring:
+  data:
+    mongodb:
+      database: qipai_admin_facade
+#      host: 172.19.24.161
+#      port: 27017
+#      username: root
+#      password: 'meiyoumima'
+      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
+      port: 3717
+      username: root
+      password: 'Meiyoumima!'
+#      host: 121.196.23.189
+#      port: 27025
+#      username: root
+#      password: '123456'
+      authentication-database: admin
+      repositories:
+        enabled: true
+
+  cloud:
+    stream:
+      kafka: 
+        binder:
+          brokers: localhost:9092
+          zk-nodes: localhost:2181
+          minPartitionCount: 1
+          autoCreateTopics: true
+          autoAddPartitions: false
+        bindings:
+          gameServerManager:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          signInPrize: 
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          memberClubCard: 
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          memberYushi:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          juPrize:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          adminHongbaoAdjust:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          loginIPLimit:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+
+      bindings:
+        members:
+          destination: members
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        memberGolds:
+          destination: memberGolds
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        memberScores:
+          destination: memberScores
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        memberClubCards:
+          destination: memberClubCards
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        memberOrders:
+          destination: memberOrders
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        memberLoginRecord:
+          destination: memberLoginRecord
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        notice:
+          destination: notice
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        membershiprights:
+          destination: membershiprights
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        grade:
+          destination: grade
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        mail:
+          destination: mail
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        gameDataReport:
+          destination: gameDataReport
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        gameServer:
+          destination: gameServer
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        agents:
+          destination: agents
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        agentApplyRecords:
+          destination: agentApplyRecords
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        agentScores:
+          destination: agentScores
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        agentRewards:
+          destination: agentRewards
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        agentClubCards:
+          destination: agentClubCards
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        agentOrders:
+          destination: agentOrders
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        agentInvitationRecords:
+          destination: agentInvitationRecords
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        activity:
+          destination: activity
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        complaint:
+          destination: complaint
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        tasks:
+          destination: tasks
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        gameServerManager:
+          destination: gameServer
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        signInPrize:
+          destination: signInPrize
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        signInPrizeLog:
+          destination: signInPrizeLog
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        memberClubCard: 
+          destination: memberClubCard
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        agentImage:
+          destination: agentImage
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        memberLoginLimitRecord:
+          destination: memberLoginLimitRecord
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        agentType:
+          destination: agentType
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        agentRewardOrder:
+          destination: agentRewardOrder
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        yangzhouMajiangResult:
+          destination: yangzhouMajiangResult
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        paodekuaiResult:
+          destination: paodekuaiResult
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        bijiResult:
+          destination: bijiResult
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        doudizhuResult:
+          destination: doudizhuResult
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        yizhengMajiangResult:
+          destination: yizhengMajiangResult
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        taizhouMajiangResult:
+          destination: taizhouMajiangResult
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        tianchangxiaohuaResult:
+          destination: tianchangxiaohuaResult
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        gaoyouMajiangResult:
+          destination: gaoyouMajiangResult
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        guandanResult:
+          destination: guandanResult
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        roomManage:
+          destination: roomManage
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        yangzhouMajiangGame:
+          destination: yangzhouMajiangGame
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        paodekuaiGame:
+          destination: paodekuaiGame
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        bijiGame:
+          destination: bijiGame
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        doudizhuGame:
+          destination: doudizhuGame
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        yizhengMajiangGame:
+          destination: yizhengMajiangGame
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        taizhouMajiangGame:
+          destination: taizhouMajiangGame
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        tianchangxiaohuaGame:
+          destination: tianchangxiaohuaGame
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        gaoyouMajiangGame:
+          destination: gaoyouMajiangGame
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        guandanGame:
+          destination: guandanGame
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        finishTasks:
+          destination: finishTasks
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        whitelist:
+          destination: whitelist
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        juPrize:
+          destination: juPrize
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        prizeSend:
+          destination: prizeSend
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        memberInvitationRecord:
+          destination: memberInvitationRecord
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        adminHongbaoAdjust:
+          destination: adminHongbaoAdjust
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        memberYushi:
+          destination: memberYushi
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        loginIPLimit:
+          destination: loginIPLimit
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        scoreProductRecord:
+          destination: scoreProductRecord
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        productType:
+          destination: productType
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        scoreShopProductDbo:
+          destination: scoreShopProductDbo
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        blackList:
+          destination: blackList
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        chaguanGameTable:
+          destination: chaguanGameTable
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        chaguanDataReport:
+          destination: chaguanDataReport
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        rankRecord:
+          destination: rankRecord
+          group: qipai-admin-facade
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+  application:
+    name: qipai-admin-facade
+server:
+  port: 99
+  context-path: /admin-facade
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/

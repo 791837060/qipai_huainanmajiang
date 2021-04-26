@@ -1,0 +1,17 @@
+server:
+  port: 8761
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+  server:
+    enable-self-preservation: false
+  #instance:
+    #prefer-ip-address: true
+ribbon.eureka.enable: true
+logging:
+  level:
+    com.netflix.eureka: OFF
+    com.netflix.discovery: OFF

@@ -1,0 +1,63 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+### 新增、修改红包点商城商品
+
+POST http://192.168.0.156:99/hongbaodianShop/saveHongbaodianProduct
+Content-Type: application/x-www-form-urlencoded
+
+token=95ec575d-3ef1-46c7-b8f7-2f6a22bc575a&desc=备注&rewardType=YUSHI&type=类型1&iconurl=ads
+
+### 删除红包点商城商品
+
+POST http://192.168.0.156:99/hongbaodianShop/deleteHongbaodianProduct
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&type=test3
+
+### 查询红包点商城商品
+
+POST http://192.168.0.156:99/hongbaodianShop/getHongbaodianShopProduct
+Content-Type: application/x-www-form-urlencoded
+
+token=95ec575d-3ef1-46c7-b8f7-2f6a22bc575a&id=5cda5593c8cf420db894450b
+
+### 查询红包点商城商品列表
+
+POST http://192.168.0.156:99/hongbaodianShop/listHongbaodianShopProduct
+Content-Type: application/x-www-form-urlencoded
+
+token=95ec575d-3ef1-46c7-b8f7-2f6a22bc575a&page=1&size=10
+
+### 查询红包点商城兑换记录
+
+POST http://192.168.0.156:99/hongbaodianShop/listScordRecordByQuery
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&type=test3
+
+### 发布红包点商城商品
+
+POST http://192.168.0.156:99/hongbaodianShop/release
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&type=test3
+
+
+### 通过红包点商城商品
+
+POST http://192.168.0.156:99/hongbaodianShop/pass
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&type=test3
+
+### 拒绝红包点商城商品
+
+POST http://192.168.0.156:99/hongbaodianShop/refuse
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&type=test3

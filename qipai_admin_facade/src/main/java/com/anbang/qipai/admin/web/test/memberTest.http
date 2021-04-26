@@ -1,0 +1,36 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+### 获取验证码
+POST http://192.168.0.156:99/member/findMemberByReqIP
+#POST http://47.96.20.47:2020/auth/getcode
+Content-Type: application/x-www-form-urlencoded
+
+token=74a7d464-f6b9-4c1c-a543-e43df99464be&reqIP=123&loginIp=192.168.0.165
+
+### queryIPlimit
+POST http://192.168.0.156:99/member/queryIPlimit
+#POST http://47.96.20.47:2020/auth/getcode
+Content-Type: application/x-www-form-urlencoded
+
+token=4d43362b-2052-41c8-b1b8-d064765bc75c
+
+### addIPlimit
+POST http://192.168.0.156:99/member/addIPlimit
+#POST http://47.96.20.47:2020/auth/getcode
+Content-Type: application/x-www-form-urlencoded
+
+token=e9e494bc-5967-4153-ab21-941903bd6bf5&desc=描述&loginIp=111
+
+### delete
+POST http://192.168.0.156:99/member/deleteIPlimits
+#POST http://47.96.20.47:2020/auth/getcode
+Content-Type: application/x-www-form-urlencoded
+
+token=e9e494bc-5967-4153-ab21-941903bd6bf5&recordId=5cb6d47ac8cf42614cdbf1e4
+
+###

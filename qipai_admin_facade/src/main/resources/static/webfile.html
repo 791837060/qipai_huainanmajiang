@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>h5上传</title>
+</head>
+<body>
+<h2>h5页面上传</h2>
+<hr/>
+<h4>0.确保版本库保留原有代码，且无必要不要频繁上传</h4>
+<h4>1.先解压，解压后的的文件夹大小不允许超过50mb</h4>
+<h4>2.解压好之后的目录名称应为wx_agent(公众号)或dist(管理后台)</h4>
+<hr/>
+<form action="/uploadWebFolder" method="post" enctype="multipart/form-data">
+    <!-- html5支持选择文件夹上传 -->
+    <input type="file" name="folder" multiple webkitdirectory>
+    <br/>
+
+    <label>token</label>
+    <input type="text" name="token" />
+    <br/>
+
+    <hr/>
+    <br/>
+    <button type="submit">上传</button>
+</form>
+</body>
+</html>

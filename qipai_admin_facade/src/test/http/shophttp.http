@@ -1,0 +1,67 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+### 新增、修改积分商城商品类型
+
+POST http://192.168.0.156:99/scoreshop/saveGoodsType
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&type=test3
+
+### 删除积分商城商品类型
+
+POST http://192.168.0.156:99/scoreshop/deleteGoodsType
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&id=5cd52b44c8cf421b266a95e5
+
+### 查询积分商城商品类型列表
+
+POST http://192.168.0.156:99/scoreshop/listGoodsType
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c
+
+### 查询积分商城商品类型
+
+POST http://192.168.0.156:99/scoreshop/getGoodsType
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&id=5cd52b4dc8cf421b266a95e6
+
+
+
+### 新增、修改积分商城商品
+
+POST http://192.168.0.156:99/scoreshop/saveScoreShopProduct
+Content-Type: application/x-www-form-urlencoded
+
+token=cf452db2-c0fc-469b-acac-6a686746a1c7&desc=333&rewardType=YUSHI&type=test&rewardNum=10&remain=10&iconurl=baidu.com&price=1
+
+### 删除积分商城商品
+
+POST http://192.168.0.156:99/scoreshop/deleteScoreShopProduct
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&id=
+
+
+### 查询积分商城商品列表
+
+POST http://192.168.0.156:99/scoreshop/listScoreShopProduct
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&page=1&size=10
+
+### 查询积分商城商品
+
+POST http://192.168.0.156:99/scoreshop/getScoreShopProduct
+Content-Type: application/x-www-form-urlencoded
+
+token=fb36ebea-244f-4420-9833-cdc0fc425b7c&id=5cd52eddc8cf421b266a95ec
+
+###

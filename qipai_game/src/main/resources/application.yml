@@ -1,0 +1,530 @@
+spring:
+  data:
+    mongodb:
+      database: qipai_game
+      host: 172.19.24.161
+      port: 27017
+      username: root
+      password: 'meiyoumima'
+#      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
+#      port: 3717
+#      username: root
+#      password: 'Meiyoumima!'
+#      host: 121.196.23.189
+#      port: 27025
+#      username: root
+#      password: '123456'
+      authentication-database: admin
+      repositories:
+        enabled: true
+
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+          zk-nodes: localhost:2181
+          minPartitionCount: 1
+          autoCreateTopics: true
+          autoAddPartitions: false
+        bindings:
+          notice:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          gameServer:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          mail:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          gameDataReport:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          yangzhouMajiangGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          taizhouMajiangGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          tianchangxiaohuaGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          gaoyouMajiangGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          hongzhongMajiangGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          maanshanMajiangGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          taixingMajiangGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          yizhengMajiangGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          paodekuaiGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          guandanGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          bijiGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          doudizhuGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          memberLoginRecord:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          roomManage:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+      bindings:
+        notice:
+          destination: notice
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        gameServer:
+          destination: gameServer
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        yangzhouMajiangGameRoom:
+          destination: yangzhouMajiangGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        taizhouMajiangGameRoom:
+          destination: taizhouMajiangGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        tianchangxiaohuaGameRoom:
+          destination: tianchangxiaohuaGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        gaoyouMajiangGameRoom:
+          destination: gaoyouMajiangGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        hongzhongMajiangGameRoom:
+          destination: hongzhongMajiangGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        maanshanMajiangGameRoom:
+          destination: maanshanMajiangGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        taixingMajiangGameRoom:
+          destination: taixingMajiangGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        yizhengMajiangGameRoom:
+          destination: yizhengMajiangGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        paodekuaiGameRoom:
+          destination: paodekuaiGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        guandanGameRoom:
+          destination: guandanGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        bijiGameRoom:
+          destination: bijiGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        doudizhuGameRoom:
+          destination: doudizhuGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        memberGolds:
+          destination: memberGolds
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        members:
+          destination: members
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        mail:
+          destination: mail
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        gameDataReport:
+          destination: gameDataReport
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        yangzhouMajiangGame:
+          destination: yangzhouMajiangGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        yangzhouMajiangResult:
+          destination: yangzhouMajiangResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        taizhouMajiangGame:
+          destination: taizhouMajiangGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        taizhouMajiangResult:
+          destination: taizhouMajiangResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        tianchangxiaohuaGame:
+          destination: tianchangxiaohuaGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        tianchangxiaohuaResult:
+          destination: tianchangxiaohuaResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        gaoyouMajiangGame:
+          destination: gaoyouMajiangGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        gaoyouMajiangResult:
+          destination: gaoyouMajiangResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        hongzhongMajiangGame:
+          destination: hongzhongMajiangGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        hongzhongMajiangResult:
+          destination: hongzhongMajiangResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        maanshanMajiangGame:
+          destination: maanshanMajiangGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        maanshanMajiangResult:
+          destination: maanshanMajiangResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        taixingMajiangGame:
+          destination: taixingMajiangGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        taixingMajiangResult:
+          destination: taixingMajiangResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        yizhengMajiangGame:
+          destination: yizhengMajiangGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        yizhengMajiangResult:
+          destination: yizhengMajiangResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        paodekuaiGame:
+          destination: paodekuaiGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        paodekuaiResult:
+          destination: paodekuaiResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        guandanGame:
+          destination: guandanGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        guandanResult:
+          destination: guandanResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        bijiGame:
+          destination: bijiGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        bijiResult:
+          destination: bijiResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        doudizhuGame:
+          destination: doudizhuGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        doudizhuResult:
+          destination: doudizhuResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        gameServerManager:
+          destination: gameServer
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        signInPrize:
+          destination: signInPrize
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        memberLoginRecord:
+          destination: memberLoginRecord
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        memberLoginLimitRecord:
+          destination: memberLoginLimitRecord
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        roomManage:
+          destination: roomManage
+          contentType: application/json
+          producer:
+            partitionCount: 1
+
+  application:
+    name: qipai-game
+server:
+  port: 83
+#  context-path: /game
+  connectionTimeout: 6000
+  tomcat:
+    max-connections: 4096
+    max-threads: 4096
+    access-log-enabled: true
+    access-log-pattern: '%a %h %A %p %U %t %H %m %r %s %b %D'
+    basedir: ./
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
+
+websocket:
+    url: ws://203.107.52.38:83/hall
+#    url: ws://wchy.wtgphn.cn/game/hall
+#    url: ws://47.98.54.41:83/hall
+
+filepath:
+    snapshotFileBasePath: /data/app/qipai_game/snapshot
+    jFileBasePath: /data/app/qipai_game/journal
+#  snapshotFileBasePath: /data/hjyl_app/qipai_game/snapshot
+#  jFileBasePath: /data/hjyl_app/qipai_game/journal

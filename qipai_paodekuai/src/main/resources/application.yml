@@ -1,0 +1,144 @@
+spring:
+  data:
+    mongodb:
+#      uri: mongodb://localhost:27017/qipai_paodekuai
+      database: qipai_paodekuai
+      host: 172.19.24.161
+      port: 27017
+      username: root
+      password: 'meiyoumima'
+#      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
+#      port: 3717
+#      username: root
+#      password: 'Meiyoumima!'
+#      host: 121.196.23.189
+#      port: 27025
+#      username: root
+#      password: '123456'
+      authentication-database: admin
+      repositories:
+        enabled: true
+
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+          zk-nodes: localhost:2181
+          minPartitionCount: 1
+          autoCreateTopics: true
+          autoAddPartitions: false
+        bindings:
+          memberGoldsAccounting:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          paodekuaiGame:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          paodekuaiResult:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          wisecrack:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          watchRecord:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+      bindings:
+        memberGoldsAccounting:
+          destination: memberGoldsAccounting
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        paodekuaiGame:
+          destination: paodekuaiGame
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        paodekuaiResult:
+          destination: paodekuaiResult
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        members:
+          destination: members
+          group: qipai-paodekuai
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        memberGolds:
+          destination: memberGolds
+          group: qipai-paodekuai
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        paodekuaiGameRoom:
+          destination: paodekuaiGameRoom
+          group: qipai-paodekuai
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        wisecrack:
+          destination: wisecrack
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        watchRecord:
+          destination: watchRecord
+          contentType: application/json
+          producer:
+            partitionCount: 1
+  application:
+    name: qipai-paodekuai
+
+server:
+  port: 2002
+#  context-path: /paodekuai
+  connectionTimeout: 65000
+  tomcat:
+    max-connections: 1024
+    max-threads: 1024
+    access-log-enabled: true
+    access-log-pattern: '%a %h %A %p %U %t %H %m %r %s %b %D'
+    basedir: ./
+
+logging:
+  config: classpath:spring-log.xml

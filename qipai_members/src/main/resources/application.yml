@@ -1,0 +1,175 @@
+spring:
+  data:
+    mongodb:
+      database: qipai_members
+#      host: 172.19.24.161
+#      port: 27017
+#      username: root
+#      password: 'meiyoumima'
+      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
+      port: 3717
+      username: root
+      password: 'Meiyoumima!'
+#      host: 121.196.23.189
+#      port: 27025
+#      username: root
+#      password: '123456'
+      authentication-database: admin
+      repositories:
+        enabled: true
+        
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+          zk-nodes: localhost:2181
+          minPartitionCount: 1
+          autoCreateTopics: true
+          autoAddPartitions: false
+        bindings:
+          members:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          authorization:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          activity:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          complaint:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          memberGolds:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          memberLoginLimitRecord:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+                  
+
+
+      bindings:
+
+        memberGoldsAccounting:
+          destination: memberGoldsAccounting
+          group: qipai-members
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+
+
+        loginIPLimit:
+          destination: loginIPLimit
+          group: qipai-members
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+
+
+        memberYushi:
+          destination: memberYushi
+          group: qipai-members
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        members:
+          destination: members
+          contentType: application/json
+          producer:
+            partitionCount: 1
+            
+        authorization:
+          destination: authorization
+          contentType: application/json
+          producer:
+            partitionCount: 1
+            
+        memberGolds:
+          destination: memberGolds
+          contentType: application/json
+          producer:
+            partitionCount: 1
+
+        
+        memberLoginLimitRecord:
+          destination: memberLoginLimitRecord
+          contentType: application/json
+          producer:
+            partitionCount: 1
+
+        activity:
+          destination: activity
+          contentType: application/json
+          producer:
+            partitionCount: 1
+
+        complaint:
+          destination: complaint
+          contentType: application/json
+          producer:
+            partitionCount: 1
+
+
+
+  application:
+    name: qipai-members
+server:
+  port: 82
+  context-path: /members
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+filepath:
+  snapshotFileBasePath: /data/app/qipai_members/snapshot
+  jFileBasePath: /data/app/qipai_members/journal
+#  snapshotFileBasePath: /data/hjyl_app/qipai_members/snapshot
+#  jFileBasePath: /data/hjyl_app/qipai_members/journal
