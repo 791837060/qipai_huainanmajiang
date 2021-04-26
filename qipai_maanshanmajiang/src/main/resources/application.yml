@@ -3,14 +3,14 @@ spring:
     mongodb:
       #      uri: mongodb://localhost:27017/qipai_maanshanMajiang
       database: qipai_maanshanMajiang
-      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
-      port: 3717
-      username: root
-      password: 'Meiyoumima!'
-#      host: 121.196.23.189
-#      port: 27025
+#      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
+#      port: 3717
 #      username: root
-#      password: '123456'
+#      password: 'Meiyoumima!'
+      host: 121.196.23.189
+      port: 27025
+      username: root
+      password: '123456'
       authentication-database: admin
       repositories:
         enabled: true
@@ -127,7 +127,7 @@ spring:
 
 server:
   port: 2012
-  context-path: /maanshanMajiang
+#  context-path: /maanshanMajiang
   connectionTimeout: 65000
   tomcat:
     max-connections: 1024

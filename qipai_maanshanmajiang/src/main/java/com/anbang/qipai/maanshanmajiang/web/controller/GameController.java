@@ -105,10 +105,10 @@ public class GameController {
      */
     @RequestMapping(value = "/newgame")
     @ResponseBody
-    public CommonVO newgame(String playerId, int panshu, int renshu, Double difen, @RequestParam(required = false) int powerLimit, OptionalPlay optionalPlay) {
+    public CommonVO newgame(String playerId, int renshu, Double difen, @RequestParam(required = false) int powerLimit, OptionalPlay optionalPlay) {
         CommonVO vo = new CommonVO();
         String newGameId = UUID.randomUUID().toString();
-        MajiangGameValueObject majiangGameValueObject = gameCmdService.newMajiangGame(newGameId, playerId, panshu, renshu, difen, powerLimit, optionalPlay);
+        MajiangGameValueObject majiangGameValueObject = gameCmdService.newMajiangGame(newGameId, playerId, 0, renshu, difen, powerLimit, optionalPlay);
         majiangGameQueryService.newMajiangGame(majiangGameValueObject);
 
         if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {

@@ -89,24 +89,32 @@ public class MasmjLawsFB {
 
     public int payForCreateRoom() {
         int gold = 15;
-        if (daozi.equals("1")) {
-            gold = 6;
-        } else if (daozi.equals("2")) {
-            gold = 10;
-        } else if (daozi.equals("3")) {
-            gold = 15;
+        switch (daozi) {
+            case "1":
+                gold = 6;
+                break;
+            case "2":
+                gold = 10;
+                break;
+            case "3":
+                gold = 15;
+                break;
         }
         return gold;
     }
 
     public int payForJoinRoom() {
         int gold = 15;
-        if (daozi.equals("1")) {
-            gold = 6;
-        } else if (daozi.equals("2")) {
-            gold = 10;
-        } else if (daozi.equals("3")) {
-            gold = 15;
+        switch (daozi) {
+            case "1":
+                gold = 6;
+                break;
+            case "2":
+                gold = 10;
+                break;
+            case "3":
+                gold = 15;
+                break;
         }
         return gold;
     }

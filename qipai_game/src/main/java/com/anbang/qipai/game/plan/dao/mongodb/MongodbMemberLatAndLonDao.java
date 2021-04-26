@@ -6,6 +6,8 @@ import com.anbang.qipai.game.plan.bean.historicalresult.puke.BijiJuPlayerResult;
 import com.anbang.qipai.game.plan.bean.historicalresult.puke.DoudizhuJuPlayerResult;
 import com.anbang.qipai.game.plan.bean.historicalresult.puke.GuandanJuPlayerResult;
 import com.anbang.qipai.game.plan.bean.historicalresult.puke.PaodekuaiJuPlayerResult;
+import com.anbang.qipai.game.plan.bean.historicalresult.zipai.BohuJuPlayerResult;
+import com.anbang.qipai.game.plan.bean.historicalresult.zipai.HuangshibaJuPlayerResult;
 import com.anbang.qipai.game.plan.bean.members.MemberLatAndLon;
 import com.anbang.qipai.game.plan.dao.MemberLatAndLonDao;
 import com.anbang.qipai.game.plan.dao.mongodb.repository.MemberLatAndLonRepository;
@@ -63,6 +65,32 @@ public class MongodbMemberLatAndLonDao implements MemberLatAndLonDao {
     public void paodekuaiDels(List<GameJuPlayerResult> playerResultList) {
         for (GameJuPlayerResult gameJuPlayerResult : playerResultList) {
             PaodekuaiJuPlayerResult playerResult= (PaodekuaiJuPlayerResult)gameJuPlayerResult;
+            String playerId = playerResult.getPlayerId();
+            Query query = new Query();
+            Criteria criteria = new Criteria();
+            criteria.andOperator(Criteria.where("id").is(playerId));
+            query.addCriteria(criteria);
+            mongoTemplate.remove(query, MemberLatAndLon.class);
+        }
+    }
+
+    @Override
+    public void huangshibaDels(List<GameJuPlayerResult> playerResultList) {
+        for (GameJuPlayerResult gameJuPlayerResult : playerResultList) {
+            HuangshibaJuPlayerResult playerResult= (HuangshibaJuPlayerResult)gameJuPlayerResult;
+            String playerId = playerResult.getPlayerId();
+            Query query = new Query();
+            Criteria criteria = new Criteria();
+            criteria.andOperator(Criteria.where("id").is(playerId));
+            query.addCriteria(criteria);
+            mongoTemplate.remove(query, MemberLatAndLon.class);
+        }
+    }
+
+    @Override
+    public void bohuDels(List<GameJuPlayerResult> playerResultList) {
+        for (GameJuPlayerResult gameJuPlayerResult : playerResultList) {
+            BohuJuPlayerResult playerResult= (BohuJuPlayerResult)gameJuPlayerResult;
             String playerId = playerResult.getPlayerId();
             Query query = new Query();
             Criteria criteria = new Criteria();

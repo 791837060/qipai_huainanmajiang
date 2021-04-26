@@ -35,6 +35,14 @@ public class MemberLatAndLonService {
         memberLatAndLonDao.paodekuaiDels(playerResultList);
     }
 
+    public void huangshibaDels(List<GameJuPlayerResult> playerResultList) {
+        memberLatAndLonDao.huangshibaDels(playerResultList);
+    }
+
+    public void bohuDels(List<GameJuPlayerResult> playerResultList) {
+        memberLatAndLonDao.bohuDels(playerResultList);
+    }
+
     public void guandanDels(List<GameJuPlayerResult> playerResultList) {
         memberLatAndLonDao.guandanDels(playerResultList);
     }

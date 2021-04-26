@@ -28,7 +28,7 @@ public class BjLawsFB {
     private String jinyuanzi = "false";      //进园子
     private String jinzhiyuyin = "false";    //禁止语音
     private String banVoice = "false";       //禁止语音
-    private String banJiesan="false";        //禁止解散
+    private String banJiesan = "false";        //禁止解散
 
     public BjLawsFB() {
     }
@@ -37,8 +37,12 @@ public class BjLawsFB {
         lawNames.forEach((lawName) -> {
             if (lawName.equals("lj")) {                     //6局
                 panshu = "6";
+            } else if (lawName.equals("bj")) {              //8局
+                panshu = "8";
             } else if (lawName.equals("shj")) {             //10局
                 panshu = "10";
+            } else if (lawName.equals("slj")) {             //16局
+                panshu = "16";
             } else if (lawName.equals("esj")) {             //20局
                 panshu = "20";
             } else if (lawName.equals("er")) {              //二人
@@ -117,38 +121,38 @@ public class BjLawsFB {
     }
 
     public int payForCreateRoom() {
-        int gold = 1;
+        int gold = 20;
         switch (panshu) {
-            case "6":
-                gold = 4;
-                break;
             case "8":
-                gold = 4;
+                gold = 15;
                 break;
             case "10":
-                gold = 5;
+                gold = 15;
+                break;
+            case "16":
+                gold = 30;
                 break;
             case "20":
-                gold = 10;
+                gold = 30;
                 break;
         }
         return gold;
     }
 
     public int payForJoinRoom() {
-        int gold = 1;
+        int gold = 20;
         switch (panshu) {
-            case "6":
-                gold = 4;
-                break;
             case "8":
-                gold = 4;
+                gold = 15;
                 break;
             case "10":
-                gold = 5;
+                gold = 15;
+                break;
+            case "16":
+                gold = 30;
                 break;
             case "20":
-                gold = 10;
+                gold = 30;
                 break;
         }
         return gold;

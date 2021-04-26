@@ -220,6 +220,14 @@ public class GameService {
         memberGameRoomDao.remove(Game.paodekuai, serverGameId, playerId);
     }
 
+    public void huangshibaPlayerQuitQame(String serverGameId, String playerId) {
+        memberGameRoomDao.remove(Game.huangshiba, serverGameId, playerId);
+    }
+
+    public void bohuPlayerQuitQame(String serverGameId, String playerId) {
+        memberGameRoomDao.remove(Game.bohu, serverGameId, playerId);
+    }
+
     public void guandanPlayerQuitQame(String serverGameId, String playerId) {
         memberGameRoomDao.remove(Game.guandan, serverGameId, playerId);
     }

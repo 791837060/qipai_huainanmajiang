@@ -9,23 +9,23 @@ import com.anbang.qipai.game.remote.vo.MemberRemoteVO;
 
 /**
  * 会员中心远程服务
- * 
- * @author neo
  *
+ * @author neo
  */
 @FeignClient("qipai-members/members")
+//@FeignClient("qipai-members")
 public interface QipaiMembersRemoteService {
 
-	@RequestMapping(value = "/auth/trytoken")
-	public CommonRemoteVO auth_trytoken(@RequestParam("token") String token);
+    @RequestMapping(value = "/auth/trytoken")
+    public CommonRemoteVO auth_trytoken(@RequestParam("token") String token);
 
-	@RequestMapping(value = "/member/info")
-	public MemberRemoteVO member_info(@RequestParam("memberId") String memberId);
+    @RequestMapping(value = "/member/info")
+    public MemberRemoteVO member_info(@RequestParam("memberId") String memberId);
 
-	@RequestMapping(value = "/gold/withdraw")
-	public CommonRemoteVO gold_withdraw(@RequestParam("memberId") String memberId, @RequestParam("amount") int amount, @RequestParam("textSummary") String textSummary);
+    @RequestMapping(value = "/gold/withdraw")
+    public CommonRemoteVO gold_withdraw(@RequestParam("memberId") String memberId, @RequestParam("amount") int amount, @RequestParam("textSummary") String textSummary);
 
-	@RequestMapping(value = "/gold/givegoldtomember")
-	public CommonRemoteVO gold_givegoldtomember(@RequestParam("memberId") String memberId, @RequestParam("amount") int amount, @RequestParam("textSummary") String textSummary);
+    @RequestMapping(value = "/gold/givegoldtomember")
+    public CommonRemoteVO gold_givegoldtomember(@RequestParam("memberId") String memberId, @RequestParam("amount") int amount, @RequestParam("textSummary") String textSummary);
 
 }

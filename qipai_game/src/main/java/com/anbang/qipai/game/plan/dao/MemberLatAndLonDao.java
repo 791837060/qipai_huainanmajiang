@@ -17,6 +17,10 @@ public interface MemberLatAndLonDao {
 
     void paodekuaiDels(List<GameJuPlayerResult> playerResultList);
 
+    void huangshibaDels(List<GameJuPlayerResult> playerResultList);
+
+    void bohuDels(List<GameJuPlayerResult> playerResultList);
+
     void guandanDels(List<GameJuPlayerResult> playerResultList);
 
     void yangzhouMajiangDels(List<GameJuPlayerResult> juPlayerResultList);

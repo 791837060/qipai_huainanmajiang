@@ -154,6 +154,26 @@ spring:
                   ms: 5
                 batch:
                   size: 16384
+          huangshibaGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
+          bohuGameRoom:
+            producer:
+              configuration:
+                request:
+                  timeout:
+                    ms: 30000
+                linger:
+                  ms: 5
+                batch:
+                  size: 16384
           guandanGameRoom:
             producer:
               configuration:
@@ -252,11 +272,6 @@ spring:
             partitionCount: 1
         yizhengMajiangGameRoom:
           destination: yizhengMajiangGameRoom
-          contentType: application/json
-          producer:
-            partitionCount: 1
-        paodekuaiGameRoom:
-          destination: paodekuaiGameRoom
           contentType: application/json
           producer:
             partitionCount: 1
@@ -411,6 +426,11 @@ spring:
             concurrency: 1
             partitioned: false
           contentType: application/json
+        paodekuaiGameRoom:
+          destination: paodekuaiGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
         paodekuaiGame:
           destination: paodekuaiGame
           group: qipai-game
@@ -420,6 +440,44 @@ spring:
           contentType: application/json
         paodekuaiResult:
           destination: paodekuaiResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        huangshibaGameRoom:
+          destination: huangshibaGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        huangshibaGame:
+          destination: huangshibaGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        huangshibaResult:
+          destination: huangshibaResult
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        bohuGameRoom:
+          destination: bohuGameRoom
+          contentType: application/json
+          producer:
+            partitionCount: 1
+        bohuGame:
+          destination: bohuGame
+          group: qipai-game
+          consumer:
+            concurrency: 1
+            partitioned: false
+          contentType: application/json
+        bohuResult:
+          destination: bohuResult
           group: qipai-game
           consumer:
             concurrency: 1
@@ -501,7 +559,7 @@ spring:
     name: qipai-game
 server:
   port: 83
-  context-path: /game
+#  context-path: /game
   connectionTimeout: 6000
   tomcat:
     max-connections: 4096

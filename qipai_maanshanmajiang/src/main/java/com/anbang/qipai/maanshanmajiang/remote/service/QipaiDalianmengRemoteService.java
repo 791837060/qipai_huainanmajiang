@@ -1,6 +1,6 @@
-package com.anbang.qipai.biji.remote.service;
+package com.anbang.qipai.maanshanmajiang.remote.service;
 
-import com.anbang.qipai.biji.remote.vo.CommonRemoteVO;
+import com.anbang.qipai.maanshanmajiang.remote.vo.CommonRemoteVO;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface QipaiDalianmengRemoteService {
 
     @RequestMapping(value = "/power/nowPowerForRemote")
-    CommonRemoteVO nowPowerForRemote(@RequestParam("memberId") String memberId, @RequestParam("lianmengId") String lianmengId);
+    public CommonRemoteVO nowPowerForRemote(@RequestParam("memberId") String memberId, @RequestParam("lianmengId") String lianmengId);
 
 }

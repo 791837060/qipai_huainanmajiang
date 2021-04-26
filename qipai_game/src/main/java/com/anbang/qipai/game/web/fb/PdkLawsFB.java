@@ -56,6 +56,8 @@ public class PdkLawsFB {
                 panshu = "8";
             } else if (lawName.equals("shj")) {             //10局
                 panshu = "10";
+            } else if (lawName.equals("slj")) {             //16局
+                panshu = "16";
             } else if (lawName.equals("esj")) {             //20局
                 panshu = "20";
             } else if (lawName.equals("er")) {              //二人
@@ -156,38 +158,38 @@ public class PdkLawsFB {
     }
 
     public int payForCreateRoom() {
-        int gold = 1;
+        int gold = 20;
         switch (panshu) {
-            case "6":
-                gold = 3;
-                break;
             case "8":
-                gold = 3;
+                gold = 10;
                 break;
             case "10":
-                gold = 4;
+                gold = 10;
+                break;
+            case "16":
+                gold = 20;
                 break;
             case "20":
-                gold = 8;
+                gold = 20;
                 break;
         }
         return gold;
     }
 
     public int payForJoinRoom() {
-        int gold = 1;
+        int gold = 20;
         switch (panshu) {
-            case "6":
-                gold = 3;
-                break;
             case "8":
-                gold = 3;
+                gold = 10;
                 break;
             case "10":
-                gold = 4;
+                gold = 10;
+                break;
+            case "16":
+                gold = 20;
                 break;
             case "20":
-                gold = 8;
+                gold = 20;
                 break;
         }
         return gold;

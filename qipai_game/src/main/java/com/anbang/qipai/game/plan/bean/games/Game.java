@@ -28,6 +28,10 @@ public enum Game {
 
     maanshanMajiang,    //马鞍山麻将
 
+    huangshiba,         //黄十八
+
+    bohu,               //博胡
+
     taixingMajiang,     //泰兴麻将
 
 }

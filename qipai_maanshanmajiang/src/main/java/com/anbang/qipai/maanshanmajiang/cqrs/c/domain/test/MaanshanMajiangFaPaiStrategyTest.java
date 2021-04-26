@@ -56,34 +56,34 @@ public class MaanshanMajiangFaPaiStrategyTest implements FaPaiStrategy {
                 MajiangPai.wuwan,
                 MajiangPai.wuwan,
                 MajiangPai.wuwan,
-                MajiangPai.qiwan,
-                MajiangPai.qiwan,
-                MajiangPai.qiwan,
-                MajiangPai.jiuwan,
+                MajiangPai.yitiao,
+                MajiangPai.ertiao,
+                MajiangPai.santiao,
+                MajiangPai.sitiao,
         };
         MajiangPai[] pai2 = {
-                MajiangPai.yiwan,
-                MajiangPai.yiwan,
-                MajiangPai.yiwan,
-                MajiangPai.sanwan,
-                MajiangPai.sanwan,
-                MajiangPai.sanwan,
                 MajiangPai.yitong,
                 MajiangPai.yitong,
                 MajiangPai.yitong,
                 MajiangPai.santong,
                 MajiangPai.santong,
                 MajiangPai.santong,
-                MajiangPai.jiuwan,
+                MajiangPai.wutong,
+                MajiangPai.wutong,
+                MajiangPai.wutong,
+                MajiangPai.sitiao,
+                MajiangPai.wutiao,
+                MajiangPai.liutiao,
+                MajiangPai.qitiao,
         };
         for (int i = 0; i < faPaiCountsForOnePlayer; i++) { //从庄家开始依次发牌 直至到规定手牌
             MajiangPosition playerMenFeng = zhuangPlayerMenFeng;
             for (int j = 0; j < 4; j++) {
                 MajiangPlayer player = currentPan.findPlayerByMenFeng(playerMenFeng);
                 if (player != null) { //门风上有玩家才会发牌
-                    if (player.getId().equals("739501")) {
+                    if (player.getId().equals("237129") || player.getId().equals("960973")) {
                         player.addShoupai(pai[i]);
-                    } else if (player.getId().equals("218318") || player.getId().equals("017320")) {
+                    } else if (player.getId().equals("830559") || player.getId().equals("713072")) {
                         player.addShoupai(pai2[i]);
                     } else {
                         faPai(avaliablePaiList, player);

@@ -64,7 +64,14 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
             String huPlayerId = null;
             for (int i = 0; i < 4; i++) {
                 huPlayerId = menFengMajiangPlayerIdMap.get(majiangPosition);
-                if (huPlayerId != null && majiangPlayerIdMajiangPlayerMap.containsKey(huPlayerId)) {
+                boolean playerHu = false;
+                for (MajiangPlayer huPlayer : huPlayers) {
+                    if (huPlayer.getId().equals(huPlayerId)) {
+                        playerHu = true;
+                        break;
+                    }
+                }
+                if (huPlayerId != null && playerHu) {
                     break;
                 } else {
                     majiangPosition = MajiangPositionUtil.nextPositionAntiClockwise(majiangPosition);

@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 会员中心远程服务
  */
 @FeignClient("qipai-members/members")
+//@FeignClient("qipai-members")
 public interface QipaiMembersRemoteService {
 
-	@RequestMapping(value = "/auth/trytoken")
-	public CommonRemoteVO auth_trytoken(@RequestParam("token") String token);
+    @RequestMapping(value = "/auth/trytoken")
+    public CommonRemoteVO auth_trytoken(@RequestParam("token") String token);
 
-	@RequestMapping(value = "/member/info")
-	public MemberRemoteVO member_info(@RequestParam("memberId") String memberId);
+    @RequestMapping(value = "/member/info")
+    public MemberRemoteVO member_info(@RequestParam("memberId") String memberId);
 
 }
