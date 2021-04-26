@@ -1,14 +1,16 @@
 package com.anbang.qipai.admin.util;
 
+
+
 import javafx.util.Pair;
 import org.apache.commons.lang.StringUtils;
 
-import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Locale;
+
 
 public class TimeUtil {
 	//获得多少天前的毫秒数
@@ -202,14 +204,14 @@ public class TimeUtil {
      * 获取年的第一与最后一天时间戳范围
      * @return
      */
-    public static Pair getYearRange(Integer year){
-        //不输入默认当前年
-        if (year == null) {
-            Calendar currCal=Calendar.getInstance();
-            year = currCal.get(Calendar.YEAR);
-        }
-        return new Pair(getYearFirst(year),getYearLast(year));
-    }
+//    public static Pair getYearRange(Integer year){
+//        //不输入默认当前年
+//        if (year == null) {
+//            Calendar currCal=Calendar.getInstance();
+//            year = currCal.get(Calendar.YEAR);
+//        }
+//        return new Pair(getYearFirst(year),getYearLast(year));
+//    }
 
     /**
      * 获取某年第一天日期

@@ -58,16 +58,17 @@ public class IndexController {
 		data.put("agentAmount", agentAmount);
 
 		//年销售数据
-		Pair<Long, Long> pair = TimeUtil.getYearRange(year);
-		MemberOrderVO memberOrderVO = new MemberOrderVO();
+        long yearFirst = TimeUtil.getYearFirst(year);
+        long yearLast = TimeUtil.getYearLast(year);
+        MemberOrderVO memberOrderVO = new MemberOrderVO();
 		memberOrderVO.setStatus("PAYSUCCESS");
-		memberOrderVO.setStartTime(pair.getKey());
-		memberOrderVO.setEndTime(pair.getValue());
+		memberOrderVO.setStartTime(yearFirst);
+		memberOrderVO.setEndTime(yearLast);
 		double memberExpence = orderService.sumField(memberOrderVO, "totalamount");
 		AgentOrderQuery agentOrderQuery = new AgentOrderQuery();
 		agentOrderQuery.setStatus("SUCCESS");
-		agentOrderQuery.setStartTime(pair.getKey());
-		agentOrderQuery.setEndTime(pair.getValue());
+		agentOrderQuery.setStartTime(yearFirst);
+		agentOrderQuery.setEndTime(yearLast);
 		double agentExpence = agentOrderService.sumField(agentOrderQuery, "totalamount");
 		data.put("totalSale", memberExpence + agentExpence);
 
