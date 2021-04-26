@@ -253,7 +253,7 @@ public class Automatic extends CmdServiceBase {
                         }
                         gameCmdService.playLeaveGameHosting(playerId, gameId, true);
 
-                        if (majiangGameDbo.getState().name().equals("DingqueState")) {
+                        if (majiangGameDbo2.getState().name().equals("DingqueState")) {
                             automaticDingque(playerId, gameId);
                             logger.info("离线托管定缺," + "Time:" + System.currentTimeMillis() + ",playerId:" + playerId + ",gameId:" + gameId);
 //                            PanActionFrame dingquePanActionFrame = majiangPlayQueryService.findAndFilterCurrentPanValueObjectForPlayer(gameId);

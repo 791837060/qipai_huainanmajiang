@@ -1756,9 +1756,9 @@ public class GamePlayController {
     }
 
     /**
-     * 创建黄十八房间
+     * 创建博胡房间
      */
-    @RequestMapping(value = "/create_Bh_room")
+    @RequestMapping(value = "/create_bh_room")
     @ResponseBody
     public CommonVO createBhRoom(HttpServletRequest request, String token, @RequestBody List<String> lawNames, String lat, String lon, String yuanzifen, String lixianchengfaScore,
                                   String lixianshichang, Boolean zidongkaishi, Double zidongkaishiTime,String baozipeifu,String ewaijiafendiyu,String ewaijiafenzengjia) {
@@ -1843,11 +1843,11 @@ public class GamePlayController {
         req.param("tuoguan", fb.getTuoguan());
 //        req.param("tuoguanjiesan", fb.getTuoguanjiesan());
 //        req.param("lixianchengfa", fb.getLixianchengfa());
-        req.param("lixianchengfaScore", lixianchengfaScore);
-        req.param("lixianshichang", lixianshichang);
+//        req.param("lixianchengfaScore", lixianchengfaScore);
+//        req.param("lixianshichang", lixianshichang);
         req.param("zidongzhunbei", "false");
-        req.param("zidongkaishi", zidongkaishi.toString());
-        req.param("zidongkaishiTime", zidongkaishiTime.toString());
+//        req.param("zidongkaishi", zidongkaishi.toString());
+//        req.param("zidongkaishiTime", zidongkaishiTime.toString());
         req.param("buzhunbeituichushichang", "0");
 //        req.param("banVoice", fb.getBanVoice());
 //        req.param("banJiesan", fb.getBanJiesan());
