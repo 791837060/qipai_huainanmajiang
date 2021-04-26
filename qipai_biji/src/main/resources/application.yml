@@ -2,14 +2,10 @@ spring:
   data:
     mongodb:
       database: qipai_biji
-      host: 172.19.24.161
-      port: 27017
+      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
+      port: 3717
       username: root
-      password: 'meiyoumima'
-#      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
-#      port: 3717
-#      username: root
-#      password: 'Meiyoumima!'
+      password: 'Meiyoumima!'
 #      host: 121.196.23.189
 #      port: 27025
 #      username: root
@@ -130,7 +126,7 @@ spring:
     name: qipai-biji
 server:
   port: 2005
-#  context-path: /biji
+  context-path: /biji
   connectionTimeout: 65000
   tomcat:
     max-connections: 1024

@@ -307,32 +307,32 @@ public class MemberThirdAuthController {
         }
         try {
             String param = VerifyPhoneCodeUtil.generateVerifyCode();
-//            String host = "http://dingxin.market.alicloudapi.com";
-//            String path = "/dx/sendSms";
-//            String method = "POST";
-//            String appcode = PhoneVerifyConfig.APPCODE;
-//            Map<String, String> headers = new HashMap<String, String>();
-//            // 最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
-//            headers.put("Authorization", "APPCODE " + appcode);
-//            Map<String, String> querys = new HashMap<String, String>();
-//            querys.put("mobile", phone);
-//            querys.put("param", "code:" + param);
-//            querys.put("tpl_id", "TP1711063");
-//            Map<String, String> bodys = new HashMap<String, String>();
-//            HttpResponse response = HttpUtil.doPost(host, path, method, headers, querys, bodys);
-//            Map map = gson.fromJson(EntityUtils.toString(response.getEntity()), Map.class);
-//            String return_code = (String) map.get("return_code");
+            String host = "http://dingxin.market.alicloudapi.com";
+            String path = "/dx/sendSms";
+            String method = "POST";
+            String appcode = PhoneVerifyConfig.APPCODE;
+            Map<String, String> headers = new HashMap<String, String>();
+            // 最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+            headers.put("Authorization", "APPCODE " + appcode);
+            Map<String, String> querys = new HashMap<String, String>();
+            querys.put("mobile", phone);
+            querys.put("param", "code:" + param);
+            querys.put("tpl_id", "TP1711063");
+            Map<String, String> bodys = new HashMap<String, String>();
+            HttpResponse response = HttpUtil.doPost(host, path, method, headers, querys, bodys);
+            Map map = gson.fromJson(EntityUtils.toString(response.getEntity()), Map.class);
+            String return_code = (String) map.get("return_code");
             MemberPhoneVerifyCode memberPhoneVerifyCode = new MemberPhoneVerifyCode();
             memberPhoneVerifyCode.setCreateTime(System.currentTimeMillis());
             memberPhoneVerifyCode.setPhone(phone);
             memberPhoneVerifyCode.setCode(param);
             memberPhoneVerifyCodeService.save(memberPhoneVerifyCode);
-//            if (return_code.equals("00000")) {
-//                vo.setSuccess(true);
-//            } else {
-//                vo.setSuccess(false);
-//                vo.setMsg(return_code);
-//            }
+            if (return_code.equals("00000")) {
+                vo.setSuccess(true);
+            } else {
+                vo.setSuccess(false);
+                vo.setMsg(return_code);
+            }
             return vo;
         } catch (Exception e) {
             vo.setSuccess(false);

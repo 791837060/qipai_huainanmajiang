@@ -403,8 +403,7 @@ public class MajiangController {
         if (lianmengId != null) {
             MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
             PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, majiangGameDbo.getPanNo());
-            Request req = httpClient.newRequest("http://localhost:92/power/nowPowerForRemote");
-//            Request req = httpClient.newRequest("http://localhost:92/dalianmeng/power/nowPowerForRemote");
+            Request req = httpClient.newRequest("http://localhost:92/dalianmeng/power/nowPowerForRemote");
             req.param("memberId", playerId);
             req.param("lianmengId", lianmengId);
             Map resData;

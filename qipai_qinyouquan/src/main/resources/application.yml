@@ -3,14 +3,10 @@ spring:
     mongodb:
       #      uri: mongodb://localhost:27017/qipai_qinyouquan
       database: qipai_qinyouquan
-      host: 172.19.24.161
-      port: 27017
+      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
+      port: 3717
       username: root
-      password: 'meiyoumima'
-#      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
-#      port: 3717
-#      username: root
-#      password: 'Meiyoumima!'
+      password: 'Meiyoumima!'
 #      host: 121.196.23.189
 #      port: 27025
 #      username: root
@@ -382,7 +378,7 @@ spring:
     name: qipai-qinyouquan
 server:
   port: 93
-#  context-path: /qinyouquan
+  context-path: /qinyouquan
 
 eureka:
   client:

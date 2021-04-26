@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface QipaiDalianmengRemoteService {
 
 	@RequestMapping(value = "/power/nowPowerForRemote")
-	public CommonRemoteVO nowPowerForRemote(@RequestParam("memberId")
-                                                        String memberId, @RequestParam("lianmengId") String lianmengId);
+	public CommonRemoteVO nowPowerForRemote(@RequestParam("memberId") String memberId, @RequestParam("lianmengId") String lianmengId);
 
 }
