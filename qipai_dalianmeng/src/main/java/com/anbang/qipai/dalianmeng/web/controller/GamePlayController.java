@@ -1742,6 +1742,7 @@ public class GamePlayController {
         req.param("suanfa", fb.getSuanfa());
         req.param("zimohupai", fb.getZimohupai());
         req.param("wufeng", fb.getWufeng());
+        req.param("shidianqihu", fb.getShidianqihu());
 
         Map resData;
         try {

@@ -15,11 +15,11 @@ public class MasmjLawsFB {
     private String banJiesan = "false";     //禁止解散
     private String dairuzongfen = "false";  //带入总分
 
-    private String daozi= "false";          //倒子
-    private String suanfa= "false";         //算法
-    private String zimohupai= "false";      //自摸胡牌
-    private String wufeng= "false";         //无风
-
+    private String daozi = "false";          //倒子
+    private String suanfa = "false";         //算法
+    private String zimohupai = "false";      //自摸胡牌
+    private String wufeng = "false";         //无风
+    private String shidianqihu = "false";    //十点起胡
 
     public MasmjLawsFB(List<String> lawNames) {
         lawNames.forEach((lawName) -> {
@@ -81,6 +81,8 @@ public class MasmjLawsFB {
                 zimohupai = "true";
             } else if (lawName.equals("wf")) {          //无风
                 wufeng = "true";
+            } else if (lawName.equals("sdqh")) {        //十点起胡
+                shidianqihu = "true";
             } else {
             }
         });
@@ -230,5 +232,13 @@ public class MasmjLawsFB {
 
     public void setWufeng(String wufeng) {
         this.wufeng = wufeng;
+    }
+
+    public String getShidianqihu() {
+        return shidianqihu;
+    }
+
+    public void setShidianqihu(String shidianqihu) {
+        this.shidianqihu = shidianqihu;
     }
 }

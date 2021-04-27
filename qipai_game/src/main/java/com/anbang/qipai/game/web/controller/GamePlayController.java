@@ -1579,7 +1579,7 @@ public class GamePlayController {
         req.param("suanfa", fb.getSuanfa());
         req.param("zimohupai", fb.getZimohupai());
         req.param("wufeng", fb.getWufeng());
-
+        req.param("shidianqihu", fb.getShidianqihu());
 
         Map resData;
         try {
@@ -1621,7 +1621,7 @@ public class GamePlayController {
     @RequestMapping(value = "/create_hsb_room")
     @ResponseBody
     public CommonVO createHsbRoom(HttpServletRequest request, String token, @RequestBody List<String> lawNames, String lat, String lon, String yuanzifen, String lixianchengfaScore,
-                                  String lixianshichang, Boolean zidongkaishi, Double zidongkaishiTime,String baozipeifu,String ewaijiafendiyu,String ewaijiafenzengjia, String kundou) {
+                                  String lixianshichang, Boolean zidongkaishi, Double zidongkaishiTime, String baozipeifu, String ewaijiafendiyu, String ewaijiafenzengjia, String kundou) {
         CommonVO vo = new CommonVO();
         String memberId = memberAuthService.getMemberIdBySessionId(token);
         if (memberId == null) {
@@ -1696,7 +1696,7 @@ public class GamePlayController {
         req.param("lowScore", ewaijiafendiyu);
         req.param("addScore", ewaijiafenzengjia);
         req.param("kundou", kundou);
-        req.param("tuoguan",fb.getTuoguan());
+        req.param("tuoguan", fb.getTuoguan());
         req.param("voice", fb.getVoice());
         req.param("gps", fb.getGps());
         req.param("difen", "1");
@@ -1761,7 +1761,7 @@ public class GamePlayController {
     @RequestMapping(value = "/create_bh_room")
     @ResponseBody
     public CommonVO createBhRoom(HttpServletRequest request, String token, @RequestBody List<String> lawNames, String lat, String lon, String yuanzifen, String lixianchengfaScore,
-                                  String lixianshichang, Boolean zidongkaishi, Double zidongkaishiTime,String baozipeifu,String ewaijiafendiyu,String ewaijiafenzengjia) {
+                                 String lixianshichang, Boolean zidongkaishi, Double zidongkaishiTime, String baozipeifu, String ewaijiafendiyu, String ewaijiafenzengjia) {
         CommonVO vo = new CommonVO();
         String memberId = memberAuthService.getMemberIdBySessionId(token);
         if (memberId == null) {
@@ -1834,7 +1834,7 @@ public class GamePlayController {
         req.param("baoziScore", baozipeifu);
         req.param("lowScore", ewaijiafendiyu);
         req.param("addScore", ewaijiafenzengjia);
-        req.param("tuoguan",fb.getTuoguan());
+        req.param("tuoguan", fb.getTuoguan());
         req.param("voice", fb.getVoice());
         req.param("gps", fb.getGps());
         req.param("difen", "1");

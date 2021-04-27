@@ -24,6 +24,7 @@ public class OptionalPlay {
     private int suanfa;                 //算法
     private boolean zimohupai;          //自摸胡牌
     private boolean wufeng;             //无风
+    private boolean shidianqihu;        //十点起胡
 
     public boolean isGps() {
         return gps;
@@ -169,4 +170,11 @@ public class OptionalPlay {
         this.suanfa = suanfa;
     }
 
+    public boolean isShidianqihu() {
+        return shidianqihu;
+    }
+
+    public void setShidianqihu(boolean shidianqihu) {
+        this.shidianqihu = shidianqihu;
+    }
 }

@@ -62,8 +62,19 @@ public class MaanshanMajiangMoActionUpdater implements MajiangPlayerMoActionUpda
                 player.normalTryKezigangmoAndGenerateCandidateAction();     //明杠(刚摸手牌和碰出的刻子组成杠)
             }
 
+            XushupaiCategory quemen = player.getQuemen();
+            boolean hasQuemen = false;
+            if (quemen.equals(XushupaiCategory.getCategoryforXushupai(player.getGangmoShoupai()))) {
+                hasQuemen = true;
+            }
+            for (MajiangPai majiangPai : fangruShoupaiList) {
+                if (quemen.equals(XushupaiCategory.getCategoryforXushupai(majiangPai))) {
+                    hasQuemen = true;
+                }
+            }
+
             MaanshanMajiangHu bestHu = MaanshanMajiangJiesuanCalculator.calculateBestZimoHu(false, gouXingPanHu, player, moAction, optionalPlay, currentPan);//计算时候胡牌
-            if (bestHu != null) {
+            if (bestHu != null && !hasQuemen) {
                 bestHu.setZimo(true);
                 player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
             }

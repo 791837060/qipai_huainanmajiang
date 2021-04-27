@@ -39,7 +39,7 @@ public class MaanshanMajiangHushu {
     private double value;              //总分
     private double tiwaixunhuan;       //体外循环分数
 
-    public boolean calculate(Pan currentPan) {
+    public boolean calculate(Pan currentPan, boolean shidianqihu) {
         if (shuangbazhi) {
             value += 10;
         } else {
@@ -124,21 +124,21 @@ public class MaanshanMajiangHushu {
 
         value += (minggang * 2);
         value += (angang * 2);
-        value += (sanzhangzaishou * 2);
+        value += sanzhangzaishou;
         value += sanzhangpengchu;
 
-        if (zimoHu && yadang) {
-            wamo = true;
-            tiwaixunhuan += 20;
+        if (kuyazhi) {
+            value += 10;
+            yadang = false;
+            if (zimoHu) {
+                calculaTiwaixunhuan(60);
+            } else {
+                calculaTiwaixunhuan(20);
+            }
         } else {
-            if (kuyazhi) {
-                value += 10;
-                yadang = false;
-                if (zimoHu) {
-                    calculaTiwaixunhuan(60);
-                } else {
-                    calculaTiwaixunhuan(20);
-                }
+            if (zimoHu && yadang) {
+                wamo = true;
+                tiwaixunhuan += 20;
             }
         }
 
@@ -146,22 +146,22 @@ public class MaanshanMajiangHushu {
             value += 1;
         }
 
-//        if (value < 10) {
-//            return false;//10点起胡
-//        }
+        if (shidianqihu && value < 10) {
+            return false;//10点起胡
+        }
 
         if (zimoHu) {
             value *= 2;
             calculaTiwaixunhuan(10);
         }
 
-        if (value >= 50) {
+        if (value >= 50 && currentPan.getMajiangPlayerIdMajiangPlayerMap().size() > 2) {
             if (currentPan.isDaoNewPan()) {
                 qingshuidana = true;
-                calculaTiwaixunhuan(50);
+                tiwaixunhuan += 50;
             } else {
                 hunshuidana = true;
-                calculaTiwaixunhuan(20);
+                tiwaixunhuan += 20;
             }
         }
 

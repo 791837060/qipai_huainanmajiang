@@ -3,6 +3,7 @@ package com.anbang.qipai.maanshanmajiang.cqrs.c.domain;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pai.XushupaiCategory;
 import com.dml.majiang.pai.fenzu.GangType;
+import com.dml.majiang.pai.fenzu.Shunzi;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.player.MajiangPlayer;
 import com.dml.majiang.player.action.mo.GanghouBupai;
@@ -45,7 +46,7 @@ public class MaanshanMajiangJiesuanCalculator {
             for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
                 //计算胡分
                 MaanshanMajiangHushu hufen = calculateHufen(true, moAction.getReason().getName().equals(GanghouBupai.name) || moAction.getReason().getName().equals(MaanshanMajiangBupai.name),
-                        false, couldTianhu, false, shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, player, currentPan);
+                        false, couldTianhu, false, shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, player, currentPan, optionalPlay);
                 if (bestHuFen == null || bestHuFen.getValue() < hufen.getValue()) {
                     bestHuFen = hufen;
                     bestHuShoupaiPaiXing = shoupaiPaiXing;
@@ -81,7 +82,8 @@ public class MaanshanMajiangJiesuanCalculator {
             MaanshanMajiangHushu bestHuFen = null;
             ShoupaiPaiXing bestHuShoupaiPaiXing = null;
             for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
-                MaanshanMajiangHushu hufen = calculateHufen(false, false, true, false, false, shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, player, currentPan);
+                MaanshanMajiangHushu hufen = calculateHufen(false, false, true, false, false, shoupaixingWuguanJiesuancanshu, shoupaiPaiXing,
+                        player, currentPan, optionalPlay);
                 if (bestHuFen == null || bestHuFen.getValue() < hufen.getValue()) {
                     bestHuFen = hufen;
                     bestHuShoupaiPaiXing = shoupaiPaiXing;
@@ -115,7 +117,8 @@ public class MaanshanMajiangJiesuanCalculator {
             MaanshanMajiangHushu bestHuFen = null;
             ShoupaiPaiXing bestHuShoupaiPaiXing = null;
             for (ShoupaiPaiXing shoupaiPaiXing : huPaiShoupaiPaiXingList) {
-                MaanshanMajiangHushu hufen = calculateHufen(false, false, false, false, couldDihu, shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, player, currentPan);
+                MaanshanMajiangHushu hufen = calculateHufen(false, false, false, false, couldDihu, shoupaixingWuguanJiesuancanshu, shoupaiPaiXing,
+                        player, currentPan, optionalPlay);
                 if (bestHuFen == null || bestHuFen.getValue() < hufen.getValue()) {
                     bestHuFen = hufen;
                     bestHuShoupaiPaiXing = shoupaiPaiXing;
@@ -156,8 +159,8 @@ public class MaanshanMajiangJiesuanCalculator {
     /**
      * 计算胡牌类型
      */
-    private static MaanshanMajiangHushu calculateHufen(boolean zimoHu, boolean gangkaiHu, boolean qianggangHu, boolean couldTianhu, boolean couldDihu,
-                                                       ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu, ShoupaiPaiXing shoupaiPaiXing, MajiangPlayer player, Pan currentPan) {
+    private static MaanshanMajiangHushu calculateHufen(boolean zimoHu, boolean gangkaiHu, boolean qianggangHu, boolean couldTianhu, boolean couldDihu, ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu,
+                                                       ShoupaiPaiXing shoupaiPaiXing, MajiangPlayer player, Pan currentPan, OptionalPlay optionalPlay) {
         MaanshanMajiangHushu hufen = new MaanshanMajiangHushu();
 
         List<MajiangPai> playerPaiList = buildPlayerAllPai(shoupaiPaiXing, player);
@@ -186,7 +189,7 @@ public class MaanshanMajiangJiesuanCalculator {
         boolean tongtian = isYitiaolong(shoupaiPaiXing);//通天(一条龙)
         int[] xushuPaiArr = playerXushuPai(playerPaiList);
 
-        int liulianCount = isLiulianCount(playerPaiList);
+        int liulianCount = isLiulianCount(shoupaiPaiXing);
         boolean liulian = false, shuangliulian = false;//六连 双六连
         if (liulianCount == 1) {
             liulian = true;
@@ -197,7 +200,7 @@ public class MaanshanMajiangJiesuanCalculator {
         int wutong = isWutongCount(xushuPaiArr);//五同
         int shuangwutong = isShuangwutongCount(xushuPaiArr);//双五同
 
-        int siheCount = isSiheCount(shoupaiPaiXing);
+        int siheCount = isSiheCount(shoupaiPaiXing, player);
         boolean sihe = false, shuangsihe = false;//四核 双四核
         if (siheCount == 1) {
             sihe = true;
@@ -205,10 +208,16 @@ public class MaanshanMajiangJiesuanCalculator {
             shuangsihe = true;
         }
 
-        int sanzhangzaishou = shoupaiPaiXing.getKeziList().size();
-        int sanzhangpengchu = player.getPengchupaiZuList().size();
+        int sanzhangpengchu = player.getPengchupaiZuList().size();//三张碰出
+        int sanzhangzaishou = shoupaiPaiXing.getKeziList().size() * 2;//三张在手
+        MajiangPai hupai = shoupaixingWuguanJiesuancanshu.getHupai();
+        for (ShoupaiKeziZu shoupaiKeziZu : shoupaiPaiXing.getKeziList()) {
+            if (shoupaiKeziZu.getKezi().getPaiType().equals(hupai)) {
+                sanzhangzaishou--;//点的那张三张在手只算1分
+            }
+        }
 
-        boolean yadang = isYadang(shoupaixingWuguanJiesuancanshu, shoupaiPaiXing);
+        boolean yadang = isYadang(shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, player);
         boolean kuyazhi = isKuyazhi(shoupaixingWuguanJiesuancanshu, currentPan, zimoHu) && yadang;
 
         boolean shixiao = false, shilao = false, quanxiao = false, quanlao = false;//十小 十老 全小 全老
@@ -268,7 +277,7 @@ public class MaanshanMajiangJiesuanCalculator {
         hufen.setBudongshou(menqing);               //不动手
         hufen.setShuangpuzi(shuangpuzi);            //双铺子
 
-        boolean couldHu = hufen.calculate(currentPan);
+        boolean couldHu = hufen.calculate(currentPan, optionalPlay.isShidianqihu());
         if (!couldHu) {
             return null;
         }
@@ -293,27 +302,75 @@ public class MaanshanMajiangJiesuanCalculator {
         return sameShunzi == 1;
     }
 
-    private static boolean isYadang(ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu, ShoupaiPaiXing shoupaiPaiXing) {
+    private static boolean isYadang(ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu, ShoupaiPaiXing shoupaiPaiXing, MajiangPlayer player) {
         MajiangPai hupai = shoupaixingWuguanJiesuancanshu.getHupai();
+
+        Map<MajiangPai, List<MajiangPai>> hupaiCandidates = player.getHupaiCandidates();
+        List<MajiangPai> kehuCandidates = player.getKehuCandidates();
+        boolean onlyOneHu = false;
+        if (hupaiCandidates.size() > 0) {
+            for (List<MajiangPai> value : hupaiCandidates.values()) {
+                if (value.size() == 1) {
+                    if (value.get(0).equals(hupai)) {
+                        onlyOneHu = true;
+                        break;
+                    }
+                }
+            }
+        } else if (kehuCandidates.size() == 1) {
+            if (kehuCandidates.get(0).equals(hupai)) {
+                onlyOneHu = true;
+            }
+        }
+
         for (ShoupaiShunziZu shoupaiShunziZu : shoupaiPaiXing.getShunziList()) {
-            if (shoupaiShunziZu.getShunzi().getPai2().equals(hupai)) {
-                return true;
+            if ((shoupaiShunziZu.getShunzi().getPai1().equals(MajiangPai.sanwan) && hupai.equals(MajiangPai.sanwan)) ||
+                    (shoupaiShunziZu.getShunzi().getPai1().equals(MajiangPai.qiwan) && hupai.equals(MajiangPai.qiwan)) ||
+                    (shoupaiShunziZu.getShunzi().getPai1().equals(MajiangPai.santong) && hupai.equals(MajiangPai.santong)) ||
+                    (shoupaiShunziZu.getShunzi().getPai1().equals(MajiangPai.qitong) && hupai.equals(MajiangPai.qitong)) ||
+                    (shoupaiShunziZu.getShunzi().getPai1().equals(MajiangPai.santiao) && hupai.equals(MajiangPai.santiao)) ||
+                    (shoupaiShunziZu.getShunzi().getPai1().equals(MajiangPai.qitiao) && hupai.equals(MajiangPai.qitiao))) {
+                if (onlyOneHu) {
+                    return true;
+                }
+            } else if ((shoupaiShunziZu.getShunzi().getPai3().equals(MajiangPai.sanwan) && hupai.equals(MajiangPai.sanwan)) ||
+                    (shoupaiShunziZu.getShunzi().getPai3().equals(MajiangPai.qiwan) && hupai.equals(MajiangPai.qiwan)) ||
+                    (shoupaiShunziZu.getShunzi().getPai3().equals(MajiangPai.santong) && hupai.equals(MajiangPai.santong)) ||
+                    (shoupaiShunziZu.getShunzi().getPai3().equals(MajiangPai.qitong) && hupai.equals(MajiangPai.qitong)) ||
+                    (shoupaiShunziZu.getShunzi().getPai3().equals(MajiangPai.santiao) && hupai.equals(MajiangPai.santiao)) ||
+                    (shoupaiShunziZu.getShunzi().getPai3().equals(MajiangPai.qitiao) && hupai.equals(MajiangPai.qitiao))) {
+                if (onlyOneHu) {
+                    return true;
+                }
+            }
+            if (shoupaiShunziZu.getShunzi().getPai2().equals(hupai) && onlyOneHu) {
+                return true;//胡卡
             }
         }
         return false;
     }
 
-    private static int isSiheCount(ShoupaiPaiXing shoupaiPaiXing) {
+    private static int isSiheCount(ShoupaiPaiXing shoupaiPaiXing, MajiangPlayer player) {
         int siheCount = 0;
+        List<ShoupaiShunziZu> shunziList = shoupaiPaiXing.getShunziList();
         for (ShoupaiKeziZu shoupaiKeziZu : shoupaiPaiXing.getKeziList()) {
             MajiangPai keziPai = shoupaiKeziZu.getKezi().getPaiType();
-            List<ShoupaiShunziZu> shunziList = shoupaiPaiXing.getShunziList();
             for (ShoupaiShunziZu shoupaiShunziZu : shunziList) {
                 if (keziPai.equals(shoupaiShunziZu.getShunzi().getPai1()) || keziPai.equals(shoupaiShunziZu.getShunzi().getPai2()) || keziPai.equals(shoupaiShunziZu.getShunzi().getPai3())) {
                     siheCount++;
                 }
             }
         }
+        for (PengchuPaiZu pengchuPaiZu : player.getPengchupaiZuList()) {
+            for (ShoupaiShunziZu shoupaiShunziZu : shunziList) {
+                if (pengchuPaiZu.getKezi().getPaiType().equals(shoupaiShunziZu.getShunzi().getPai1())
+                        || pengchuPaiZu.getKezi().getPaiType().equals(shoupaiShunziZu.getShunzi().getPai2())
+                        || pengchuPaiZu.getKezi().getPaiType().equals(shoupaiShunziZu.getShunzi().getPai3())) {
+                    siheCount++;
+                }
+            }
+        }
+
         return siheCount;
     }
 
@@ -343,7 +400,44 @@ public class MaanshanMajiangJiesuanCalculator {
         }
     }
 
-    private static int isLiulianCount(List<MajiangPai> playerPaiList) {
+    private static int isLiulianCount(ShoupaiPaiXing shoupaiPaiXing) {
+        int liulianCount = 0;
+        List<int[]> shunziArrList = new ArrayList<>();
+        for (ShoupaiShunziZu shoupaiShunziZu : shoupaiPaiXing.getShunziList()) {
+            Shunzi shunzi = shoupaiShunziZu.getShunzi();
+            int[] arr = new int[4];
+            arr[0] = shunzi.getPai1().ordinal();
+            arr[1] = shunzi.getPai2().ordinal();
+            arr[2] = shunzi.getPai3().ordinal();
+            arr[3] = 0;
+            shunziArrList.add(arr);
+        }
+
+        for (int i = 0; i < shunziArrList.size(); i++) {
+            int[] ints = shunziArrList.get(i);
+            for (int j = i + 1; j < shunziArrList.size(); j++) {
+                int[] ints2 = shunziArrList.get(j);
+                if (ints[0] - 1 == ints2[2] || ints[2] + 1 == ints2[0]) {
+                    if (ints[3] == 0 && ints2[3] == 0) {
+                        ints[3] = -1;
+                        ints2[3] = -1;
+                        liulianCount++;
+                    }
+                }
+            }
+        }
+        return liulianCount;
+    }
+
+    private static int isLiulianCount2(ShoupaiPaiXing shoupaiPaiXing) {
+        List<MajiangPai> playerPaiList = new ArrayList<>();
+        for (ShoupaiShunziZu shoupaiShunziZu : shoupaiPaiXing.getShunziList()) {
+            Shunzi shunzi = shoupaiShunziZu.getShunzi();
+            playerPaiList.add(shunzi.getPai1());
+            playerPaiList.add(shunzi.getPai2());
+            playerPaiList.add(shunzi.getPai3());
+        }
+
         int liulianCount = 0;
         int[] wanArr = new int[9];
         int[] tongArr = new int[9];

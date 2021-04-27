@@ -2,6 +2,8 @@ package com.anbang.qipai.maanshanmajiang.cqrs.c.domain;
 
 import com.anbang.qipai.maanshanmajiang.cqrs.c.domain.listener.MaanshanMajiangPengGangActionStatisticsListener;
 import com.dml.majiang.ju.Ju;
+import com.dml.majiang.pai.MajiangPai;
+import com.dml.majiang.pai.XushupaiCategory;
 import com.dml.majiang.pai.fenzu.GangType;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.pan.frame.PanActionFrame;
@@ -67,7 +69,16 @@ public class MaanshanMajiangGangActionUpdater implements MajiangPlayerGangAction
                             bestHu = null;
                         }
                     }
-                    if (bestHu != null) {
+
+                    XushupaiCategory quemen = player.getQuemen();
+                    boolean hasQuemen = false;
+                    for (MajiangPai majiangPai : player.getFangruShoupaiList()) {
+                        if (quemen.equals(XushupaiCategory.getCategoryforXushupai(majiangPai))) {
+                            hasQuemen = true;
+                        }
+                    }
+
+                    if (bestHu != null && !hasQuemen) {
                         bestHu.setQianggang(true); //抢杠
                         bestHu.setDianpaoPlayerId(player.getId());
                         xiajia.addActionCandidate(new MajiangHuAction(xiajia.getId(), bestHu));

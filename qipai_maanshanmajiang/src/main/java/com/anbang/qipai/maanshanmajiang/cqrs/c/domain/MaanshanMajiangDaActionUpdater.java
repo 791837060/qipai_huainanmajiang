@@ -69,7 +69,16 @@ public class MaanshanMajiangDaActionUpdater implements MajiangPlayerDaActionUpda
                 }
                 //再把这张牌拿出计算器
                 xiajiaPlayer.getShoupaiCalculator().removePai(daAction.getPai());
-                if (bestHu != null) {
+
+                XushupaiCategory quemen = xiajiaPlayer.getQuemen();
+                boolean hasQuemen = false;
+                for (MajiangPai majiangPai : xiajiaPlayer.getFangruShoupaiList()) {
+                    if (quemen.equals(XushupaiCategory.getCategoryforXushupai(majiangPai))) {
+                        hasQuemen = true;
+                    }
+                }
+
+                if (bestHu != null && !hasQuemen) {
                     bestHu.setDianpao(true);
                     bestHu.setDianpaoPlayerId(daPlayer.getId());
                     xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
