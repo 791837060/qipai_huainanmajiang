@@ -256,10 +256,6 @@ public class Automatic extends CmdServiceBase {
                         if (majiangGameDbo2.getState().name().equals("DingqueState")) {
                             automaticDingque(playerId, gameId);
                             logger.info("离线托管定缺," + "Time:" + System.currentTimeMillis() + ",playerId:" + playerId + ",gameId:" + gameId);
-//                            PanActionFrame dingquePanActionFrame = majiangPlayQueryService.findAndFilterCurrentPanValueObjectForPlayer(gameId);
-//                            if (dingquePanActionFrame.getPanAfterAction().getPublicWaitingPlayerId().equals(playerId)) {
-//                                automaticAction(playerId, 1, gameId);
-//                            }
                             return;
                         }
 
@@ -271,7 +267,14 @@ public class Automatic extends CmdServiceBase {
                                     action instanceof MajiangGangAction ||
                                     action instanceof MajiangGuoAction ||
                                     action instanceof MajiangTingAction) {
-                                automaticAction(playerId, 1, gameId);
+                                automaticAction(playerId, 1, gameId);//第一次碰 第二次离线摸牌
+                            }
+                        }
+                        panActionFrame3 = majiangPlayQueryService.findAndFilterCurrentPanValueObjectForPlayer(gameId);
+                        if (panActionFrame3 != null) {
+                            MajiangPlayerAction action = panActionFrame3.getAction();
+                            if (action instanceof MajiangGangAction) {
+                                automaticAction(playerId, 1, gameId);//有可能第一次碰 第二次就是补杠 第三次离线摸牌
                             }
                         }
                         logger.info("【离线托管," + "Time:" + System.currentTimeMillis() + ",playerId:" + playerId + ",gameId:" + gameId + "】");

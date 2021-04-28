@@ -6,6 +6,7 @@ public class HufenVO {
     private boolean hu;             //胡
     private boolean zimoHu;         //自摸胡
 
+    private boolean xiaohu;         //小胡
     private int bazhi;              //八支
     private boolean shuangbazhi;    //双八支
     private boolean fengyise;       //风一色
@@ -31,7 +32,7 @@ public class HufenVO {
     private boolean shilao;         //十老
     private boolean quanlao;        //全老
     private boolean budongshou;     //不动手
-    private boolean shuangpuzi;     //双铺子
+    private int shuangpuzi;         //双铺子
     private boolean wamo;           //挖摸
     private boolean qingshuidana;   //清水大拿
     private boolean hunshuidana;    //浑水大拿
@@ -45,6 +46,7 @@ public class HufenVO {
 
     public HufenVO(MaanshanMajiangHushu playerHufen) {
         hu = playerHufen.isHu();                            //胡
+        xiaohu = playerHufen.isXiaohu();                    //小胡
         zimoHu = playerHufen.isZimoHu();                    //自摸胡
         bazhi = playerHufen.getBazhi();                     //八支
         shuangbazhi = playerHufen.isShuangbazhi();          //双八支
@@ -71,7 +73,7 @@ public class HufenVO {
         shilao = playerHufen.isShilao();                    //十老
         quanlao = playerHufen.isQuanlao();                  //全老
         budongshou = playerHufen.isBudongshou();            //不动手
-        shuangpuzi = playerHufen.isShuangpuzi();            //双铺子
+        shuangpuzi = playerHufen.getShuangpuzi();           //双铺子
         wamo = playerHufen.isWamo();                        //挖摸
         qingshuidana = playerHufen.isQingshuidana();        //清水大拿
         hunshuidana = playerHufen.isHunshuidana();          //浑水大拿
@@ -295,11 +297,11 @@ public class HufenVO {
         this.budongshou = budongshou;
     }
 
-    public boolean isShuangpuzi() {
+    public int getShuangpuzi() {
         return shuangpuzi;
     }
 
-    public void setShuangpuzi(boolean shuangpuzi) {
+    public void setShuangpuzi(int shuangpuzi) {
         this.shuangpuzi = shuangpuzi;
     }
 
@@ -341,5 +343,13 @@ public class HufenVO {
 
     public void setTiwaixunhuan(double tiwaixunhuan) {
         this.tiwaixunhuan = tiwaixunhuan;
+    }
+
+    public boolean isXiaohu() {
+        return xiaohu;
+    }
+
+    public void setXiaohu(boolean xiaohu) {
+        this.xiaohu = xiaohu;
     }
 }

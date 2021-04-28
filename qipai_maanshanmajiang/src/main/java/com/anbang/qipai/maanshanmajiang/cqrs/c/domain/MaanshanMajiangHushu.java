@@ -6,6 +6,7 @@ public class MaanshanMajiangHushu {
     private boolean hu;             //胡
     private boolean zimoHu;         //自摸胡
 
+    private boolean xiaohu;         //小胡
     private int bazhi;              //八支
     private boolean shuangbazhi;    //双八支
     private boolean fengyise;       //风一色
@@ -31,7 +32,7 @@ public class MaanshanMajiangHushu {
     private boolean shilao;         //十老
     private boolean quanlao;        //全老
     private boolean budongshou;     //不动手
-    private boolean shuangpuzi;     //双铺子
+    private int shuangpuzi;         //双铺子
     private boolean wamo;           //挖摸
     private boolean qingshuidana;   //清水大拿
     private boolean hunshuidana;    //浑水大拿
@@ -42,9 +43,13 @@ public class MaanshanMajiangHushu {
     public boolean calculate(Pan currentPan, boolean shidianqihu) {
         if (shuangbazhi) {
             value += 10;
+            bazhi = 0;
         } else {
             if (bazhi >= 5) {
                 value += bazhi;
+            } else {
+                value += 4;
+                xiaohu = true;
             }
         }
         if (fengyise) {
@@ -118,14 +123,10 @@ public class MaanshanMajiangHushu {
             value += wutong;
         }
 
-        if (shuangpuzi) {
-            value += 5;
+        if (shuangpuzi > 0) {
+            shuangpuzi = shuangpuzi * 5;
+            value += shuangpuzi;
         }
-
-        value += (minggang * 2);
-        value += (angang * 2);
-        value += sanzhangzaishou;
-        value += sanzhangpengchu;
 
         if (kuyazhi) {
             value += 10;
@@ -146,13 +147,18 @@ public class MaanshanMajiangHushu {
             value += 1;
         }
 
-        if (shidianqihu && value < 10) {
-            return false;//10点起胡
-        }
+        value += (minggang * 2);
+        value += (angang * 2);
+        value += sanzhangzaishou;
+        value += sanzhangpengchu;
 
         if (zimoHu) {
             value *= 2;
             calculaTiwaixunhuan(10);
+        }
+
+        if (shidianqihu && value < 10) {
+            return false;//10点起胡
         }
 
         if (value >= 50 && currentPan.getMajiangPlayerIdMajiangPlayerMap().size() > 2) {
@@ -165,7 +171,6 @@ public class MaanshanMajiangHushu {
             }
         }
 
-
         return true;
     }
 
@@ -173,7 +178,6 @@ public class MaanshanMajiangHushu {
         if (tiwaixunhuanScore > tiwaixunhuan) {
             tiwaixunhuan = tiwaixunhuanScore;
         }
-
     }
 
     public boolean isHu() {
@@ -392,14 +396,6 @@ public class MaanshanMajiangHushu {
         this.budongshou = budongshou;
     }
 
-    public boolean isShuangpuzi() {
-        return shuangpuzi;
-    }
-
-    public void setShuangpuzi(boolean shuangpuzi) {
-        this.shuangpuzi = shuangpuzi;
-    }
-
     public boolean isWamo() {
         return wamo;
     }
@@ -438,5 +434,21 @@ public class MaanshanMajiangHushu {
 
     public void setTiwaixunhuan(double tiwaixunhuan) {
         this.tiwaixunhuan = tiwaixunhuan;
+    }
+
+    public boolean isXiaohu() {
+        return xiaohu;
+    }
+
+    public void setXiaohu(boolean xiaohu) {
+        this.xiaohu = xiaohu;
+    }
+
+    public int getShuangpuzi() {
+        return shuangpuzi;
+    }
+
+    public void setShuangpuzi(int shuangpuzi) {
+        this.shuangpuzi = shuangpuzi;
     }
 }

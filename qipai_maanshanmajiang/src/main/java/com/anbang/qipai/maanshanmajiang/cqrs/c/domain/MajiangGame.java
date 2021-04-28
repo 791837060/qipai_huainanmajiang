@@ -5,6 +5,7 @@ import java.util.*;
 import com.anbang.qipai.maanshanmajiang.cqrs.c.domain.dingque.*;
 import com.anbang.qipai.maanshanmajiang.cqrs.c.domain.listener.MaanshanMajiangPengGangActionStatisticsListener;
 import com.anbang.qipai.maanshanmajiang.cqrs.c.domain.test.MaanshanMajiangFaPaiStrategyTest;
+import com.anbang.qipai.maanshanmajiang.utils.BigDecimalUtil;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.ju.result.JuResultBuilder;
 import com.dml.majiang.pai.XushupaiCategory;
@@ -204,7 +205,8 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 
             for (MaanshanMajiangPanPlayerResult maanshanMajiangPanPlayerResult : panResult.getPanPlayerResultList()) {
                 Double tiwaixunhuanScore = playerTiwaixunhuanScoreMap.get(maanshanMajiangPanPlayerResult.getPlayerId());
-                tiwaixunhuanScore += maanshanMajiangPanPlayerResult.getTiwaixunhuanScore();
+//                tiwaixunhuanScore += maanshanMajiangPanPlayerResult.getTiwaixunhuanScore();
+                tiwaixunhuanScore = BigDecimalUtil.add(tiwaixunhuanScore, maanshanMajiangPanPlayerResult.getTiwaixunhuanScore());
                 playerTiwaixunhuanScoreMap.put(maanshanMajiangPanPlayerResult.getPlayerId(), tiwaixunhuanScore);
             }
 
@@ -261,6 +263,13 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
                     doubles.set(currentDao - 1, maanshanMajiangPanPlayerResult.getTotalScore());
                     playerTotalDaoScoreMap.put(maanshanMajiangPanPlayerResult.getPlayerId(), doubles);
                 }
+            }
+
+            for (MaanshanMajiangPanPlayerResult maanshanMajiangPanPlayerResult : panResult.getPanPlayerResultList()) {
+                Double tiwaixunhuanScore = playerTiwaixunhuanScoreMap.get(maanshanMajiangPanPlayerResult.getPlayerId());
+//                tiwaixunhuanScore += maanshanMajiangPanPlayerResult.getTiwaixunhuanScore();
+                tiwaixunhuanScore = BigDecimalUtil.add(tiwaixunhuanScore, maanshanMajiangPanPlayerResult.getTiwaixunhuanScore());
+                playerTiwaixunhuanScoreMap.put(maanshanMajiangPanPlayerResult.getPlayerId(), tiwaixunhuanScore);
             }
 
             //试探一局是否结束

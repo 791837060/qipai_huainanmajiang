@@ -212,7 +212,7 @@ public class MaanshanMajiangJiesuanCalculator {
         int sanzhangzaishou = shoupaiPaiXing.getKeziList().size() * 2;//三张在手
         MajiangPai hupai = shoupaixingWuguanJiesuancanshu.getHupai();
         for (ShoupaiKeziZu shoupaiKeziZu : shoupaiPaiXing.getKeziList()) {
-            if (shoupaiKeziZu.getKezi().getPaiType().equals(hupai)) {
+            if (shoupaiKeziZu.getKezi().getPaiType().equals(hupai) && !zimoHu) {
                 sanzhangzaishou--;//点的那张三张在手只算1分
             }
         }
@@ -237,8 +237,8 @@ public class MaanshanMajiangJiesuanCalculator {
         if (laoCount >= 10) {
             shilao = true;
         }
-        if (allCount != 0) {
-            if (allCount == xiaoCount && !shoupaixingWuguanJiesuancanshu.isHasZipai()) {
+        if (allCount != 0 && !shoupaixingWuguanJiesuancanshu.isHasZipai()) {
+            if (allCount == xiaoCount) {
                 quanxiao = true;
             } else if (allCount == laoCount) {
                 quanlao = true;
@@ -246,7 +246,7 @@ public class MaanshanMajiangJiesuanCalculator {
         }
         boolean menqing = shoupaixingWuguanJiesuancanshu.getPengchuPaizuCount() == 0 && shoupaixingWuguanJiesuancanshu.getChichupaiZuCount() == 0 && !shoupaixingWuguanJiesuancanshu.isHasMinggang();
 
-        boolean shuangpuzi = isShuangpuzi(shoupaiPaiXing);
+        int shuangpuzi = isShuangpuzi(shoupaiPaiXing);
 
         hufen.setHu(true);                          //胡
         hufen.setZimoHu(zimoHu);                    //自摸
@@ -285,8 +285,9 @@ public class MaanshanMajiangJiesuanCalculator {
         return hufen;
     }
 
-    private static boolean isShuangpuzi(ShoupaiPaiXing shoupaiPaiXing) {
+    private static int isShuangpuzi(ShoupaiPaiXing shoupaiPaiXing) {
         List<ShoupaiShunziZu> shunziList = shoupaiPaiXing.getShunziList();
+        Set<MajiangPai> majiangPais = new HashSet<>();
         int sameShunzi = 0;
         for (int i = 0; i < shunziList.size(); i++) {
             for (int j = i + 1; j < shunziList.size(); j++) {
@@ -294,12 +295,14 @@ public class MaanshanMajiangJiesuanCalculator {
                 ShoupaiShunziZu shoupaiShunziZu1 = shunziList.get(j);
                 if (shoupaiShunziZu.getShunzi().getPai1().equals(shoupaiShunziZu1.getShunzi().getPai1()) &&
                         shoupaiShunziZu.getShunzi().getPai2().equals(shoupaiShunziZu1.getShunzi().getPai2()) &&
-                        shoupaiShunziZu.getShunzi().getPai3().equals(shoupaiShunziZu1.getShunzi().getPai3())) {
+                        shoupaiShunziZu.getShunzi().getPai3().equals(shoupaiShunziZu1.getShunzi().getPai3()) &&
+                        !majiangPais.contains(shoupaiShunziZu1.getShunzi().getPai1())) {
                     sameShunzi++;
+                    majiangPais.add(shoupaiShunziZu1.getShunzi().getPai1());
                 }
             }
         }
-        return sameShunzi == 1;
+        return sameShunzi;
     }
 
     private static boolean isYadang(ShoupaixingWuguanJiesuancanshu shoupaixingWuguanJiesuancanshu, ShoupaiPaiXing shoupaiPaiXing, MajiangPlayer player) {
@@ -417,11 +420,13 @@ public class MaanshanMajiangJiesuanCalculator {
             int[] ints = shunziArrList.get(i);
             for (int j = i + 1; j < shunziArrList.size(); j++) {
                 int[] ints2 = shunziArrList.get(j);
-                if (ints[0] - 1 == ints2[2] || ints[2] + 1 == ints2[0]) {
-                    if (ints[3] == 0 && ints2[3] == 0) {
-                        ints[3] = -1;
-                        ints2[3] = -1;
-                        liulianCount++;
+                if ((ints[0] - 1 != 8 && ints[0] - 1 != 17 && ints[0] - 1 != 23) || (ints[2] + 1 != 9 && ints[2] + 1 != 18)) {
+                    if (ints[0] - 1 == ints2[2] || ints[2] + 1 == ints2[0]) {
+                        if (ints[3] == 0 && ints2[3] == 0) {
+                            ints[3] = -1;
+                            ints2[3] = -1;
+                            liulianCount++;
+                        }
                     }
                 }
             }

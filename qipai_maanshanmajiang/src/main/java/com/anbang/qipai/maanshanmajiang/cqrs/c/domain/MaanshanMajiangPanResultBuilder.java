@@ -1,5 +1,6 @@
 package com.anbang.qipai.maanshanmajiang.cqrs.c.domain;
 
+import com.anbang.qipai.maanshanmajiang.utils.BigDecimalUtil;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.pan.Pan;
 import com.dml.majiang.pan.frame.PanValueObject;
@@ -106,11 +107,13 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                     if (buHuplayerTotalScore >= delta) {
                         hufen.setValue(-delta);
                         buHuPlayerResult.setTiwaixunhuanScore(-tiwaixunhuan);
-                        winScore += delta;
+//                        winScore += delta;
+                        winScore = BigDecimalUtil.add(winScore, delta);
                     } else {
                         hufen.setValue(-buHuplayerTotalScore);
                         buHuPlayerResult.setTiwaixunhuanScore(-tiwaixunhuan);
-                        winScore += buHuplayerTotalScore;
+//                        winScore += buHuplayerTotalScore;
+                        winScore = BigDecimalUtil.add(winScore, buHuplayerTotalScore);
                     }
                     playerResultList.add(buHuPlayerResult);
                 }
@@ -121,7 +124,8 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 double score = playerResult.getHufen().getValue();
                 playerResult.setScore(new BigDecimal(Double.toString(difen)).multiply(new BigDecimal(Double.toString(score))).doubleValue());
                 // 计算累计总分
-                Double totalScore = playerTotalScoreMap.get(playerResult.getPlayerId()) + playerResult.getScore();
+//                Double totalScore = playerTotalScoreMap.get(playerResult.getPlayerId()) + playerResult.getScore();
+                Double totalScore = BigDecimalUtil.add(playerTotalScoreMap.get(playerResult.getPlayerId()), playerResult.getScore());
                 playerResult.setTotalScore(totalScore);
             });
 
@@ -158,12 +162,14 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                             hufen.setValue(-delta);
                             hufen.setTiwaixunhuan(-tiwaixunhuan);
                             buHuPlayerResult.setTiwaixunhuanScore(-tiwaixunhuan);
-                            winScore += delta;
+//                            winScore += delta;
+                            winScore = BigDecimalUtil.add(winScore, delta);
                         } else {
                             hufen.setValue(-buHuplayerTotalScore);
                             hufen.setTiwaixunhuan(-tiwaixunhuan);
                             buHuPlayerResult.setTiwaixunhuanScore(-tiwaixunhuan);
-                            winScore += buHuplayerTotalScore;
+//                            winScore += buHuplayerTotalScore;
+                            winScore = BigDecimalUtil.add(winScore, buHuplayerTotalScore);
                         }
                         playerResultList.add(buHuPlayerResult);
                     }
@@ -191,12 +197,14 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                             hufen.setValue(-delta);
                             hufen.setTiwaixunhuan(-tiwaixunhuan);
                             buHuPlayerResult.setTiwaixunhuanScore(-tiwaixunhuan);
-                            winScore += delta;
+//                            winScore += delta;
+                            winScore = BigDecimalUtil.add(winScore, delta);
                         } else {
                             hufen.setValue(-buHuplayerTotalScore);
                             hufen.setTiwaixunhuan(-tiwaixunhuan);
                             buHuPlayerResult.setTiwaixunhuanScore(-tiwaixunhuan);
-                            winScore += buHuplayerTotalScore;
+//                            winScore += buHuplayerTotalScore;
+                            winScore = BigDecimalUtil.add(winScore, buHuplayerTotalScore);
                         }
                         playerResultList.add(buHuPlayerResult);
                     }
@@ -224,12 +232,14 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                             hufen.setValue(-delta);
                             hufen.setTiwaixunhuan(-tiwaixunhuan);
                             buHuPlayerResult.setTiwaixunhuanScore(-tiwaixunhuan);
-                            winScore += delta;
+//                            winScore += delta;
+                            winScore = BigDecimalUtil.add(winScore, delta);
                         } else {
                             hufen.setValue(-buHuplayerTotalScore);
                             hufen.setTiwaixunhuan(-tiwaixunhuan);
                             buHuPlayerResult.setTiwaixunhuanScore(-tiwaixunhuan);
-                            winScore += buHuplayerTotalScore;
+//                            winScore += buHuplayerTotalScore;
+                            winScore = BigDecimalUtil.add(winScore, buHuplayerTotalScore);
                         }
                         playerResultList.add(buHuPlayerResult);
                     }
@@ -241,7 +251,8 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 double score = playerResult.getHufen().getValue();
                 playerResult.setScore(new BigDecimal(Double.toString(difen)).multiply(new BigDecimal(Double.toString(score))).doubleValue());
                 // 计算累计总分
-                Double totalScore = playerTotalScoreMap.get(playerResult.getPlayerId()) + playerResult.getScore();
+//                Double totalScore = playerTotalScoreMap.get(playerResult.getPlayerId()) + playerResult.getScore();
+                Double totalScore = BigDecimalUtil.add(playerTotalScoreMap.get(playerResult.getPlayerId()), playerResult.getScore());
                 playerResult.setTotalScore(totalScore);
             });
 
@@ -265,7 +276,8 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 double score = playerResult.getHufen().getValue();
                 playerResult.setScore(new BigDecimal(Double.toString(difen)).multiply(new BigDecimal(Double.toString(score))).doubleValue());
                 //计算累计总分
-                Double totalScore = playerTotalScoreMap.get(playerResult.getPlayerId()) + playerResult.getScore();
+//                Double totalScore = playerTotalScoreMap.get(playerResult.getPlayerId()) + playerResult.getScore();
+                Double totalScore = BigDecimalUtil.add(playerTotalScoreMap.get(playerResult.getPlayerId()), playerResult.getScore());
                 playerResult.setTotalScore(totalScore);
                 playerResult.setTiwaixunhuanScore(0d);
             });

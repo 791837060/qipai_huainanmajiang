@@ -1,6 +1,7 @@
 package com.anbang.qipai.maanshanmajiang.cqrs.c.domain.test;
 
 import com.anbang.qipai.maanshanmajiang.cqrs.c.domain.*;
+import com.anbang.qipai.maanshanmajiang.utils.BigDecimalUtil;
 import com.dml.majiang.pai.MajiangPai;
 import com.dml.majiang.pai.fenzu.GangType;
 import com.dml.majiang.pai.fenzu.Gangzi;
@@ -17,16 +18,17 @@ import com.dml.majiang.player.shoupai.gouxing.GouXingCalculator;
 import com.dml.majiang.player.shoupai.gouxing.GouXingCalculatorHelper;
 import com.dml.majiang.player.shoupaisort.MajiangPaiOrderShoupaiSortComparator;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 
 public class MyTest {
 
     public static void main(String[] args) {
-        test7();
+        test1();
     }
 
-    public static void test7() {
+    public static void test1() {
 
         MajiangPai[] allMajiangPaiArray = MajiangPai.values();
         List<MajiangPai> playPaiTypeList = new ArrayList<>(Arrays.asList(allMajiangPaiArray));
@@ -48,26 +50,27 @@ public class MyTest {
         MajiangPlayer majiangPlayer = new MajiangPlayer();
 
         majiangPlayer.addShoupai(MajiangPai.yitong);
+        majiangPlayer.addShoupai(MajiangPai.yitong);
+        majiangPlayer.addShoupai(MajiangPai.yitong);
+        majiangPlayer.addShoupai(MajiangPai.yitong);
         majiangPlayer.addShoupai(MajiangPai.ertong);
-        majiangPlayer.addShoupai(MajiangPai.wutong);
-        majiangPlayer.addShoupai(MajiangPai.liutong);
-        majiangPlayer.addShoupai(MajiangPai.qitong);
-        majiangPlayer.addShoupai(MajiangPai.santiao);
-        majiangPlayer.addShoupai(MajiangPai.santiao);
-        majiangPlayer.addShoupai(MajiangPai.santiao);
-        majiangPlayer.addShoupai(MajiangPai.sitiao);
-        majiangPlayer.addShoupai(MajiangPai.wutiao);
-//        majiangPlayer.addShoupai(MajiangPai.jiuwan);
-//        majiangPlayer.addShoupai(MajiangPai.jiuwan);
+        majiangPlayer.addShoupai(MajiangPai.ertong);
+        majiangPlayer.addShoupai(MajiangPai.ertong);
+        majiangPlayer.addShoupai(MajiangPai.ertong);
+        majiangPlayer.addShoupai(MajiangPai.santong);
+        majiangPlayer.addShoupai(MajiangPai.santong);
+        majiangPlayer.addShoupai(MajiangPai.santong);
+        majiangPlayer.addShoupai(MajiangPai.santong);
+        majiangPlayer.addShoupai(MajiangPai.dongfeng);
 
-//        majiangPlayer.setGangmoShoupai(MajiangPai.yitong);
+        majiangPlayer.setGangmoShoupai(MajiangPai.dongfeng);
 
 
-        PengchuPaiZu pengchuPaiZu = new PengchuPaiZu();
-        Kezi kezi = new Kezi();
-        kezi.setPaiType(MajiangPai.sitong);
-        pengchuPaiZu.setKezi(kezi);
-        majiangPlayer.getPengchupaiZuList().add(pengchuPaiZu);
+//        PengchuPaiZu pengchuPaiZu = new PengchuPaiZu();
+//        Kezi kezi = new Kezi();
+//        kezi.setPaiType(MajiangPai.sitong);
+//        pengchuPaiZu.setKezi(kezi);
+//        majiangPlayer.getPengchupaiZuList().add(pengchuPaiZu);
 
 //        PengchuPaiZu pengchuPaiZu2 = new PengchuPaiZu();
 //        Kezi kezi2 = new Kezi();
@@ -163,59 +166,40 @@ public class MyTest {
 
 //        majiangPlayer.setHupaiCandidates(majiangPaiListMap);
 
-//        MaanshanMajiangHu hu = MaanshanMajiangJiesuanCalculator.calculateBestZimoHu(false, gouXingPanHu, majiangPlayer, majiangMoAction, optionalPlay, pan);
+        MaanshanMajiangHu hu = MaanshanMajiangJiesuanCalculator.calculateBestZimoHu(false, gouXingPanHu, majiangPlayer, majiangMoAction, optionalPlay, pan);
 
-        majiangPlayer.getShoupaiCalculator().addPai(MajiangPai.santong);
-        MaanshanMajiangHu hu = MaanshanMajiangJiesuanCalculator.calculateBestDianpaoHu(false, gouXingPanHu, majiangPlayer, MajiangPai.santong, optionalPlay, pan);
-        majiangPlayer.getShoupaiCalculator().removePai(MajiangPai.santong);
+//        majiangPlayer.getShoupaiCalculator().addPai(MajiangPai.nanfeng);
+//        MaanshanMajiangHu hu = MaanshanMajiangJiesuanCalculator.calculateBestDianpaoHu(false, gouXingPanHu, majiangPlayer, MajiangPai.nanfeng, optionalPlay, pan);
+//        majiangPlayer.getShoupaiCalculator().removePai(MajiangPai.nanfeng);
 
+        assert hu != null;
         System.out.println("结束！" + "|" + hu.getHufen().getValue());
     }
 
-    public static void test1() {
-        List<int[]> shunziArrList = new ArrayList<>();
-        int[] arr = new int[4];
-        arr[0] = 3;
-        arr[1] = 4;
-        arr[2] = 5;
-        arr[3] = 0;
-        shunziArrList.add(arr);
+    public static void test2() {
+        Double d1 = 0.1;
+        Double d2 = 0.2;
+        Double d3 = d1 + d2;
+        System.out.println(d1 + d2);
+        System.out.println(d3);
 
-        arr = new int[4];
-        arr[0] = 4;
-        arr[1] = 5;
-        arr[2] = 6;
-        arr[3] = 0;
-        shunziArrList.add(arr);
+        double add = BigDecimalUtil.add(d1, d2);
+        System.out.println(add);
 
-        arr = new int[4];
-        arr[0] = 5;
-        arr[1] = 6;
-        arr[2] = 7;
-        arr[3] = 0;
-        shunziArrList.add(arr);
+        double d4 = 0.01;
+        double d5 = 0.02;
+        BigDecimal bigDecimal1 = new BigDecimal(String.valueOf(d4));
+        BigDecimal bigDecimal2 = new BigDecimal(String.valueOf(d5));
+        double v = bigDecimal1.add(bigDecimal2).doubleValue();
+        System.out.println(v);
 
-        arr = new int[4];
-        arr[0] = 6;
-        arr[1] = 7;
-        arr[2] = 8;
-        arr[3] = 0;
-        shunziArrList.add(arr);
+    }
 
-        for (int i = 0; i < shunziArrList.size(); i++) {
-            int[] ints = shunziArrList.get(i);
-            for (int j = i + 1; j < shunziArrList.size(); j++) {
-                int[] ints2 = shunziArrList.get(j);
-                if (ints[0] - 1 == ints2[2] || ints[2] + 1 == ints2[0]) {
-                    if (ints[3] == 0 && ints2[3] == 0) {
-                        System.out.println(Arrays.toString(ints) + "|" + Arrays.toString(ints2));
-                        ints[3] = -1;
-                        ints2[3] = -1;
-                    }
-                }
-            }
+    public static void test3() {
+        MajiangPai[] values = MajiangPai.values();
+        for (MajiangPai value : values) {
+            System.out.println(value.name() + "|" + value.ordinal());
         }
-        System.out.println(1);
     }
 
 }
