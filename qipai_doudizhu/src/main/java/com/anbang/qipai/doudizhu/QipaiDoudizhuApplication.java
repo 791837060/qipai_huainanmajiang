@@ -17,6 +17,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableFeignClients
+@EnableEurekaClient
 public class QipaiDoudizhuApplication {
 
     @Autowired

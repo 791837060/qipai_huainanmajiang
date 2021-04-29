@@ -20,6 +20,7 @@ public class PukeGameDbo {
     private int panNo;
     private List<PukeGamePlayerDbo> players;
     private long createTime;
+    private int powerLimit;
 
     public PukeGameDbo() {
     }
@@ -31,6 +32,7 @@ public class PukeGameDbo {
         state = pukeGame.getState();
         panNo = pukeGame.getPanNo();
         optionalPlay = pukeGame.getOptionalPlay();
+        powerLimit = pukeGame.getPowerLimit();
         difen = pukeGame.getDifen();
         players = new ArrayList<>();
         Map<String, Double> playeTotalScoreMap = pukeGame.getPlayeTotalScoreMap();
@@ -137,5 +139,13 @@ public class PukeGameDbo {
 
     public void setCreateTime(long createTime) {
         this.createTime = createTime;
+    }
+
+    public int getPowerLimit() {
+        return powerLimit;
+    }
+
+    public void setPowerLimit(int powerLimit) {
+        this.powerLimit = powerLimit;
     }
 }

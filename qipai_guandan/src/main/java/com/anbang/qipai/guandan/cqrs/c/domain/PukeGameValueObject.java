@@ -14,6 +14,7 @@ public class PukeGameValueObject extends FixedPlayersMultipanAndVotetofinishGame
 	private int panshu;
 	private int renshu;
 	private OptionalPlay optionalPlay;
+	private int powerLimit;
 	private double difen;
 	private Map<String, Double> playeTotalScoreMap = new HashMap<>();
 	private Map<String, Integer> playeGongxianfenMap = new HashMap<>();
@@ -44,6 +45,7 @@ public class PukeGameValueObject extends FixedPlayersMultipanAndVotetofinishGame
 		if (pukeGame.getJu() != null) {
 			juResult = pukeGame.getJu().getJuResult();
 		}
+		powerLimit = pukeGame.getPowerLimit();
 	}
 
 	public int getPanshu() {
@@ -156,5 +158,13 @@ public class PukeGameValueObject extends FixedPlayersMultipanAndVotetofinishGame
 
 	public void setJuResult(JuResult juResult) {
 		this.juResult = juResult;
+	}
+
+	public int getPowerLimit() {
+		return powerLimit;
+	}
+
+	public void setPowerLimit(int powerLimit) {
+		this.powerLimit = powerLimit;
 	}
 }

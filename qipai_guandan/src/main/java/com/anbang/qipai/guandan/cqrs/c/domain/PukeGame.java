@@ -1,9 +1,7 @@
 package com.anbang.qipai.guandan.cqrs.c.domain;
 
-import com.anbang.qipai.guandan.cqrs.c.domain.listener.XianshuCountDaActionStatisticsListener;
 import com.anbang.qipai.guandan.cqrs.c.domain.result.*;
 import com.anbang.qipai.guandan.cqrs.c.domain.state.*;
-import com.anbang.qipai.guandan.cqrs.c.domain.test.FapaiStrategyTest;
 import com.anbang.qipai.guandan.utils.SpringUtil;
 import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.Playing;
@@ -44,6 +42,7 @@ public class PukeGame extends FixedPlayersMultipanAndVotetofinishGame {
     private int panshu;
     private int renshu;
     private OptionalPlay optionalPlay;
+    private int powerLimit;
     private Ju ju;
     private final Map<String, Double> playerTotalScoreMap = new HashMap<>();
 
@@ -774,5 +773,13 @@ public class PukeGame extends FixedPlayersMultipanAndVotetofinishGame {
 
     public Map<String, PukeGamePlayerChaodiState> getPlayerChaodiStateMap() {
         return playerChaodiStateMap;
+    }
+
+    public int getPowerLimit() {
+        return powerLimit;
+    }
+
+    public void setPowerLimit(int powerLimit) {
+        this.powerLimit = powerLimit;
     }
 }

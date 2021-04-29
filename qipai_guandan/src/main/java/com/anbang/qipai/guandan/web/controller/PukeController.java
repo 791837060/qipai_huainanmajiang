@@ -9,16 +9,15 @@ import com.anbang.qipai.guandan.cqrs.c.domain.state.StartChaodi;
 import com.anbang.qipai.guandan.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.guandan.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.guandan.cqrs.c.service.PukePlayCmdService;
-import com.anbang.qipai.guandan.cqrs.q.dbo.JuResultDbo;
-import com.anbang.qipai.guandan.cqrs.q.dbo.PanResultDbo;
-import com.anbang.qipai.guandan.cqrs.q.dbo.PukeGameDbo;
-import com.anbang.qipai.guandan.cqrs.q.dbo.PukeGameInfoDbo;
+import com.anbang.qipai.guandan.cqrs.q.dbo.*;
 import com.anbang.qipai.guandan.cqrs.q.service.PukeGameQueryService;
 import com.anbang.qipai.guandan.cqrs.q.service.PukePlayQueryService;
 import com.anbang.qipai.guandan.msg.msjobj.PukeHistoricalJuResult;
 import com.anbang.qipai.guandan.msg.msjobj.PukeHistoricalPanResult;
 import com.anbang.qipai.guandan.msg.service.GuandanGameMsgService;
 import com.anbang.qipai.guandan.msg.service.GuandanResultMsgService;
+import com.anbang.qipai.guandan.remote.service.QipaiDalianmengRemoteService;
+import com.anbang.qipai.guandan.remote.vo.CommonRemoteVO;
 import com.anbang.qipai.guandan.utils.SpringUtil;
 import com.anbang.qipai.guandan.web.vo.*;
 import com.anbang.qipai.guandan.websocket.GamePlayWsNotifier;
@@ -27,14 +26,13 @@ import com.anbang.qipai.guandan.websocket.WatchQueryScope;
 import com.dml.mpgame.game.Playing;
 import com.dml.mpgame.game.player.GamePlayerOnlineState;
 import com.dml.shuangkou.pan.PanActionFrame;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.api.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -67,10 +65,12 @@ public class PukeController {
     @Autowired
     private GameCmdService gameCmdService;
 
+    @Autowired
+    private QipaiDalianmengRemoteService qipaiDalianmengRemoteService;
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Automatic automatic = SpringUtil.getBean(Automatic.class);
-
 
     /**
      * 当前盘我应该看到的所有信息
@@ -406,7 +406,7 @@ public class PukeController {
 
     @RequestMapping(value = "/ready_to_next_pan")
     @ResponseBody
-    public CommonVO readytonextpan(String token) {
+    public CommonVO readytonextpan(String token, @RequestParam(required = false) String lianmengId, @RequestParam(required = false) String gameId) {
         CommonVO vo = new CommonVO();
         Map data = new HashMap();
         vo.setData(data);
@@ -423,39 +423,113 @@ public class PukeController {
             playerIds = playerIdGameIdMap.keySet();//托管玩家集合
         }
 
-        ReadyToNextPanResult readyToNextPanResult;
-        try {
-            readyToNextPanResult = pukePlayCmdService.readyToNextPan(playerId, playerIds);
-        } catch (Exception e) {
-            vo.setSuccess(false);
-            vo.setMsg(e.getClass().getName());
-            return vo;
-        }
-
-        pukePlayQueryService.readyToNextPan(readyToNextPanResult);
-
-        // 通知其他人
-        for (String otherPlayerId : readyToNextPanResult.getPukeGame().allPlayerIds()) {
-            if (!otherPlayerId.equals(playerId)) {
-                GamePlayerOnlineState onlineState = readyToNextPanResult.getPukeGame().findPlayerOnlineState(otherPlayerId);
-                if (onlineState.equals(GamePlayerOnlineState.online)) {
-                    List<QueryScope> scopes = QueryScope.scopesForState(readyToNextPanResult.getPukeGame().getState(), readyToNextPanResult.getPukeGame().findPlayerState(otherPlayerId));
-                    scopes.remove(QueryScope.panResult);
-                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
+        if (lianmengId != null) {
+            PukeGameDbo pukeGameDbo = pukeGameQueryService.findPukeGameDboById(gameId);
+            PanResultDbo panResultDbo = pukePlayQueryService.findPanResultDbo(gameId, pukeGameDbo.getPanNo());
+            CommonRemoteVO resVo = qipaiDalianmengRemoteService.nowPowerForRemote(playerId, lianmengId);
+            if (resVo.isSuccess()) {
+                Map powerdata = (Map) resVo.getData();
+                double powerbalance = (Double) powerdata.get("powerbalance");
+                for (GuandanPanPlayerResultDbo ruianMajiangPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
+                    if (ruianMajiangPanPlayerResultDbo.getPlayerId().equals(playerId)) {
+                        if (ruianMajiangPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= pukeGameDbo.getPowerLimit()) {
+                            try {
+                                PukeGameValueObject gameValueObject = gameCmdService.finishGameImmediately(gameId);
+                                pukeGameQueryService.finishGameImmediately(gameValueObject);
+                                gameMsgService.gameFinished(gameId);
+                                JuResultDbo juResultDbo = pukePlayQueryService.findJuResultDbo(gameId);
+                                PukeHistoricalJuResult juResult = new PukeHistoricalJuResult(juResultDbo, pukeGameDbo);
+                                guandanResultMsgService.recordJuResult(juResult);
+                                List<String> queryScopes = new ArrayList<>();
+                                String endFlag = "query";
+                                gameMsgService.gameFinished(gameId);
+                                queryScopes.add(QueryScope.juResult.name());
+                                endFlag = WatchQueryScope.watchEnd.name();
+                                for (String otherPlayerId : gameValueObject.allPlayerIds()) {
+                                    if (!otherPlayerId.equals(playerId)) {
+                                        wsNotifier.notifyToQuery(otherPlayerId, QueryScope.scopesForState(gameValueObject.getState(), gameValueObject.findPlayerState(otherPlayerId)));
+                                    }
+                                }
+                                data.put("queryScopes", queryScopes);
+                                vo.setData(data);
+                                return vo;
+                            } catch (Throwable throwable) {
+                                throwable.printStackTrace();
+                                vo.setSuccess(false);
+                                vo.setMsg(throwable.getClass().getName());
+                                return vo;
+                            }
+                        }
+                    }
                 }
             }
-        }
+            ReadyToNextPanResult readyToNextPanResult;
+            try {
+                readyToNextPanResult = pukePlayCmdService.readyToNextPan(playerId, playerIds);
+            } catch (Exception e) {
+                vo.setSuccess(false);
+                vo.setMsg(e.getClass().getName());
+                return vo;
+            }
+            pukePlayQueryService.readyToNextPan(readyToNextPanResult);
 
-        List<QueryScope> queryScopes = new ArrayList<>();
-        queryScopes.add(QueryScope.gameInfo);
-        if (readyToNextPanResult.getPukeGame().getState().name().equals(Playing.name)) {
-            queryScopes.add(QueryScope.panForMe);
+            // 通知其他人
+            for (String otherPlayerId : readyToNextPanResult.getPukeGame().allPlayerIds()) {
+                if (!otherPlayerId.equals(playerId)) {
+                    GamePlayerOnlineState onlineState = readyToNextPanResult.getPukeGame().findPlayerOnlineState(otherPlayerId);
+                    if (onlineState.equals(GamePlayerOnlineState.online)) {
+                        List<QueryScope> scopes = QueryScope.scopesForState(readyToNextPanResult.getPukeGame().getState(), readyToNextPanResult.getPukeGame().findPlayerState(otherPlayerId));
+                        scopes.remove(QueryScope.panResult);
+                        wsNotifier.notifyToQuery(otherPlayerId, scopes);
+                    }
+                }
+            }
+
+            List<QueryScope> queryScopes = new ArrayList<>();
+            queryScopes.add(QueryScope.gameInfo);
+            if (readyToNextPanResult.getPukeGame().getState().name().equals(Playing.name)) {
+                queryScopes.add(QueryScope.panForMe);
+            }
+            if (readyToNextPanResult.getPukeGame().getState().name().equals(StartChaodi.name)) {
+                queryScopes.add(QueryScope.chaodiInfo);
+                queryScopes.add(QueryScope.panForMe);
+            }
+            data.put("queryScopes", queryScopes);
+        } else {
+            ReadyToNextPanResult readyToNextPanResult;
+            try {
+                readyToNextPanResult = pukePlayCmdService.readyToNextPan(playerId, playerIds);
+            } catch (Exception e) {
+                vo.setSuccess(false);
+                vo.setMsg(e.getClass().getName());
+                return vo;
+            }
+
+            pukePlayQueryService.readyToNextPan(readyToNextPanResult);
+
+            // 通知其他人
+            for (String otherPlayerId : readyToNextPanResult.getPukeGame().allPlayerIds()) {
+                if (!otherPlayerId.equals(playerId)) {
+                    GamePlayerOnlineState onlineState = readyToNextPanResult.getPukeGame().findPlayerOnlineState(otherPlayerId);
+                    if (onlineState.equals(GamePlayerOnlineState.online)) {
+                        List<QueryScope> scopes = QueryScope.scopesForState(readyToNextPanResult.getPukeGame().getState(), readyToNextPanResult.getPukeGame().findPlayerState(otherPlayerId));
+                        scopes.remove(QueryScope.panResult);
+                        wsNotifier.notifyToQuery(otherPlayerId, scopes);
+                    }
+                }
+            }
+
+            List<QueryScope> queryScopes = new ArrayList<>();
+            queryScopes.add(QueryScope.gameInfo);
+            if (readyToNextPanResult.getPukeGame().getState().name().equals(Playing.name)) {
+                queryScopes.add(QueryScope.panForMe);
+            }
+            if (readyToNextPanResult.getPukeGame().getState().name().equals(StartChaodi.name)) {
+                queryScopes.add(QueryScope.chaodiInfo);
+                queryScopes.add(QueryScope.panForMe);
+            }
+            data.put("queryScopes", queryScopes);
         }
-        if (readyToNextPanResult.getPukeGame().getState().name().equals(StartChaodi.name)) {
-            queryScopes.add(QueryScope.chaodiInfo);
-            queryScopes.add(QueryScope.panForMe);
-        }
-        data.put("queryScopes", queryScopes);
         return vo;
     }
 

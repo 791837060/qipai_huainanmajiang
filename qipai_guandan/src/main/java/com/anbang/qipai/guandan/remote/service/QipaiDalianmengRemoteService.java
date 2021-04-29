@@ -1,6 +1,6 @@
-package com.anbang.qipai.doudizhu.remote.service;
+package com.anbang.qipai.guandan.remote.service;
 
-import com.anbang.qipai.doudizhu.remote.vo.CommonRemoteVO;
+import com.anbang.qipai.guandan.remote.vo.CommonRemoteVO;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

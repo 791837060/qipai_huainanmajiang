@@ -11,8 +11,7 @@ import java.util.Set;
 
 public interface GameCmdService {
 
-    PukeGameValueObject newPukeGame(String gameId, String playerId, Integer panshu, Integer renshu,
-                                          OptionalPlay optionalPlay, Double difen);
+    PukeGameValueObject newPukeGame(String gameId, String playerId, Integer panshu, Integer renshu, OptionalPlay optionalPlay, Double difen,Integer powerLimit);
 
     PukeGameValueObject joinGame(String playerId, String gameId) throws Exception;
 

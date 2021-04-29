@@ -3,10 +3,10 @@ spring:
     mongodb:
 #      uri: mongodb://localhost:27017/qipai_guandan
       database: qipai_guandan
-      host: 172.19.24.161
-      port: 27017
+      host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
+      port: 3717
       username: root
-      password: 'meiyoumima'
+      password: 'Meiyoumima!'
 #      host: 172.16.57.175
 #      port: 27025
 #      username: root
@@ -127,6 +127,7 @@ spring:
 
 server:
   port: 2009
+  context-path: /guandan
   connectionTimeout: 65000
   tomcat:
     max-connections: 1024

@@ -36,16 +36,15 @@ import java.util.Set;
 public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService {
 
     @Override
-    public PukeGameValueObject newPukeGame(String gameId, String playerId, Integer panshu, Integer renshu, OptionalPlay optionalPlay, Double difen) {
+    public PukeGameValueObject newPukeGame(String gameId, String playerId, Integer panshu, Integer renshu, OptionalPlay optionalPlay, Double difen,Integer powerLimit) {
         GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
         PukeGame newGame = new PukeGame();
         newGame.setPanshu(panshu);
         newGame.setRenshu(renshu);
         newGame.setFixedPlayerCount(renshu);
-
         optionalPlay.setBx(BianXingWanFa.qianbian);
-		
         newGame.setOptionalPlay(optionalPlay);
+        newGame.setPowerLimit(powerLimit);
         newGame.setDifen(difen);
         newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
         newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));

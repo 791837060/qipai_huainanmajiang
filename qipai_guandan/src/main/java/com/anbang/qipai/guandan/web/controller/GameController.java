@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -94,10 +95,10 @@ public class GameController {
      */
     @RequestMapping(value = "/newgame")
     @ResponseBody
-    public CommonVO newgame(String playerId, int panshu, int renshu, double difen, OptionalPlay optionalPlay) {
+    public CommonVO newgame(String playerId, int panshu, int renshu, double difen, OptionalPlay optionalPlay, @RequestParam(required = false) int powerLimit) {
         CommonVO vo = new CommonVO();
         String newGameId = UUID.randomUUID().toString();
-        PukeGameValueObject pukeGameValueObject = gameCmdService.newPukeGame(newGameId, playerId, panshu, renshu, optionalPlay, difen);
+        PukeGameValueObject pukeGameValueObject = gameCmdService.newPukeGame(newGameId, playerId, panshu, renshu, optionalPlay, difen, powerLimit);
         pukeGameQueryService.newPukeGame(pukeGameValueObject);
         notReadyQuit(playerId, newGameId, pukeGameValueObject);
         String token = playerAuthService.newSessionForPlayer(playerId);
