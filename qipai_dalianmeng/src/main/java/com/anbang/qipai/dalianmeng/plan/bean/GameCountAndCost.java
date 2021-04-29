@@ -1,7 +1,5 @@
 package com.anbang.qipai.dalianmeng.plan.bean;
 
-import com.anbang.qipai.dalianmeng.plan.bean.game.Game;
-
 public class GameCountAndCost {
     private int count=0;
     private int cost=0;
