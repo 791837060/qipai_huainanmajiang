@@ -762,5 +762,9 @@ public class MemberDayResultDataService {
 //        System.out.println(endTime);
     }
 
+    public LianmengDiamondDayCost findLianmengDiamondDayCostByLianmengIdAndTime(long startTime ,long endTime ,String lianmengId){
+        return lianmengDiamondDayCostDao.findByLianmengId(lianmengId,startTime,endTime);
+    }
+
 
 }

@@ -8,6 +8,7 @@ import com.anbang.qipai.dalianmeng.cqrs.q.service.LianmengMemberService;
 import com.anbang.qipai.dalianmeng.cqrs.q.service.LianmengYushiService;
 import com.anbang.qipai.dalianmeng.cqrs.q.service.MemberService;
 import com.anbang.qipai.dalianmeng.cqrs.q.service.PowerService;
+import com.anbang.qipai.dalianmeng.plan.bean.LianmengDiamondDayCost;
 import com.anbang.qipai.dalianmeng.plan.bean.game.GameMemberTable;
 import com.anbang.qipai.dalianmeng.plan.service.MemberAuthService;
 import com.anbang.qipai.dalianmeng.plan.service.MemberDayResultDataService;
@@ -466,8 +467,7 @@ public class PowerController {
      * 盟主钻石流水记录
      */
     @RequestMapping("/diamondRecord")
-    public CommonVO diamondRecord(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "30") int size,
-                                  String token ,String lianmengId ,long queryTime) {
+    public CommonVO diamondRecord(String token ,String lianmengId ,long queryTime) {
         CommonVO vo = new CommonVO();
         String memberId = memberAuthService.getMemberIdBySessionId(token);
         if (memberId == null) {
@@ -477,16 +477,13 @@ public class PowerController {
         }
         long startTime= TimeUtil.getDayStartTime(queryTime);
         MemberLianmengDbo memberLianmengDbo = lianmengMemberService.findByMemberIdAndLianmengId(memberId, lianmengId);
-        if (memberLianmengDbo.getIdentity().equals(Identity.MENGZHU)) {
-            ListPage listPage = lianmengYushiService.queryRecordByMemberIdAndLianmengId(page, size, memberId, lianmengId, startTime, queryTime);
-
-            Map data = new HashMap<>();
-            data.put("listPage", listPage);
-            vo.setData(data);
-        } else {
+        if (!memberLianmengDbo.getIdentity().equals(Identity.MENGZHU)) {
             vo.setSuccess(false);
             vo.setMsg("member is not mengzhu");
+            return vo;
         }
+        LianmengDiamondDayCost dayCostByLianmengIdAndTime = memberDayResultDataService.findLianmengDiamondDayCostByLianmengIdAndTime(startTime, queryTime, lianmengId);
+        vo.setData(dayCostByLianmengIdAndTime);
         return vo;
     }
 

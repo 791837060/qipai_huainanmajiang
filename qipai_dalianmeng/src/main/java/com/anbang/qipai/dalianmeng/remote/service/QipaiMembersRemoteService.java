@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 会员中心远程服务
  */
-@FeignClient("qipai-members/members")
-//@FeignClient("qipai-members")
+//@FeignClient("qipai-members/members")
+@FeignClient("qipai-members")
 public interface QipaiMembersRemoteService {
 
     @RequestMapping(value = "/auth/trytoken")
