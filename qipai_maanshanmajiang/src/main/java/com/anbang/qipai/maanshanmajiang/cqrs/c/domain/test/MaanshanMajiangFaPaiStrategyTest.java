@@ -76,6 +76,21 @@ public class MaanshanMajiangFaPaiStrategyTest implements FaPaiStrategy {
                 MajiangPai.liutiao,
                 MajiangPai.qitiao,
         };
+        MajiangPai[] pai3 = {
+                MajiangPai.yitong,
+                MajiangPai.yitong,
+                MajiangPai.yitong,
+                MajiangPai.santong,
+                MajiangPai.santong,
+                MajiangPai.santong,
+                MajiangPai.wutong,
+                MajiangPai.wutong,
+                MajiangPai.liutong,
+                MajiangPai.qitong,
+                MajiangPai.jiutong,
+                MajiangPai.jiutong,
+                MajiangPai.jiutong,
+        };
         for (int i = 0; i < faPaiCountsForOnePlayer; i++) { //从庄家开始依次发牌 直至到规定手牌
             MajiangPosition playerMenFeng = zhuangPlayerMenFeng;
             for (int j = 0; j < 4; j++) {
@@ -83,8 +98,10 @@ public class MaanshanMajiangFaPaiStrategyTest implements FaPaiStrategy {
                 if (player != null) { //门风上有玩家才会发牌
                     if (player.getId().equals("237129") || player.getId().equals("1")) {
                         player.addShoupai(pai[i]);
-                    } else if (player.getId().equals("960973") || player.getId().equals("830559")) {
+                    } else if (player.getId().equals("960973") || player.getId().equals("22")) {
                         player.addShoupai(pai2[i]);
+                    } else if (player.getId().equals("830559") || player.getId().equals("33")) {
+                        player.addShoupai(pai3[i]);
                     } else {
                         faPai(avaliablePaiList, player);
                     }

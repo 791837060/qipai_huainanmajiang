@@ -131,6 +131,8 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 } else if (totalScore < 0) {
                     totalScore = 0d;
                 }
+                double hufenTiwaixunhuan = playerResult.getHufen().getTiwaixunhuan();
+                playerResult.getHufen().setTiwaixunhuan(BigDecimalUtil.mul(hufenTiwaixunhuan, difen));
                 Double tiwaixunhuanScore = playerResult.getTiwaixunhuanScore();
                 playerResult.setTiwaixunhuanScore(BigDecimalUtil.mul(tiwaixunhuanScore, difen));
                 playerResult.setTotalScore(totalScore);
@@ -141,11 +143,14 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 if (maanshanMajiangPanPlayerResult.getTotalScore() == 200 && huPlayer.getId().equals(maanshanMajiangPanPlayerResult.getPlayerId())) {
                     MaanshanMajiangHushu hufen = maanshanMajiangPanPlayerResult.getHufen();
                     if (!hufen.isQingshuidana()) {
-                        hufen.setHunshuidana(true);
-                        hufen.setTiwaixunhuan(20);
                         huPlayerID = maanshanMajiangPanPlayerResult.getPlayerId();
-                        double tiwaixunhuanScore = BigDecimalUtil.add(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), 60);
-                        tiwaixunhuanScore = BigDecimalUtil.mul(tiwaixunhuanScore, difen);
+
+                        hufen.setHunshuidana(true);
+                        double mul = BigDecimalUtil.mul(difen, 20);
+                        hufen.setTiwaixunhuan(hufen.getTiwaixunhuan() + mul);
+
+                        double tiwaixunhuanScore = BigDecimalUtil.mul(difen, 60);
+                        tiwaixunhuanScore = BigDecimalUtil.add(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), tiwaixunhuanScore);
                         maanshanMajiangPanPlayerResult.setTiwaixunhuanScore(tiwaixunhuanScore);
                     }
                 }
@@ -155,9 +160,11 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                     if (!maanshanMajiangPanPlayerResult.getPlayerId().equals(huPlayerID)) {
                         MaanshanMajiangHushu hufen = maanshanMajiangPanPlayerResult.getHufen();
                         hufen.setHunshuidana(true);
-                        hufen.setTiwaixunhuan(hufen.getTiwaixunhuan() - 20);
-                        double tiwaixunhuanScore = BigDecimalUtil.sub(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), 20);
-                        tiwaixunhuanScore = BigDecimalUtil.mul(tiwaixunhuanScore, difen);
+                        double mul = BigDecimalUtil.mul(difen, 20);
+                        hufen.setTiwaixunhuan(hufen.getTiwaixunhuan() - mul);
+
+                        double tiwaixunhuanScore = BigDecimalUtil.mul(difen, 20);
+                        tiwaixunhuanScore = BigDecimalUtil.sub(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), tiwaixunhuanScore);
                         maanshanMajiangPanPlayerResult.setTiwaixunhuanScore(tiwaixunhuanScore);
                     }
                 }
@@ -293,6 +300,8 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 } else if (totalScore < 0) {
                     totalScore = 0d;
                 }
+                double hufenTiwaixunhuan = playerResult.getHufen().getTiwaixunhuan();
+                playerResult.getHufen().setTiwaixunhuan(BigDecimalUtil.mul(hufenTiwaixunhuan, difen));
                 Double tiwaixunhuanScore = playerResult.getTiwaixunhuanScore();
                 playerResult.setTiwaixunhuanScore(BigDecimalUtil.mul(tiwaixunhuanScore, difen));
                 playerResult.setTotalScore(totalScore);
@@ -303,11 +312,14 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 if (maanshanMajiangPanPlayerResult.getTotalScore() == 200 && huPlayer.getId().equals(maanshanMajiangPanPlayerResult.getPlayerId())) {
                     MaanshanMajiangHushu hufen = maanshanMajiangPanPlayerResult.getHufen();
                     if (!hufen.isQingshuidana()) {
-                        hufen.setHunshuidana(true);
-                        hufen.setTiwaixunhuan(20);
                         huPlayerID = maanshanMajiangPanPlayerResult.getPlayerId();
-                        double tiwaixunhuanScore = BigDecimalUtil.add(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), 60);
-                        tiwaixunhuanScore = BigDecimalUtil.mul(tiwaixunhuanScore, difen);
+
+                        hufen.setHunshuidana(true);
+                        double mul = BigDecimalUtil.mul(difen, 20);
+                        hufen.setTiwaixunhuan(hufen.getTiwaixunhuan() + mul);
+
+                        double tiwaixunhuanScore = BigDecimalUtil.mul(difen, 60);
+                        tiwaixunhuanScore = BigDecimalUtil.add(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), tiwaixunhuanScore);
                         maanshanMajiangPanPlayerResult.setTiwaixunhuanScore(tiwaixunhuanScore);
                     }
                 }
@@ -317,9 +329,11 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                     if (!maanshanMajiangPanPlayerResult.getPlayerId().equals(huPlayerID)) {
                         MaanshanMajiangHushu hufen = maanshanMajiangPanPlayerResult.getHufen();
                         hufen.setHunshuidana(true);
-                        hufen.setTiwaixunhuan(hufen.getTiwaixunhuan() - 20);
-                        double tiwaixunhuanScore = BigDecimalUtil.add(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), 20);
-                        tiwaixunhuanScore = BigDecimalUtil.mul(tiwaixunhuanScore, difen);
+                        double mul = BigDecimalUtil.mul(difen, 20);
+                        hufen.setTiwaixunhuan(hufen.getTiwaixunhuan() - mul);
+
+                        double tiwaixunhuanScore = BigDecimalUtil.mul(difen, 20);
+                        tiwaixunhuanScore = BigDecimalUtil.sub(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), tiwaixunhuanScore);
                         maanshanMajiangPanPlayerResult.setTiwaixunhuanScore(tiwaixunhuanScore);
                     }
                 }

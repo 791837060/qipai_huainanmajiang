@@ -55,17 +55,21 @@ public class MaanshanMajiangHushu {
         if (fengyise) {
             value += 50;
             if (zimoHu) {
-                calculaTiwaixunhuan(200);
+//                calculaTiwaixunhuan(200);
+                tiwaixunhuan+=200;
             } else {
-                calculaTiwaixunhuan(100);
+//                calculaTiwaixunhuan(100);
+                tiwaixunhuan+=100;
             }
         }
         if (qingyise) {
             value += 20;
             if (zimoHu) {
-                calculaTiwaixunhuan(60);
+//                calculaTiwaixunhuan(60);
+                tiwaixunhuan+=60;
             } else {
-                calculaTiwaixunhuan(20);
+//                calculaTiwaixunhuan(20);
+                tiwaixunhuan+=20;
             }
         }
         if (hunyise) {
@@ -132,9 +136,11 @@ public class MaanshanMajiangHushu {
             value += 10;
             yadang = false;
             if (zimoHu) {
-                calculaTiwaixunhuan(60);
+//                calculaTiwaixunhuan(60);
+                tiwaixunhuan+=60;
             } else {
-                calculaTiwaixunhuan(20);
+//                calculaTiwaixunhuan(20);
+                tiwaixunhuan+=20;
             }
         } else {
             if (zimoHu && yadang) {
