@@ -23,14 +23,11 @@ import com.anbang.qipai.maanshanmajiang.plan.service.PlayerInfoService;
 import com.anbang.qipai.maanshanmajiang.plan.bean.MemberGoldBalance;
 import com.anbang.qipai.maanshanmajiang.plan.bean.PlayerInfo;
 import com.dml.majiang.pan.frame.PanActionFrame;
-import com.dml.majiang.pan.frame.PanValueObject;
 import com.dml.majiang.player.action.MajiangPlayerAction;
 import com.dml.majiang.player.action.gang.MajiangGangAction;
 import com.dml.majiang.player.action.guo.MajiangGuoAction;
-import com.dml.majiang.player.action.mo.MajiangMoAction;
 import com.dml.majiang.player.action.peng.MajiangPengAction;
 import com.dml.majiang.player.action.ting.MajiangTingAction;
-import com.dml.majiang.player.valueobj.MajiangPlayerValueObject;
 import com.dml.mpgame.game.*;
 import com.dml.mpgame.game.extend.fpmpv.VoteNotPassWhenWaitingNextPan;
 import com.dml.mpgame.game.extend.vote.FinishedByVote;
@@ -105,47 +102,48 @@ public class GameController {
      */
     @RequestMapping(value = "/newgame")
     @ResponseBody
-    public CommonVO newgame(String playerId, int renshu, Double difen, @RequestParam(required = false) int powerLimit, OptionalPlay optionalPlay) {
+    public CommonVO newgame(String playerId, int renshu, Double difen, @RequestParam(required = false) int powerLimit, OptionalPlay optionalPlay, @RequestParam(required = false) String lianmengId) {
         CommonVO vo = new CommonVO();
         String newGameId = UUID.randomUUID().toString();
-        MajiangGameValueObject majiangGameValueObject = gameCmdService.newMajiangGame(newGameId, playerId, 0, renshu, difen, powerLimit, optionalPlay);
+        MajiangGameValueObject majiangGameValueObject = gameCmdService.newMajiangGame(newGameId, playerId, 0, renshu, difen, powerLimit, optionalPlay, lianmengId);
         majiangGameQueryService.newMajiangGame(majiangGameValueObject);
 
-        if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
-            executorService.submit(() -> {
-                try {
-                    int sleepTime = majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
-                    Thread.sleep((sleepTime + 1) * 1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(newGameId);
-                for (MajiangGamePlayerDbo player : majiangGameDbo.getPlayers()) {
-                    if (player.getPlayerId().equals(playerId)) {
-                        if (majiangGameDbo.getState().name().equals(WaitingStart.name)) {
-                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
-                                MajiangGameValueObject majiangGameValueObject1 = null;
-                                try {
-                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), newGameId);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                majiangGameQueryService.quit(majiangGameValueObject1);
-                                for (String otherPlayerId : majiangGameValueObject1.allPlayerIds()) {
-                                    List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject1.getState(), majiangGameValueObject1.findPlayerState(otherPlayerId));
-                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
-                                }
-                                if (majiangGameValueObject1.getPlayers().size() == 0) {
-                                    gameMsgService.gameFinished(newGameId);
-                                }
-                                gameMsgService.gamePlayerLeave(majiangGameValueObject1, playerId);
-                                wsNotifier.sendMessageToQuit(playerId);
-                            }
-                        }
-                    }
-                }
-            });
-        }
+//        if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
+//            executorService.submit(() -> {
+//                try {
+//                    int sleepTime = majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
+//                    Thread.sleep((sleepTime + 1) * 1000);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(newGameId);
+//                for (MajiangGamePlayerDbo player : majiangGameDbo.getPlayers()) {
+//                    if (player.getPlayerId().equals(playerId)) {
+//                        if (majiangGameDbo.getState().name().equals(WaitingStart.name)) {
+//                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
+//                                MajiangGameValueObject majiangGameValueObject1 = null;
+//                                try {
+//                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), newGameId);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                                majiangGameQueryService.quit(majiangGameValueObject1);
+//                                for (String otherPlayerId : majiangGameValueObject1.allPlayerIds()) {
+//                                    List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject1.getState(), majiangGameValueObject1.findPlayerState(otherPlayerId));
+//                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
+//                                }
+//                                if (majiangGameValueObject1.getPlayers().size() == 0) {
+//                                    gameMsgService.gameFinished(newGameId);
+//                                }
+//                                gameMsgService.gamePlayerLeave(majiangGameValueObject1, playerId);
+//                                wsNotifier.sendMessageToQuit(playerId);
+//                            }
+//                        }
+//                    }
+//                }
+//            });
+//        }
+        notReadyQuit(playerId, majiangGameValueObject);
 
         String token = playerAuthService.newSessionForPlayer(playerId);
         Map data = new HashMap();
@@ -173,42 +171,43 @@ public class GameController {
         }
         majiangGameQueryService.joinGame(majiangGameValueObject);
 
-        if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
-            executorService.submit(() -> {
-                try {
-                    int sleepTime = majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
-                    Thread.sleep((sleepTime + 1) * 1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-                for (MajiangGamePlayerDbo player : majiangGameDbo.getPlayers()) {
-                    if (player.getPlayerId().equals(playerId)) {
-                        if (majiangGameDbo.getState().name().equals(WaitingStart.name)) {
-                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
-                                MajiangGameValueObject majiangGameValueObject1 = null;
-                                try {
-                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), gameId);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                majiangGameQueryService.quit(majiangGameValueObject1);
-                                for (String otherPlayerId : majiangGameValueObject1.allPlayerIds()) {
-                                    List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject1.getState(), majiangGameValueObject1.findPlayerState(otherPlayerId));
-                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
-                                }
-                                if (majiangGameValueObject1.getPlayers().size() == 0) {
-                                    gameMsgService.gameFinished(gameId);
-                                }
-                                gameMsgService.gamePlayerLeave(majiangGameValueObject1, playerId);
-                                wsNotifier.sendMessageToQuit(playerId);
-                            }
-                        }
-                    }
-                }
-            });
-
-        }
+//        if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
+//            executorService.submit(() -> {
+//                try {
+//                    int sleepTime = majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
+//                    Thread.sleep((sleepTime + 1) * 1000);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+//                for (MajiangGamePlayerDbo player : majiangGameDbo.getPlayers()) {
+//                    if (player.getPlayerId().equals(playerId)) {
+//                        if (majiangGameDbo.getState().name().equals(WaitingStart.name)) {
+//                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
+//                                MajiangGameValueObject majiangGameValueObject1 = null;
+//                                try {
+//                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), gameId);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                                majiangGameQueryService.quit(majiangGameValueObject1);
+//                                for (String otherPlayerId : majiangGameValueObject1.allPlayerIds()) {
+//                                    List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject1.getState(), majiangGameValueObject1.findPlayerState(otherPlayerId));
+//                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
+//                                }
+//                                if (majiangGameValueObject1.getPlayers().size() == 0) {
+//                                    gameMsgService.gameFinished(gameId);
+//                                }
+//                                gameMsgService.gamePlayerLeave(majiangGameValueObject1, playerId);
+//                                wsNotifier.sendMessageToQuit(playerId);
+//                            }
+//                        }
+//                    }
+//                }
+//            });
+//
+//        }
+        notReadyQuit(playerId, majiangGameValueObject);
 
         // 通知其他人
         for (String otherPlayerId : majiangGameValueObject.allPlayerIds()) {
@@ -385,6 +384,11 @@ public class GameController {
             return vo;
         }
         majiangGameQueryService.leaveGame(majiangGameValueObject);
+
+        if (majiangGameValueObject.getState().name().equals(WaitingStart.name)) {
+            notReadyQuit(playerId, majiangGameValueObject);
+        }
+
         // 断开玩家的socket
         wsNotifier.closeSessionForPlayer(playerId);
         String gameId = majiangGameValueObject.getId();
@@ -450,6 +454,11 @@ public class GameController {
             return vo;
         }
         majiangGameQueryService.leaveGame(majiangGameValueObject);
+
+        if (majiangGameValueObject.getState().name().equals(WaitingStart.name)) {
+            notReadyQuit(playerId, majiangGameValueObject);
+        }
+
         // 断开玩家的socket
         wsNotifier.closeSessionForPlayer(playerId);
         String gameId = majiangGameValueObject.getId();
@@ -641,41 +650,42 @@ public class GameController {
         majiangPlayQueryService.readyForGame(readyForGameResult);// TODO 一起点准备的时候可能有同步问题.要靠框架解决
 
         MajiangGameValueObject majiangGameValueObject = readyForGameResult.getMajiangGame();
-        if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
-            executorService.submit(() -> {
-                try {
-                    int sleepTime = majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
-                    Thread.sleep((sleepTime + 1) * 1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(readyForGameResult.getMajiangGame().getId());
-                for (MajiangGamePlayerDbo player : majiangGameDbo.getPlayers()) {
-                    if (player.getPlayerId().equals(playerId)) {
-                        if (majiangGameDbo.getState().name().equals(WaitingStart.name)) {
-                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
-                                MajiangGameValueObject majiangGameValueObject1 = null;
-                                try {
-                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), readyForGameResult.getMajiangGame().getId());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                majiangGameQueryService.quit(majiangGameValueObject1);
-                                for (String otherPlayerId : majiangGameValueObject1.allPlayerIds()) {
-                                    List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject1.getState(), majiangGameValueObject1.findPlayerState(otherPlayerId));
-                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
-                                }
-                                if (majiangGameValueObject1.getPlayers().size() == 0) {
-                                    gameMsgService.gameFinished(majiangGameValueObject1.getId());
-                                }
-                                gameMsgService.gamePlayerLeave(majiangGameValueObject1, playerId);
-                                wsNotifier.sendMessageToQuit(playerId);
-                            }
-                        }
-                    }
-                }
-            });
-        }
+//        if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
+//            executorService.submit(() -> {
+//                try {
+//                    int sleepTime = majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
+//                    Thread.sleep((sleepTime + 1) * 1000);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(readyForGameResult.getMajiangGame().getId());
+//                for (MajiangGamePlayerDbo player : majiangGameDbo.getPlayers()) {
+//                    if (player.getPlayerId().equals(playerId)) {
+//                        if (majiangGameDbo.getState().name().equals(WaitingStart.name)) {
+//                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
+//                                MajiangGameValueObject majiangGameValueObject1 = null;
+//                                try {
+//                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), readyForGameResult.getMajiangGame().getId());
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                                majiangGameQueryService.quit(majiangGameValueObject1);
+//                                for (String otherPlayerId : majiangGameValueObject1.allPlayerIds()) {
+//                                    List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject1.getState(), majiangGameValueObject1.findPlayerState(otherPlayerId));
+//                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
+//                                }
+//                                if (majiangGameValueObject1.getPlayers().size() == 0) {
+//                                    gameMsgService.gameFinished(majiangGameValueObject1.getId());
+//                                }
+//                                gameMsgService.gamePlayerLeave(majiangGameValueObject1, playerId);
+//                                wsNotifier.sendMessageToQuit(playerId);
+//                            }
+//                        }
+//                    }
+//                }
+//            });
+//        }
+        notReadyQuit(playerId, majiangGameValueObject);
 
         // 通知其他人
         for (String otherPlayerId : readyForGameResult.getMajiangGame().allPlayerIds()) {
@@ -1194,6 +1204,45 @@ public class GameController {
             }
         }
 
+    }
+
+    private void notReadyQuit(String playerId, MajiangGameValueObject majiangGameValueObject) {
+        if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
+            executorService.submit(() -> {
+                try {
+                    int sleepTime = majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
+                    Thread.sleep((sleepTime + 1) * 1000L);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(majiangGameValueObject.getId());
+                for (MajiangGamePlayerDbo player : majiangGameDbo.getPlayers()) {
+                    if (player.getPlayerId().equals(playerId)) {
+                        if (majiangGameDbo.getState().name().equals(WaitingStart.name)) {
+                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
+                                MajiangGameValueObject majiangGameValueObject1 = null;
+                                try {
+                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), majiangGameValueObject.getId());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                majiangGameQueryService.quit(majiangGameValueObject1);
+                                for (String otherPlayerId : majiangGameValueObject1.allPlayerIds()) {
+                                    List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject1.getState(), majiangGameValueObject1.findPlayerState(otherPlayerId));
+                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
+                                }
+                                if (majiangGameValueObject1.getPlayers().size() == 0) {
+                                    gameMsgService.gameFinished(majiangGameValueObject.getId());
+                                }
+                                gameMsgService.gamePlayerLeave(majiangGameValueObject1, playerId);
+                                wsNotifier.sendMessageToQuit(playerId);
+                            }
+                        }
+                    }
+                }
+            });
+
+        }
     }
 
 }

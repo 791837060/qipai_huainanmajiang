@@ -40,10 +40,9 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
      * @param playerId 玩家ID
      * @param panshu   盘数
      * @param renshu   人数
-     * @return
      */
     @Override
-    public MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit, OptionalPlay optionalPlay) {
+    public MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit, OptionalPlay optionalPlay, String lianmengId) {
         GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
         MajiangGame newGame = new MajiangGame();
         newGame.setFixedPlayerCount(renshu);
@@ -52,6 +51,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         newGame.setDifen(difen);
         newGame.setOptionalPlay(optionalPlay);
         newGame.setPowerLimit(powerLimit);
+        newGame.setLianmengId(lianmengId);
         newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
         newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
         newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));

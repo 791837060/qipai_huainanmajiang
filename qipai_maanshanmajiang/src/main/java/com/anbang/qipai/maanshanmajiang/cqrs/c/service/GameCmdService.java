@@ -11,7 +11,7 @@ import com.dml.majiang.pan.frame.PanActionFrame;
 
 public interface GameCmdService {
 
-	MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit, OptionalPlay optionalPlay);
+	MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit, OptionalPlay optionalPlay, String lianmengId);
 
 	MajiangGameValueObject joinGame(String playerId, String gameId) throws Exception;
 

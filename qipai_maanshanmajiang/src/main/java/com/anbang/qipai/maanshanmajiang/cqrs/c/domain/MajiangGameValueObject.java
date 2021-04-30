@@ -26,6 +26,7 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
     private JuResult juResult;
     private Double difen;
     private int powerLimit;
+    private String lianmengId;           //联盟ID
     /**
      * 当前倒
      */
@@ -54,6 +55,7 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
         currentDao = majiangGame.getCurrentDao();
         playeTotalDaoScoreMap = majiangGame.getPlayerTotalDaoScoreMap();
         playerTiwaixunhuanScoreMap=majiangGame.getPlayerTiwaixunhuanScoreMap();
+        lianmengId=majiangGame.getLianmengId();
     }
 
     public int getPanshu() {
@@ -144,5 +146,13 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
 
     public void setPlayerTiwaixunhuanScoreMap(Map<String, Double> playerTiwaixunhuanScoreMap) {
         this.playerTiwaixunhuanScoreMap = playerTiwaixunhuanScoreMap;
+    }
+
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
     }
 }

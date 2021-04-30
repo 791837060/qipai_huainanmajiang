@@ -20,6 +20,7 @@ public class MajiangGameDbo {
     private Set<String> xipaiPlayerIds;
     private long createTime;
     private int powerLimit;
+    private String lianmengId;           //联盟ID
     /**
      * 当前倒
      */
@@ -69,6 +70,7 @@ public class MajiangGameDbo {
         currentDao = majiangGame.getCurrentDao();
         playeTotalDaoScoreMap = majiangGame.getPlayeTotalDaoScoreMap();
         playerTiwaixunhuanScoreMap = majiangGame.getPlayerTiwaixunhuanScoreMap();
+        lianmengId = majiangGame.getLianmengId();
     }
 
     public MajiangGamePlayerDbo findPlayer(String playerId) {
@@ -191,5 +193,13 @@ public class MajiangGameDbo {
 
     public void setPlayerTiwaixunhuanScoreMap(Map<String, Double> playerTiwaixunhuanScoreMap) {
         this.playerTiwaixunhuanScoreMap = playerTiwaixunhuanScoreMap;
+    }
+
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
     }
 }

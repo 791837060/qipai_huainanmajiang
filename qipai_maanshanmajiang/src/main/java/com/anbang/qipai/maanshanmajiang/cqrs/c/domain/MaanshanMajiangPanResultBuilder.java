@@ -118,16 +118,50 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                     playerResultList.add(buHuPlayerResult);
                 }
             }
+
             huPlayerHufen.setValue(winScore);
             playerResultList.forEach((playerResult) -> {
                 // 计算当盘总分
                 double score = playerResult.getHufen().getValue();
                 playerResult.setScore(new BigDecimal(Double.toString(difen)).multiply(new BigDecimal(Double.toString(score))).doubleValue());
                 // 计算累计总分
-//                Double totalScore = playerTotalScoreMap.get(playerResult.getPlayerId()) + playerResult.getScore();
                 Double totalScore = BigDecimalUtil.add(playerTotalScoreMap.get(playerResult.getPlayerId()), playerResult.getScore());
+                if (totalScore > 200) {
+                    totalScore = currentPan.getMajiangPlayerIdMajiangPlayerMap().size() * 50d;
+                } else if (totalScore < 0) {
+                    totalScore = 0d;
+                }
+                Double tiwaixunhuanScore = playerResult.getTiwaixunhuanScore();
+                playerResult.setTiwaixunhuanScore(BigDecimalUtil.mul(tiwaixunhuanScore, difen));
                 playerResult.setTotalScore(totalScore);
             });
+
+            String huPlayerID = null;
+            for (MaanshanMajiangPanPlayerResult maanshanMajiangPanPlayerResult : playerResultList) {
+                if (maanshanMajiangPanPlayerResult.getTotalScore() == 200 && huPlayer.getId().equals(maanshanMajiangPanPlayerResult.getPlayerId())) {
+                    MaanshanMajiangHushu hufen = maanshanMajiangPanPlayerResult.getHufen();
+                    if (!hufen.isQingshuidana()) {
+                        hufen.setHunshuidana(true);
+                        hufen.setTiwaixunhuan(20);
+                        huPlayerID = maanshanMajiangPanPlayerResult.getPlayerId();
+                        double tiwaixunhuanScore = BigDecimalUtil.add(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), 60);
+                        tiwaixunhuanScore = BigDecimalUtil.mul(tiwaixunhuanScore, difen);
+                        maanshanMajiangPanPlayerResult.setTiwaixunhuanScore(tiwaixunhuanScore);
+                    }
+                }
+            }
+            if (huPlayerID != null) {
+                for (MaanshanMajiangPanPlayerResult maanshanMajiangPanPlayerResult : playerResultList) {
+                    if (!maanshanMajiangPanPlayerResult.getPlayerId().equals(huPlayerID)) {
+                        MaanshanMajiangHushu hufen = maanshanMajiangPanPlayerResult.getHufen();
+                        hufen.setHunshuidana(true);
+                        hufen.setTiwaixunhuan(hufen.getTiwaixunhuan() - 20);
+                        double tiwaixunhuanScore = BigDecimalUtil.sub(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), 20);
+                        tiwaixunhuanScore = BigDecimalUtil.mul(tiwaixunhuanScore, difen);
+                        maanshanMajiangPanPlayerResult.setTiwaixunhuanScore(tiwaixunhuanScore);
+                    }
+                }
+            }
 
             tianchangxiaohuaPanResult.setPan(new PanValueObject(currentPan));
             tianchangxiaohuaPanResult.setPanFinishTime(panFinishTime);
@@ -246,15 +280,50 @@ public class MaanshanMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 }
                 huPlayerHufen.setValue(winScore);
             }
+
+
             playerResultList.forEach((playerResult) -> {
                 // 计算当盘总分
                 double score = playerResult.getHufen().getValue();
                 playerResult.setScore(new BigDecimal(Double.toString(difen)).multiply(new BigDecimal(Double.toString(score))).doubleValue());
                 // 计算累计总分
-//                Double totalScore = playerTotalScoreMap.get(playerResult.getPlayerId()) + playerResult.getScore();
                 Double totalScore = BigDecimalUtil.add(playerTotalScoreMap.get(playerResult.getPlayerId()), playerResult.getScore());
+                if (totalScore > 200) {
+                    totalScore = currentPan.getMajiangPlayerIdMajiangPlayerMap().size() * 50d;
+                } else if (totalScore < 0) {
+                    totalScore = 0d;
+                }
+                Double tiwaixunhuanScore = playerResult.getTiwaixunhuanScore();
+                playerResult.setTiwaixunhuanScore(BigDecimalUtil.mul(tiwaixunhuanScore, difen));
                 playerResult.setTotalScore(totalScore);
             });
+
+            String huPlayerID = null;
+            for (MaanshanMajiangPanPlayerResult maanshanMajiangPanPlayerResult : playerResultList) {
+                if (maanshanMajiangPanPlayerResult.getTotalScore() == 200 && huPlayer.getId().equals(maanshanMajiangPanPlayerResult.getPlayerId())) {
+                    MaanshanMajiangHushu hufen = maanshanMajiangPanPlayerResult.getHufen();
+                    if (!hufen.isQingshuidana()) {
+                        hufen.setHunshuidana(true);
+                        hufen.setTiwaixunhuan(20);
+                        huPlayerID = maanshanMajiangPanPlayerResult.getPlayerId();
+                        double tiwaixunhuanScore = BigDecimalUtil.add(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), 60);
+                        tiwaixunhuanScore = BigDecimalUtil.mul(tiwaixunhuanScore, difen);
+                        maanshanMajiangPanPlayerResult.setTiwaixunhuanScore(tiwaixunhuanScore);
+                    }
+                }
+            }
+            if (huPlayerID != null) {
+                for (MaanshanMajiangPanPlayerResult maanshanMajiangPanPlayerResult : playerResultList) {
+                    if (!maanshanMajiangPanPlayerResult.getPlayerId().equals(huPlayerID)) {
+                        MaanshanMajiangHushu hufen = maanshanMajiangPanPlayerResult.getHufen();
+                        hufen.setHunshuidana(true);
+                        hufen.setTiwaixunhuan(hufen.getTiwaixunhuan() - 20);
+                        double tiwaixunhuanScore = BigDecimalUtil.add(maanshanMajiangPanPlayerResult.getTiwaixunhuanScore(), 20);
+                        tiwaixunhuanScore = BigDecimalUtil.mul(tiwaixunhuanScore, difen);
+                        maanshanMajiangPanPlayerResult.setTiwaixunhuanScore(tiwaixunhuanScore);
+                    }
+                }
+            }
 
             tianchangxiaohuaPanResult.setPan(new PanValueObject(currentPan));
             tianchangxiaohuaPanResult.setPanFinishTime(panFinishTime);

@@ -2,17 +2,16 @@ package com.anbang.qipai.maanshanmajiang.cqrs.c.domain;
 
 import com.anbang.qipai.maanshanmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.maanshanmajiang.cqrs.c.service.MajiangPlayCmdService;
-import com.anbang.qipai.maanshanmajiang.cqrs.q.dbo.JuResultDbo;
-import com.anbang.qipai.maanshanmajiang.cqrs.q.dbo.MajiangGameDbo;
+import com.anbang.qipai.maanshanmajiang.cqrs.q.dbo.*;
 import com.anbang.qipai.maanshanmajiang.cqrs.c.service.impl.CmdServiceBase;
-import com.anbang.qipai.maanshanmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
-import com.anbang.qipai.maanshanmajiang.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.maanshanmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.maanshanmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.maanshanmajiang.msg.msjobj.MajiangHistoricalJuResult;
 import com.anbang.qipai.maanshanmajiang.msg.msjobj.MajiangHistoricalPanResult;
 import com.anbang.qipai.maanshanmajiang.msg.service.MaanshanMajiangGameMsgService;
 import com.anbang.qipai.maanshanmajiang.msg.service.MaanshanMajiangResultMsgService;
+import com.anbang.qipai.maanshanmajiang.remote.service.QipaiDalianmengRemoteService;
+import com.anbang.qipai.maanshanmajiang.remote.vo.CommonRemoteVO;
 import com.anbang.qipai.maanshanmajiang.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.maanshanmajiang.websocket.QueryScope;
 import com.dml.majiang.pan.frame.PanActionFrame;
@@ -63,6 +62,9 @@ public class Automatic extends CmdServiceBase {
 
     @Autowired
     private GamePlayWsNotifier wsNotifier;
+
+    @Autowired
+    private QipaiDalianmengRemoteService qipaiDalianmengRemoteService;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -229,7 +231,44 @@ public class Automatic extends CmdServiceBase {
 
                         MajiangGameDbo majiangGameDbo2 = majiangGameQueryService.findMajiangGameDboById(gameId);
                         PanActionFrame panActionFrame2 = majiangPlayQueryService.findAndFilterCurrentPanValueObjectForPlayer(gameId);
-                        if (majiangGameDbo2.getState().name().equals(WaitingNextPan.name)) {  //游戏没有开始 托管玩家自动准备
+                        if (majiangGameDbo2.getState().name().equals(WaitingNextPan.name)) {
+                            //游戏没有开始 托管玩家自动准备
+                            //如果托管玩家能力低于淘汰分直接结束游戏
+//                            String lianmengId = majiangGameDbo2.getLianmengId();
+//                            CommonRemoteVO commonRemoteVO = qipaiDalianmengRemoteService.nowPowerForRemote(playerId, lianmengId);
+//                            if (commonRemoteVO.isSuccess()) {
+//                                Map powerdata = (Map) commonRemoteVO.getData();
+//                                double powerbalance = (Double) powerdata.get("powerbalance");
+//                                PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, majiangGameDbo.getPanNo());
+//                                for (MaanshanMajiangPanPlayerResultDbo maanshanMajiangPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
+//                                    if (maanshanMajiangPanPlayerResultDbo.getPlayerId().equals(playerId)) {
+//                                        if (maanshanMajiangPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= majiangGameDbo.getPowerLimit()) {
+//                                            MajiangGameValueObject gameValueObject = null;
+//                                            try {
+//                                                gameValueObject = gameCmdService.finishGameImmediately(gameId);
+//                                            } catch (Exception e) {
+//                                                e.printStackTrace();
+//                                            }
+//                                            List<QueryScope> queryScopes = new ArrayList<>();
+//                                            if (gameValueObject != null) {
+//                                                majiangGameQueryService.finishGameImmediately(gameValueObject, null);
+//                                                gameMsgService.gameFinished(gameId);
+//                                                JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+//                                                MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
+//                                                maanshanMajiangResultMsgService.recordJuResult(juResult);
+//                                                gameMsgService.gameFinished(gameId);
+//                                                queryScopes.add(QueryScope.juResult);
+//                                            }
+//                                            for (MajiangPlayerValueObject majiangPlayerValueObject : panActionFrame2.getPanAfterAction().getPlayerList()) {
+//                                                wsNotifier.notifyToQuery(majiangPlayerValueObject.getId(), queryScopes);
+//                                            }
+//                                            logger.info("开始下一局解散," + "Time:" + System.currentTimeMillis() + ",playerId:" + playerId + ",gameId:" + gameId);
+//                                            return;
+//                                        }
+//                                    }
+//                                }
+//                            }
+
                             ReadyToNextPanResult readyToNextPanResult = null;
                             Map<String, String> tuoguanzhunbeiPlayers = gameCmdService.playLeaveGameHosting(playerId, gameId, true);//把托管玩家放入托管列表
                             try {

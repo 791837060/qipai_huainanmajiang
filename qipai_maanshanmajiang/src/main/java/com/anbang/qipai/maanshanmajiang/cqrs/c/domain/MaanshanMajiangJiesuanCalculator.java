@@ -420,7 +420,8 @@ public class MaanshanMajiangJiesuanCalculator {
             int[] ints = shunziArrList.get(i);
             for (int j = i + 1; j < shunziArrList.size(); j++) {
                 int[] ints2 = shunziArrList.get(j);
-                if ((ints[0] - 1 != 8 && ints[0] - 1 != 17 && ints[0] - 1 != 23) || (ints[2] + 1 != 9 && ints[2] + 1 != 18)) {
+                if ((ints[0] - 1 != 8 && ints[0] - 1 != 17 && ints[0] - 1 != 23 && ints[2] + 1 != 9 && ints[2] + 1 != 18) ||
+                        (ints2[0] - 1 != 8 && ints2[0] - 1 != 17 && ints2[0] - 1 != 23 && ints2[2] + 1 != 9 && ints2[2] + 1 != 18)) {
                     if (ints[0] - 1 == ints2[2] || ints[2] + 1 == ints2[0]) {
                         if (ints[3] == 0 && ints2[3] == 0) {
                             ints[3] = -1;

@@ -387,8 +387,7 @@ public class MajiangController {
 
     @RequestMapping(value = "/ready_to_next_pan")
     @ResponseBody
-    public CommonVO readytonextpan(String token, @RequestParam(required = false) String lianmengId,
-                                   @RequestParam(required = false) String gameId) {
+    public CommonVO readytonextpan(String token, @RequestParam(required = false) String lianmengId, @RequestParam(required = false) String gameId) {
         CommonVO vo = new CommonVO();
         Map data = new HashMap();
         vo.setData(data);
@@ -408,26 +407,9 @@ public class MajiangController {
         if (lianmengId != null) {
             MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
             PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, majiangGameDbo.getPanNo());
-//            Request req = httpClient.newRequest("http://localhost:92/dalianmeng/power/nowPowerForRemote");
             CommonRemoteVO resVo = qipaiDalianmengRemoteService.nowPowerForRemote(playerId, lianmengId);
-//            req.param("memberId", playerId);
-//            req.param("lianmengId", lianmengId);
-//            Map resData;
-//            CommonVO resVo;
-//            try {
-//                ContentResponse res = req.send();
-//                String resJson = new String(res.getContent());
-//                resVo = gson.fromJson(resJson, CommonVO.class);
-//                resData = (Map) resVo.getData();
-//            } catch (Exception e) {
-//                vo.setSuccess(false);
-//                vo.setMsg("SysException");
-//                return vo;
-//            }
             if (resVo.isSuccess()) {
-//                double powerbalance = ((Double) resData.get("powerbalance")).intValue();
-                Map powerdata = new HashMap();
-                powerdata = (Map) resVo.getData();
+                Map powerdata = (Map) resVo.getData();
                 double powerbalance = (Double) powerdata.get("powerbalance");
                 for (MaanshanMajiangPanPlayerResultDbo maanshanMajiangPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
                     if (maanshanMajiangPanPlayerResultDbo.getPlayerId().equals(playerId)) {
@@ -460,6 +442,46 @@ public class MajiangController {
                     }
                 }
             }
+//            if (playerIds != null) {
+//                for (String tuoguanPlayerId : playerIds) {
+//                    CommonRemoteVO commonRemoteVO = qipaiDalianmengRemoteService.nowPowerForRemote(tuoguanPlayerId, lianmengId);
+//                    if (commonRemoteVO.isSuccess()) {
+//                        Map powerdata = (Map) commonRemoteVO.getData();
+//                        double powerbalance = (Double) powerdata.get("powerbalance");
+//                        for (MaanshanMajiangPanPlayerResultDbo maanshanMajiangPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
+//                            if (maanshanMajiangPanPlayerResultDbo.getPlayerId().equals(playerId)) {
+//                                if (maanshanMajiangPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= majiangGameDbo.getPowerLimit()) {
+//                                    try {
+//                                        MajiangGameValueObject gameValueObject = gameCmdService.finishGameImmediately(gameId);
+//                                        majiangGameQueryService.finishGameImmediately(gameValueObject);
+//                                        gameMsgService.gameFinished(gameId);
+//                                        JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+//                                        MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
+//                                        maanshanMajiangResultMsgService.recordJuResult(juResult);
+//                                        List<String> queryScopes = new ArrayList<>();
+//                                        gameMsgService.gameFinished(gameId);
+//                                        queryScopes.add(QueryScope.juResult.name());
+//                                        for (String otherPlayerId : gameValueObject.allPlayerIds()) {
+//                                            if (!otherPlayerId.equals(playerId)) {
+//                                                wsNotifier.notifyToQuery(otherPlayerId, QueryScope.scopesForState(gameValueObject.getState(), gameValueObject.findPlayerState(otherPlayerId)));
+//                                            }
+//                                        }
+//                                        data.put("queryScopes", queryScopes);
+//                                        vo.setData(data);
+//                                        return vo;
+//                                    } catch (Throwable throwable) {
+//                                        throwable.printStackTrace();
+//                                        vo.setSuccess(false);
+//                                        vo.setMsg(throwable.getClass().getName());
+//                                        return vo;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+
             ReadyToNextPanResult readyToNextPanResult;
             try {
                 readyToNextPanResult = majiangPlayCmdService.readyToNextPan(playerId, playerIds);
@@ -480,9 +502,7 @@ public class MajiangController {
             // 通知其他人
             for (String otherPlayerId : readyToNextPanResult.getMajiangGame().allPlayerIds()) {
                 if (!otherPlayerId.equals(playerId)) {
-                    List<QueryScope> scopes = QueryScope.scopesForState(
-                            readyToNextPanResult.getMajiangGame().getState(),
-                            readyToNextPanResult.getMajiangGame().findPlayerState(otherPlayerId));
+                    List<QueryScope> scopes = QueryScope.scopesForState(readyToNextPanResult.getMajiangGame().getState(), readyToNextPanResult.getMajiangGame().findPlayerState(otherPlayerId));
                     scopes.remove(QueryScope.panResult);
                     wsNotifier.notifyToQuery(otherPlayerId, scopes);
                 }

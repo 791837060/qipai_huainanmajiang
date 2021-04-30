@@ -161,14 +161,15 @@ public class MaanshanMajiangHushu {
             return false;//10点起胡
         }
 
-        if (value >= 50 && currentPan.getMajiangPlayerIdMajiangPlayerMap().size() > 2) {
+        if (value >= 50 && currentPan.getMajiangPlayerIdMajiangPlayerMap().size() ==4) {
             if (currentPan.isDaoNewPan()) {
                 qingshuidana = true;
                 tiwaixunhuan += 50;
-            } else {
-                hunshuidana = true;
-                tiwaixunhuan += 20;
             }
+//            else {
+//                hunshuidana = true;
+//                tiwaixunhuan += 20;
+//            }
         }
 
         return true;

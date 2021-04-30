@@ -35,6 +35,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
     private int renshu;                  //人数
     private Double difen;                //底分
     private int powerLimit;              //淘汰分
+    private String lianmengId;           //联盟ID
     private OptionalPlay optionalPlay;   //玩法
     private Ju ju;
     private Map<String, Double> playeTotalScoreMap = new HashMap<>();
@@ -545,4 +546,11 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
         this.playerTiwaixunhuanScoreMap = playerTiwaixunhuanScoreMap;
     }
 
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
+    }
 }
