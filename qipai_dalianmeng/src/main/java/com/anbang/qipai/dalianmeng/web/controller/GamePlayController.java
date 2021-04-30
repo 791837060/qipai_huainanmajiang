@@ -226,6 +226,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
@@ -377,6 +378,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
@@ -548,6 +550,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
@@ -685,6 +688,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
@@ -842,6 +846,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
@@ -989,6 +994,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
@@ -1140,6 +1146,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
@@ -1288,6 +1295,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
@@ -1433,6 +1441,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
@@ -1578,6 +1587,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
@@ -1718,6 +1728,7 @@ public class GamePlayController {
 
         GameServer gameServer = gameTable.getServerGame().getServer();
         Request req = httpClient.newRequest(gameServer.getHttpUrl() + "/game/newgame");
+        req.param("lianmengId",lianmengId);
         req.param("playerId", memberId);
         req.param("panshu", fb.getPanshu());
         req.param("renshu", fb.getRenshu());
