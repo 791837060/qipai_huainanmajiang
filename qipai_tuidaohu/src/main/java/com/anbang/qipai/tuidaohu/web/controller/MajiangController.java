@@ -22,6 +22,8 @@ import com.anbang.qipai.tuidaohu.plan.bean.MemberGoldBalance;
 import com.anbang.qipai.tuidaohu.plan.bean.PlayerInfo;
 import com.anbang.qipai.tuidaohu.plan.service.MemberGoldBalanceService;
 import com.anbang.qipai.tuidaohu.plan.service.PlayerInfoService;
+import com.anbang.qipai.tuidaohu.remote.service.QipaiDalianmengRemoteService;
+import com.anbang.qipai.tuidaohu.remote.vo.CommonRemoteVO;
 import com.anbang.qipai.tuidaohu.utils.SpringUtil;
 import com.anbang.qipai.tuidaohu.web.vo.CommonVO;
 import com.anbang.qipai.tuidaohu.web.vo.JuResultVO;
@@ -84,6 +86,9 @@ public class MajiangController {
 
     @Autowired
     private GameCmdService gameCmdService;
+
+    @Autowired
+    private QipaiDalianmengRemoteService qipaiDalianmengRemoteService;
 
     @Autowired
     private HttpClient httpClient;
@@ -338,23 +343,10 @@ public class MajiangController {
         if (lianmengId != null) {
             MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
             PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, majiangGameDbo.getPanNo());
-            Request req = httpClient.newRequest("http://localhost:92/dalianmeng/power/nowPowerForRemote");
-            req.param("memberId", playerId);
-            req.param("lianmengId", lianmengId);
-            Map resData;
-            CommonVO resVo;
-            try {
-                ContentResponse res = req.send();
-                String resJson = new String(res.getContent());
-                resVo = gson.fromJson(resJson, CommonVO.class);
-                resData = (Map) resVo.getData();
-            } catch (Exception e) {
-                vo.setSuccess(false);
-                vo.setMsg("SysException");
-                return vo;
-            }
+            CommonRemoteVO resVo = qipaiDalianmengRemoteService.nowPowerForRemote(playerId, lianmengId);
             if (resVo.isSuccess()) {
-                double powerbalance = ((Double) resData.get("powerbalance")).intValue();
+                Map powerdata = (Map) resVo.getData();
+                double powerbalance = (Double) powerdata.get("powerbalance");
                 for (TuiDaoHuPanPlayerResultDbo tuiDaoHuPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
                     if (tuiDaoHuPanPlayerResultDbo.getPlayerId().equals(playerId)) {
                         if (tuiDaoHuPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= majiangGameDbo.getPowerLimit()) {
