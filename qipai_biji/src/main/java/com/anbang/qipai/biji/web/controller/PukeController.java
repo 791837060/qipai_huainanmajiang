@@ -418,12 +418,12 @@ public class PukeController {
                 Map powerdata = new HashMap();
                 powerdata = (Map) commonRemoteVO.getData();
                 double powerbalance = (Double) powerdata.get("powerbalance");
-                for (BijiPanPlayerResultDbo ruianMajiangPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
-                    if (ruianMajiangPanPlayerResultDbo.getPlayerId().equals(playerId)) {
-                        if (pukeGameDbo.getOptionalPlay().isJinyuanzi()) {
-                            powerbalance -= pukeGameDbo.getOptionalPlay().getYuanzifen();
-                        }
-                        if (ruianMajiangPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= pukeGameDbo.getPowerLimit()) {
+                for (BijiPanPlayerResultDbo bijiPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
+                    if (bijiPanPlayerResultDbo.getPlayerId().equals(playerId)) {
+//                        if (pukeGameDbo.getOptionalPlay().isJinyuanzi()) {
+//                            powerbalance -= pukeGameDbo.getOptionalPlay().getYuanzifen();
+//                        }
+                        if (bijiPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= pukeGameDbo.getPowerLimit()) {
                             try {
                                 PukeGameValueObject gameValueObject = gameCmdService.finishGameImmediately(gameId);
                                 pukeGameQueryService.finishGameImmediately(gameValueObject);

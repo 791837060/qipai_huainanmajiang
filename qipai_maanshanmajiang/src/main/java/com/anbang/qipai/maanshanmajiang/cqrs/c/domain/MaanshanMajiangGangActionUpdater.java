@@ -70,9 +70,9 @@ public class MaanshanMajiangGangActionUpdater implements MajiangPlayerGangAction
                         }
                     }
 
-                    XushupaiCategory quemen = player.getQuemen();
+                    XushupaiCategory quemen = xiajia.getQuemen();
                     boolean hasQuemen = false;
-                    for (MajiangPai majiangPai : player.getFangruShoupaiList()) {
+                    for (MajiangPai majiangPai : xiajia.getFangruShoupaiList()) {
                         if (quemen.equals(XushupaiCategory.getCategoryforXushupai(majiangPai))) {
                             hasQuemen = true;
                         }

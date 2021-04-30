@@ -47,34 +47,34 @@ public class MaanshanMajiangFaPaiStrategyTest implements FaPaiStrategy {
         MajiangPosition zhuangPlayerMenFeng = currentPan.findMenFengForZhuang();    //庄家门风
 
         MajiangPai[] pai = {
-                MajiangPai.dongfeng,
-                MajiangPai.dongfeng,
-                MajiangPai.dongfeng,
-                MajiangPai.nanfeng,
-                MajiangPai.nanfeng,
-                MajiangPai.nanfeng,
-                MajiangPai.xifeng,
-                MajiangPai.xifeng,
-                MajiangPai.xifeng,
-                MajiangPai.beifeng,
-                MajiangPai.beifeng,
-                MajiangPai.beifeng,
-                MajiangPai.hongzhong,
+                MajiangPai.yiwan,
+                MajiangPai.yiwan,
+                MajiangPai.yiwan,
+                MajiangPai.sitong,
+                MajiangPai.sitong,
+                MajiangPai.sitong,
+                MajiangPai.wutong,
+                MajiangPai.liutong,
+                MajiangPai.batong,
+                MajiangPai.batong,
+                MajiangPai.qitong,
+                MajiangPai.jiutong,
+                MajiangPai.jiutong,
         };
         MajiangPai[] pai2 = {
-                MajiangPai.yitong,
-                MajiangPai.yitong,
-                MajiangPai.yitong,
-                MajiangPai.santong,
-                MajiangPai.santong,
-                MajiangPai.santong,
-                MajiangPai.wutong,
-                MajiangPai.wutong,
-                MajiangPai.wutong,
-                MajiangPai.sitiao,
-                MajiangPai.wutiao,
-                MajiangPai.liutiao,
-                MajiangPai.qitiao,
+                MajiangPai.yiwan,
+                MajiangPai.batong,
+                MajiangPai.qitong,
+                MajiangPai.qitong,
+                MajiangPai.qitong,
+                MajiangPai.yitiao,
+                MajiangPai.yitiao,
+                MajiangPai.yitiao,
+                MajiangPai.ertiao,
+                MajiangPai.ertiao,
+                MajiangPai.ertiao,
+                MajiangPai.santiao,
+                MajiangPai.santiao,
         };
         MajiangPai[] pai3 = {
                 MajiangPai.yitong,
@@ -98,9 +98,9 @@ public class MaanshanMajiangFaPaiStrategyTest implements FaPaiStrategy {
                 if (player != null) { //门风上有玩家才会发牌
                     if (player.getId().equals("237129") || player.getId().equals("1")) {
                         player.addShoupai(pai[i]);
-                    } else if (player.getId().equals("960973") || player.getId().equals("22")) {
+                    } else if (player.getId().equals("960973") || player.getId().equals("830559")) {
                         player.addShoupai(pai2[i]);
-                    } else if (player.getId().equals("830559") || player.getId().equals("33")) {
+                    } else if (player.getId().equals("3") || player.getId().equals("33")) {
                         player.addShoupai(pai3[i]);
                     } else {
                         faPai(avaliablePaiList, player);
