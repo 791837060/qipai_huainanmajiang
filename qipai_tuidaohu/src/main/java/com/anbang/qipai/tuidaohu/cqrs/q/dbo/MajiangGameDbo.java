@@ -20,6 +20,7 @@ public class MajiangGameDbo {
     private Set<String> xipaiPlayerIds;
     private long createTime;
     private int powerLimit;
+    private String lianmengId;
 
     public MajiangGameDbo() {
     }
@@ -35,6 +36,7 @@ public class MajiangGameDbo {
         state = majiangGame.getState();
         xipaiPlayerIds = new HashSet<>(majiangGame.getXipaiPlayerIds());
         players = new ArrayList<>();
+        lianmengId = majiangGame.getLianmengId();
         Map<String, Double> playeTotalScoreMap = majiangGame.getPlayeTotalScoreMap();
         for (GamePlayerValueObject playerValueObject : majiangGame.getPlayers()) {
             String playerId = playerValueObject.getId();
@@ -152,5 +154,13 @@ public class MajiangGameDbo {
 
     public void setPowerLimit(int powerLimit) {
         this.powerLimit = powerLimit;
+    }
+
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
     }
 }

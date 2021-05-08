@@ -1,12 +1,12 @@
 package com.anbang.qipai.tuidaohu.cqrs.c.domain;
 
+import com.dml.majiang.ju.result.JuResult;
+import com.dml.mpgame.game.extend.fpmpv.FixedPlayersMultipanAndVotetofinishGameValueObject;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.dml.majiang.ju.result.JuResult;
-import com.dml.mpgame.game.extend.fpmpv.FixedPlayersMultipanAndVotetofinishGameValueObject;
 
 public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishGameValueObject {
     /**
@@ -29,6 +29,7 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
     private JuResult juResult;
     private Double difen;
     private int powerLimit;
+    private String lianmengId;
 
     public MajiangGameValueObject(MajiangGame majiangGame) {
         super(majiangGame);
@@ -42,6 +43,7 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
         if (majiangGame.getJu() != null) {
             juResult = majiangGame.getJu().getJuResult();
         }
+        lianmengId = majiangGame.getLianmengId();
     }
 
     public int getPanshu() {
@@ -108,5 +110,13 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
 
     public void setPowerLimit(int powerLimit) {
         this.powerLimit = powerLimit;
+    }
+
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
     }
 }

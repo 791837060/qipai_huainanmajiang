@@ -21,6 +21,7 @@ public class PukeGameDbo {
     private List<PukeGamePlayerDbo> players;
     private long createTime;
     private int powerLimit;
+    private String lianmengId;
 
     public PukeGameDbo() {
 
@@ -62,6 +63,7 @@ public class PukeGameDbo {
         }
         createTime = System.currentTimeMillis();
         powerLimit = pukeGame.getPowerLimit();
+        lianmengId = pukeGame.getLianmengId();
     }
 
     public PukeGamePlayerDbo findPlayer(String playerId) {
@@ -143,5 +145,13 @@ public class PukeGameDbo {
 
     public void setPowerLimit(int powerLimit) {
         this.powerLimit = powerLimit;
+    }
+
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
     }
 }

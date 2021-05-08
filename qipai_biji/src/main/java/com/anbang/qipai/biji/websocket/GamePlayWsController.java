@@ -8,7 +8,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.anbang.qipai.biji.cqrs.c.domain.Automatic;
+import com.anbang.qipai.biji.cqrs.q.dbo.PukeGamePlayerDbo;
 import com.anbang.qipai.biji.utils.SpringUtil;
+import com.dml.mpgame.game.WaitingStart;
+import com.dml.mpgame.game.player.PlayerReadyToStart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -107,7 +110,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
         if (pukeGameValueObject != null) {
             pukeGameQueryService.leaveGame(pukeGameValueObject);
             gameMsgService.gamePlayerLeave(pukeGameValueObject, closedPlayerId);
-
+            notReadyQuit(closedPlayerId,  pukeGameValueObject);
             String gameId = pukeGameValueObject.getId();
             if (pukeGameValueObject.getState().name().equals(FinishedByVote.name)
                     || pukeGameValueObject.getState().name().equals(Canceled.name)
@@ -253,6 +256,45 @@ public class GamePlayWsController extends TextWebSocketHandler {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+    private void notReadyQuit(String playerId, PukeGameValueObject pukeGameValueObject) {
+        if (pukeGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
+            executorService.submit(()->{
+                try {
+                    int sleepTime = pukeGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
+                    Thread.sleep((sleepTime + 1) * 1000L);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                PukeGameDbo pukeGameDbo = pukeGameQueryService.findPukeGameDboById(pukeGameValueObject.getId());
+                for (PukeGamePlayerDbo player : pukeGameDbo.getPlayers()) {
+                    if (player.getPlayerId().equals(playerId)) {
+                        if (pukeGameDbo.getState().name().equals(WaitingStart.name)) {
+                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
+                                PukeGameValueObject pukeGameValueObject1 = null;
+                                try {
+                                    pukeGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), pukeGameValueObject.getId());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                pukeGameQueryService.quit(pukeGameValueObject1);
+                                for (String otherPlayerId : pukeGameValueObject1.allPlayerIds()) {
+                                    List<QueryScope> scopes = QueryScope.scopesForState(pukeGameValueObject1.getState(),
+                                            pukeGameValueObject1.findPlayerState(otherPlayerId));
+                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
+                                }
+                                if (pukeGameValueObject1.getPlayers().size() == 0) {
+                                    gameMsgService.gameFinished(pukeGameValueObject.getId());
+                                }
+                                gameMsgService.gamePlayerLeave(pukeGameValueObject1, playerId);
+                                wsNotifier.sendMessageToQuit(playerId);
+                            }
+                        }
+                    }
+                }
+            });
+
         }
     }
 }

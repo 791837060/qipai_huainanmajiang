@@ -8,9 +8,8 @@ import java.util.Set;
 import com.anbang.qipai.tuidaohu.cqrs.c.domain.listener.TuiDaoHuPengGangActionStatisticsListener;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.ju.finish.FixedPanNumbersJuFinishiDeterminer;
-import com.dml.majiang.ju.firstpan.ClassicStartFirstPanProcess;
+
 import com.dml.majiang.ju.firstpan.HasGuipaiStartFirstPanProcess;
-import com.dml.majiang.ju.nextpan.ClassicStartNextPanProcess;
 import com.dml.majiang.ju.nextpan.HasGuipaiStartNextPanProcess;
 import com.dml.majiang.pan.frame.PanActionFrame;
 import com.dml.majiang.pan.publicwaitingplayer.WaitDaPlayerPanPublicWaitingPlayerDeterminer;
@@ -44,6 +43,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
     private Ju ju;
     private Map<String, Double> playeTotalScoreMap = new HashMap<>();
     private Set<String> xipaiPlayerIds = new HashSet<>();
+    private String lianmengId;
 
     /**
      * 洗牌
@@ -308,5 +308,13 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 
     public void setPowerLimit(int powerLimit) {
         this.powerLimit = powerLimit;
+    }
+
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
     }
 }

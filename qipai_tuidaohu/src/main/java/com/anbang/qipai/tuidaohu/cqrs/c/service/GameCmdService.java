@@ -1,26 +1,23 @@
 package com.anbang.qipai.tuidaohu.cqrs.c.service;
 
+import com.anbang.qipai.tuidaohu.cqrs.c.domain.MajiangGameValueObject;
+import com.anbang.qipai.tuidaohu.cqrs.c.domain.OptionalPlay;
+import com.anbang.qipai.tuidaohu.cqrs.c.domain.ReadyForGameResult;
+import com.dml.majiang.pan.frame.PanActionFrame;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.anbang.qipai.tuidaohu.cqrs.c.domain.MajiangGameValueObject;
-import com.anbang.qipai.tuidaohu.cqrs.c.domain.OptionalPlay;
-import com.anbang.qipai.tuidaohu.cqrs.c.domain.ReadyForGameResult;
-import com.anbang.qipai.tuidaohu.cqrs.q.service.MajiangGameQueryService;
-import com.anbang.qipai.tuidaohu.msg.service.TuiDaoHuGameMsgService;
-import com.anbang.qipai.tuidaohu.websocket.GamePlayWsNotifier;
-import com.dml.majiang.pan.frame.PanActionFrame;
-
 public interface GameCmdService {
 
-    MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay);
+    MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay, String lianmengId, Integer powerLimit);
 
-    MajiangGameValueObject newMajiangGameLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit,
-                                                      OptionalPlay optionalPlay);
-
-    MajiangGameValueObject newMajiangGamePlayerLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit, OptionalPlay optionalPlay,
-                                                            MajiangGameQueryService gameQueryService, TuiDaoHuGameMsgService gameMsgService, GamePlayWsNotifier wsNotifier);
+//    MajiangGameValueObject newMajiangGameLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit,
+//                                                      OptionalPlay optionalPlay);
+//
+//    MajiangGameValueObject newMajiangGamePlayerLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit, OptionalPlay optionalPlay,
+//                                                            MajiangGameQueryService gameQueryService, TuiDaoHuGameMsgService gameMsgService, GamePlayWsNotifier wsNotifier);
 
     MajiangGameValueObject joinGame(String playerId, String gameId) throws Exception;
 

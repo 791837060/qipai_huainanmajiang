@@ -1,12 +1,8 @@
 package com.anbang.qipai.biji.cqrs.c.service;
 
-import com.anbang.qipai.biji.cqrs.c.domain.BianXingWanFa;
 import com.anbang.qipai.biji.cqrs.c.domain.OptionalPlay;
 import com.anbang.qipai.biji.cqrs.c.domain.PukeGameValueObject;
 import com.anbang.qipai.biji.cqrs.c.domain.result.ReadyForGameResult;
-import com.anbang.qipai.biji.cqrs.q.service.PukeGameQueryService;
-import com.anbang.qipai.biji.msg.service.BijiGameMsgService;
-import com.anbang.qipai.biji.websocket.GamePlayWsNotifier;
 import com.dml.shisanshui.pan.PanActionFrame;
 
 import java.util.List;
@@ -15,7 +11,7 @@ import java.util.Set;
 
 public interface GameCmdService {
 
-    PukeGameValueObject newPukeGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay, Integer powerLimit);
+    PukeGameValueObject newPukeGame(String gameId, String lianmengId, String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay, Integer powerLimit);
 
 //    PukeGameValueObject newPukeGameLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay, Integer powerLimit);
 

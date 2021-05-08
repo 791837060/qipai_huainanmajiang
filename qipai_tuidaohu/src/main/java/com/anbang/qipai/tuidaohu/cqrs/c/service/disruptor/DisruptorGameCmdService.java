@@ -25,32 +25,32 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
     private GameCmdServiceImpl gameCmdServiceImpl;
 
     @Override
-    public MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay) {
-        CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "newMajiangGame", gameId, playerId, panshu, renshu, difen, optionalPlay);
-        DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () ->
-                gameCmdServiceImpl.newMajiangGame(cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter()));
+    public MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay, String lianmengId, Integer powerLimit) {
+        CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "newMajiangGame", gameId, playerId, panshu, renshu, difen, optionalPlay,lianmengId,powerLimit);
+        DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, ()->
+                gameCmdServiceImpl.newMajiangGame(cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter()));
         try {
             return result.getResult();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-
-    @Override
-    public MajiangGameValueObject newMajiangGameLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit, OptionalPlay optionalPlay) {
-        CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "newMajiangGameLeaveAndQuit", gameId, playerId, panshu, renshu, difen, powerLimit, optionalPlay);
-        DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd,
-                () -> {
-                    MajiangGameValueObject majiangGameValueObject = gameCmdServiceImpl.newMajiangGameLeaveAndQuit(cmd.getParameter(), cmd.getParameter(),
-                            cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
-                    return majiangGameValueObject;
-                });
-        try {
-            return result.getResult();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//
+//    @Override
+//    public MajiangGameValueObject newMajiangGameLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit, OptionalPlay optionalPlay) {
+//        CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "newMajiangGameLeaveAndQuit", gameId, playerId, panshu, renshu, difen, powerLimit, optionalPlay);
+//        DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd,
+//                () -> {
+//                    MajiangGameValueObject majiangGameValueObject = gameCmdServiceImpl.newMajiangGameLeaveAndQuit(cmd.getParameter(), cmd.getParameter(),
+//                            cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
+//                    return majiangGameValueObject;
+//                });
+//        try {
+//            return result.getResult();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     @Override
     public MajiangGameValueObject joinGame(String playerId, String gameId) throws Exception {
@@ -308,25 +308,25 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
             throw new RuntimeException(e);
         }
     }
-
-    @Override
-    public MajiangGameValueObject newMajiangGamePlayerLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit, OptionalPlay optionalPlay,
-                                                                   MajiangGameQueryService gameQueryService, TuiDaoHuGameMsgService gameMsgService, GamePlayWsNotifier wsNotifier) {
-        CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "newMajiangGamePlayerLeaveAndQuit",
-                gameId, playerId, panshu, renshu, difen, powerLimit, optionalPlay, gameQueryService, gameMsgService, wsNotifier);
-        DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd,
-                () -> {
-                    MajiangGameValueObject majiangGameValueObject = gameCmdServiceImpl.newMajiangGamePlayerLeaveAndQuit(
-                            cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(),
-                            cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
-                    return majiangGameValueObject;
-                });
-        try {
-            return result.getResult();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//
+//    @Override
+//    public MajiangGameValueObject newMajiangGamePlayerLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, Integer powerLimit, OptionalPlay optionalPlay,
+//                                                                   MajiangGameQueryService gameQueryService, TuiDaoHuGameMsgService gameMsgService, GamePlayWsNotifier wsNotifier) {
+//        CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "newMajiangGamePlayerLeaveAndQuit",
+//                gameId, playerId, panshu, renshu, difen, powerLimit, optionalPlay, gameQueryService, gameMsgService, wsNotifier);
+//        DeferredResult<MajiangGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd,
+//                () -> {
+//                    MajiangGameValueObject majiangGameValueObject = gameCmdServiceImpl.newMajiangGamePlayerLeaveAndQuit(
+//                            cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(),
+//                            cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter());
+//                    return majiangGameValueObject;
+//                });
+//        try {
+//            return result.getResult();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     @Override
     public Set<String> listGameId() {

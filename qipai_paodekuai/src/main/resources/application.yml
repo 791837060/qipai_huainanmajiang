@@ -1,7 +1,6 @@
 spring:
   data:
     mongodb:
-#      uri: mongodb://localhost:27017/qipai_paodekuai
       database: qipai_paodekuai
       host: dds-bp1f74084c1cd354118530.mongodb.rds.aliyuncs.com
       port: 3717

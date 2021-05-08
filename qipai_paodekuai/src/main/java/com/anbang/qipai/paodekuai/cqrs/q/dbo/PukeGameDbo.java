@@ -21,6 +21,7 @@ public class PukeGameDbo {
     private long createTime;
     private double difen;
     private int powerLimit;
+    private String lianmengId;
 
     public PukeGameDbo() {
     }
@@ -35,6 +36,7 @@ public class PukeGameDbo {
         panNo = pukeGame.getPanNo();
         powerLimit = pukeGame.getPowerLimit();
         players = new ArrayList<>();
+        lianmengId = pukeGame.getLianmengId();
         Map<String, Double> playerTotalScoreMap = pukeGame.getPlayeTotalScoreMap();
         for (GamePlayerValueObject playerValueObject : pukeGame.getPlayers()) {
             String playerId = playerValueObject.getId();
@@ -147,5 +149,13 @@ public class PukeGameDbo {
 
     public void setPowerLimit(int powerLimit) {
         this.powerLimit = powerLimit;
+    }
+
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
     }
 }

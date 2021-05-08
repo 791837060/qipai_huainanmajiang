@@ -26,9 +26,10 @@ public class DisruptorGameCmdService extends DisruptorCmdServiceBase implements 
     private GameCmdServiceImpl gameCmdServiceImpl;
 
     @Override
-    public PukeGameValueObject newPukeGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay, Integer powerLimit) {
-        CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "newPukeGame", gameId, playerId, panshu, renshu, difen, optionalPlay, powerLimit);
-        DeferredResult<PukeGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> gameCmdServiceImpl.newPukeGame(cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter()));
+    public PukeGameValueObject newPukeGame(String gameId, String lianmengId,String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay, Integer powerLimit) {
+        CommonCommand cmd = new CommonCommand(GameCmdServiceImpl.class.getName(), "newPukeGame", gameId,lianmengId, playerId, panshu, renshu, difen, optionalPlay, powerLimit);
+        DeferredResult<PukeGameValueObject> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () -> gameCmdServiceImpl.
+                newPukeGame(cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(), cmd.getParameter(),cmd.getParameter(), cmd.getParameter(), cmd.getParameter()));
         try {
             return result.getResult();
         } catch (Exception e) {

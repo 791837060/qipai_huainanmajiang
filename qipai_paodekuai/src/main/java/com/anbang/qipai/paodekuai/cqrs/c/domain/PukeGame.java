@@ -46,7 +46,7 @@ public class PukeGame extends FixedPlayersMultipanAndVotetofinishGame {
     private Map<String, Double> playerTotalScoreMap = new HashMap<>();
     private double difen;
     private int powerLimit;
-
+    private String lianmengId;
     private void createJuAndStartFirstPan(long currentTime) throws Exception {
         ju = new Ju();
         ju.setOptionalPlay(optionalPlay);
@@ -382,5 +382,21 @@ public class PukeGame extends FixedPlayersMultipanAndVotetofinishGame {
 
     public void setPowerLimit(int powerLimit) {
         this.powerLimit = powerLimit;
+    }
+
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
+    }
+
+    public Automatic getAutomatic() {
+        return automatic;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 }

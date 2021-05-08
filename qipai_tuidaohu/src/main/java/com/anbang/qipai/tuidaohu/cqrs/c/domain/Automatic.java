@@ -1,18 +1,17 @@
 package com.anbang.qipai.tuidaohu.cqrs.c.domain;
 
-import com.anbang.qipai.tuidaohu.cqrs.q.dbo.JuResultDbo;
-import com.anbang.qipai.tuidaohu.cqrs.q.dbo.MajiangGameDbo;
-import com.anbang.qipai.tuidaohu.cqrs.q.dbo.MajiangGamePlayerDbo;
-import com.anbang.qipai.tuidaohu.cqrs.q.dbo.PanResultDbo;
 import com.anbang.qipai.tuidaohu.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.tuidaohu.cqrs.c.service.MajiangPlayCmdService;
 import com.anbang.qipai.tuidaohu.cqrs.c.service.impl.CmdServiceBase;
+import com.anbang.qipai.tuidaohu.cqrs.q.dbo.*;
 import com.anbang.qipai.tuidaohu.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.tuidaohu.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.tuidaohu.msg.msjobj.MajiangHistoricalJuResult;
 import com.anbang.qipai.tuidaohu.msg.msjobj.MajiangHistoricalPanResult;
 import com.anbang.qipai.tuidaohu.msg.service.TuiDaoHuGameMsgService;
 import com.anbang.qipai.tuidaohu.msg.service.TuiDaoHuResultMsgService;
+import com.anbang.qipai.tuidaohu.remote.service.QipaiDalianmengRemoteService;
+import com.anbang.qipai.tuidaohu.remote.vo.CommonRemoteVO;
 import com.anbang.qipai.tuidaohu.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.tuidaohu.websocket.QueryScope;
 import com.dml.majiang.pan.frame.PanActionFrame;
@@ -29,7 +28,6 @@ import com.dml.mpgame.game.extend.multipan.WaitingNextPan;
 import com.dml.mpgame.game.extend.vote.FinishedByTuoguan;
 import com.dml.mpgame.game.extend.vote.VoteNotPassWhenPlaying;
 import com.dml.mpgame.game.extend.vote.VotingWhenPlaying;
-import com.dml.mpgame.game.player.GamePlayerOnlineState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +69,9 @@ public class Automatic extends CmdServiceBase {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Set<String> tuoguanPlayerIdSet = new HashSet<>();
+
+    @Autowired
+    private QipaiDalianmengRemoteService qipaiDalianmengRemoteService;
 
     /**
      * 自动出牌
@@ -229,8 +230,47 @@ public class Automatic extends CmdServiceBase {
                             + ",playerAction:" + playerAction + ",playerDeposit:" + playerDeposit + ",isPlayerOnLine:" + playerOnLine);
                     if (!playerAction && !playerDeposit && !playerOnLine) {   //没有出过牌&&没有托管&&没有打到下一盘
                         MajiangGameDbo majiangGameDbo2 = majiangGameQueryService.findMajiangGameDboById(gameId);
+                        PanActionFrame panActionFrame2 = majiangPlayQueryService.findAndFilterCurrentPanValueObjectForPlayer(gameId);
+                        if (majiangGameDbo2.getState().name().equals(WaitingNextPan.name)) {
+                            //游戏没有开始 托管玩家自动准备
+                            //如果托管玩家能量低于淘汰分直接结束游戏
 
-                        if (majiangGameDbo2.getState().name().equals(WaitingNextPan.name)) {  //游戏没有开始 托管玩家自动准备
+                            String lianmengId = majiangGameDbo2.getLianmengId();
+                            if (lianmengId != null) {
+                                CommonRemoteVO commonRemoteVO = qipaiDalianmengRemoteService.nowPowerForRemote(playerId, lianmengId);
+                                if (commonRemoteVO.isSuccess()) {
+                                    Map powerdata = (Map) commonRemoteVO.getData();
+                                    double powerbalance = (Double) powerdata.get("powerbalance");
+                                    PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, majiangGameDbo.getPanNo());
+                                    for (TuiDaoHuPanPlayerResultDbo tuiDaoHuPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
+                                        if (tuiDaoHuPanPlayerResultDbo.getPlayerId().equals(playerId)) {
+                                            if (tuiDaoHuPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= majiangGameDbo.getPowerLimit()) {
+                                                MajiangGameValueObject gameValueObject = null;
+                                                try {
+                                                    gameValueObject = gameCmdService.finishGameImmediately(gameId);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                                List<QueryScope> queryScopes = new ArrayList<>();
+                                                if (gameValueObject != null) {
+                                                    majiangGameQueryService.finishGameImmediately(gameValueObject, null);
+                                                    gameMsgService.gameFinished(gameId);
+                                                    JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+                                                    MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
+                                                    tuidaohuResultMsgService.recordJuResult(juResult);
+                                                    gameMsgService.gameFinished(gameId);
+                                                    queryScopes.add(QueryScope.juResult);
+                                                }
+                                                for (MajiangPlayerValueObject majiangPlayerValueObject : panActionFrame2.getPanAfterAction().getPlayerList()) {
+                                                    wsNotifier.notifyToQuery(majiangPlayerValueObject.getId(), queryScopes);
+                                                }
+                                                logger.info("开始下一局解散," + "Time:" + System.currentTimeMillis() + ",playerId:" + playerId + ",gameId:" + gameId);
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             ReadyToNextPanResult readyToNextPanResult = null;
                             Map<String, String> tuoguanzhunbeiPlayers = gameCmdService.playLeaveGameHosting(playerId, gameId, true);//把托管玩家放入托管列表
                             try {
@@ -246,7 +286,6 @@ public class Automatic extends CmdServiceBase {
                                 }
                             }
                             queryScopes.add(QueryScope.gameInfo);
-                            PanActionFrame panActionFrame2 = majiangPlayQueryService.findAndFilterCurrentPanValueObjectForPlayer(gameId);
                             for (MajiangPlayerValueObject majiangPlayerValueObject : panActionFrame2.getPanAfterAction().getPlayerList()) {
                                 wsNotifier.notifyToQuery(majiangPlayerValueObject.getId(), queryScopes);
                             }

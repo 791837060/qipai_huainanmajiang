@@ -1,6 +1,8 @@
 package com.anbang.qipai.biji.cqrs.c.service.impl;
 
-import com.anbang.qipai.biji.cqrs.c.domain.*;
+import com.anbang.qipai.biji.cqrs.c.domain.OptionalPlay;
+import com.anbang.qipai.biji.cqrs.c.domain.PukeGame;
+import com.anbang.qipai.biji.cqrs.c.domain.PukeGameValueObject;
 import com.anbang.qipai.biji.cqrs.c.domain.result.ReadyForGameResult;
 import com.anbang.qipai.biji.cqrs.c.service.GameCmdService;
 import com.dml.mpgame.game.Finished;
@@ -10,7 +12,8 @@ import com.dml.mpgame.game.WaitingStart;
 import com.dml.mpgame.game.extend.fpmpv.back.OnlineGameBackStrategy;
 import com.dml.mpgame.game.extend.vote.*;
 import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
-import com.dml.mpgame.game.leave.*;
+import com.dml.mpgame.game.leave.OfflineAndNotReadyGameLeaveStrategy;
+import com.dml.mpgame.game.leave.OfflineGameLeaveStrategy;
 import com.dml.mpgame.game.player.GamePlayer;
 import com.dml.mpgame.game.player.PlayerFinished;
 import com.dml.mpgame.game.ready.FixedNumberOfPlayersGameReadyStrategy;
@@ -31,7 +34,7 @@ import java.util.Set;
 public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService {
 
     @Override
-    public PukeGameValueObject newPukeGame(String gameId, String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay, Integer powerLimit) {
+    public PukeGameValueObject newPukeGame(String gameId, String lianmengId, String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay, Integer powerLimit) {
         GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
         PukeGame newGame = new PukeGame();
         newGame.setPanshu(panshu);
@@ -40,6 +43,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         newGame.setDifen(difen);
         newGame.setPowerLimit(powerLimit);
         newGame.setOptionalPlay(optionalPlay);
+        newGame.setLianmengId(lianmengId);
         newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
         newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
         newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
@@ -48,7 +52,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         newGame.setLeaveByHangupStrategyAfterStart(new OfflineGameLeaveStrategy());
         newGame.setLeaveByHangupStrategyBeforeStart(new OfflineAndNotReadyGameLeaveStrategy());
         newGame.setLeaveByPlayerStrategyAfterStart(new OfflineGameLeaveStrategy());
-        newGame.setLeaveByPlayerStrategyBeforeStart(new OfflineGameLeaveStrategy());
+        newGame.setLeaveByPlayerStrategyBeforeStart(new OfflineAndNotReadyGameLeaveStrategy());
         newGame.setBackStrategy(new OnlineGameBackStrategy());
         newGame.create(gameId, playerId);
         newGame.updatePlayerPosition(playerId);
@@ -329,7 +333,9 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         } else {
             gameID = gameId;
         }
-        if (gameID == null) return null;
+        if (gameID == null) {
+            return null;
+        }
         PukeGame pukeGame = null;
         try {
             pukeGame = (PukeGame) gameServer.findGame(gameID);

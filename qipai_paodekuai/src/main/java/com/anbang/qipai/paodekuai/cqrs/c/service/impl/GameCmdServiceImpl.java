@@ -11,7 +11,8 @@ import com.dml.mpgame.game.WaitingStart;
 import com.dml.mpgame.game.extend.fpmpv.back.OnlineGameBackStrategy;
 import com.dml.mpgame.game.extend.vote.*;
 import com.dml.mpgame.game.join.FixedNumberOfPlayersGameJoinStrategy;
-import com.dml.mpgame.game.leave.*;
+import com.dml.mpgame.game.leave.OfflineAndNotReadyGameLeaveStrategy;
+import com.dml.mpgame.game.leave.OfflineGameLeaveStrategy;
 import com.dml.mpgame.game.player.GamePlayer;
 import com.dml.mpgame.game.player.PlayerFinished;
 import com.dml.mpgame.game.ready.FixedNumberOfPlayersGameReadyStrategy;
@@ -33,7 +34,7 @@ import java.util.Set;
 public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService {
 
     @Override
-    public PukeGameValueObject newPukeGame(String gameId, String playerId, Integer panshu, Integer renshu, OptionalPlay optionalPlay, Double difen, Integer powerLimit) {
+    public PukeGameValueObject newPukeGame(String gameId, String playerId, Integer panshu, Integer renshu, OptionalPlay optionalPlay, Double difen, Integer powerLimit, String lianmengId) {
         GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
         PukeGame newGame = new PukeGame();
         newGame.setDifen(difen);
@@ -42,6 +43,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         newGame.setFixedPlayerCount(renshu);
         newGame.setPowerLimit(powerLimit);
         newGame.setOptionalPlay(optionalPlay);
+        newGame.setLianmengId(lianmengId);
         newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
         newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
         newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
@@ -50,7 +52,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         newGame.setLeaveByHangupStrategyAfterStart(new OfflineGameLeaveStrategy());
         newGame.setLeaveByHangupStrategyBeforeStart(new OfflineAndNotReadyGameLeaveStrategy());
         newGame.setLeaveByPlayerStrategyAfterStart(new OfflineGameLeaveStrategy());
-        newGame.setLeaveByPlayerStrategyBeforeStart(new OfflineGameLeaveStrategy());
+        newGame.setLeaveByPlayerStrategyBeforeStart(new OfflineAndNotReadyGameLeaveStrategy());
         newGame.setBackStrategy(new OnlineGameBackStrategy());
         newGame.create(gameId, playerId);
         gameServer.playerCreateGame(newGame, playerId);
@@ -180,7 +182,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         if (pukeGame.getState().name().equals(WaitingStart.name)) {
             return new PukeGameValueObject(pukeGame);
         } else {
-            if (pukeGame.getOptionalPlay().isBanJiesan()){
+            if (pukeGame.getOptionalPlay().isBanJiesan()) {
                 return new PukeGameValueObject(pukeGame);
             }
             pukeGame.launchVoteToFinish(playerId, new MostPlayersWinVoteCalculator(), currentTime, 99000);
@@ -194,22 +196,22 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
     }
 
     @Override
-    public PukeGameValueObject quit(String playerId, Long currentTime,String gameId) throws Exception {
+    public PukeGameValueObject quit(String playerId, Long currentTime, String gameId) throws Exception {
         GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-        if (gameServer.getPlayerIdGameIdMap().get(playerId)!=null) {
+        if (gameServer.getPlayerIdGameIdMap().get(playerId) != null) {
             PukeGame pukeGame = (PukeGame) gameServer.findGamePlayerPlaying(playerId);
             if (pukeGame.getState().name().equals(WaitingStart.name)) {
                 gameServer.quit(playerId);
-                if (pukeGame.getIdPlayerMap().size()==0){
+                if (pukeGame.getIdPlayerMap().size() == 0) {
                     gameServer.finishGame(pukeGame.getId());
                 }
             }
             return new PukeGameValueObject(pukeGame);
-        }else {
+        } else {
             PukeGame pukeGame = (PukeGame) gameServer.findGame(gameId);
             pukeGame.quit(playerId);
             if (pukeGame.getState().name().equals(WaitingStart.name)) {
-                if (pukeGame.getIdPlayerMap().size()==0){
+                if (pukeGame.getIdPlayerMap().size() == 0) {
                     gameServer.finishGame(pukeGame.getId());
                 }
             }
@@ -313,7 +315,6 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         WatcherMap watcherMap = singletonEntityRepository.getEntity(WatcherMap.class);
         watcherMap.recycleWatch(gameId);
     }
-
 
 
     @Override

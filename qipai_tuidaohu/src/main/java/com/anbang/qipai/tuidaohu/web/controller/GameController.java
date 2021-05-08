@@ -22,13 +22,11 @@ import com.anbang.qipai.tuidaohu.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.tuidaohu.websocket.QueryScope;
 import com.anbang.qipai.tuidaohu.websocket.WatchQueryScope;
 import com.dml.majiang.pan.frame.PanActionFrame;
-import com.dml.majiang.pan.frame.PanValueObject;
 import com.dml.majiang.player.action.MajiangPlayerAction;
 import com.dml.majiang.player.action.chi.MajiangChiAction;
 import com.dml.majiang.player.action.gang.MajiangGangAction;
 import com.dml.majiang.player.action.guo.MajiangGuoAction;
 import com.dml.majiang.player.action.peng.MajiangPengAction;
-import com.dml.majiang.player.valueobj.MajiangPlayerValueObject;
 import com.dml.mpgame.game.*;
 import com.dml.mpgame.game.extend.fpmpv.VoteNotPassWhenWaitingNextPan;
 import com.dml.mpgame.game.extend.vote.FinishedByVote;
@@ -103,12 +101,12 @@ public class GameController {
      */
     @RequestMapping(value = "/newgame")
     @ResponseBody
-    public CommonVO newgame(String playerId, int panshu, int renshu, Double difen, OptionalPlay optionalPlay) {
+    public CommonVO newgame(String playerId, int panshu, int renshu, Double difen, OptionalPlay optionalPlay, @RequestParam(required = false) String lianmengId, @RequestParam(required = false) int powerLimit) {
         CommonVO vo = new CommonVO();
         String newGameId = UUID.randomUUID().toString();
-        MajiangGameValueObject majiangGameValueObject = gameCmdService.newMajiangGame(newGameId, playerId, panshu, renshu, difen, optionalPlay);
+        MajiangGameValueObject majiangGameValueObject = gameCmdService.newMajiangGame(newGameId, playerId, panshu, renshu, difen, optionalPlay, lianmengId, powerLimit);
         majiangGameQueryService.newMajiangGame(majiangGameValueObject);
-        notReadyQuit(playerId, newGameId, majiangGameValueObject);
+        notReadyQuit(playerId,  majiangGameValueObject);
         String token = playerAuthService.newSessionForPlayer(playerId);
         Map data = new HashMap();
         data.put("gameId", newGameId);
@@ -135,7 +133,7 @@ public class GameController {
             return vo;
         }
         majiangGameQueryService.joinGame(majiangGameValueObject);
-        notReadyQuit(playerId, gameId, majiangGameValueObject);
+        notReadyQuit(playerId,  majiangGameValueObject);
         // 通知其他人
         for (String otherPlayerId : majiangGameValueObject.allPlayerIds()) {
             if (!otherPlayerId.equals(playerId)) {
@@ -312,7 +310,7 @@ public class GameController {
             return vo;
         }
         majiangGameQueryService.leaveGame(majiangGameValueObject);
-        notReadyQuit(playerId, majiangGameValueObject.getId(), majiangGameValueObject);
+        notReadyQuit(playerId,  majiangGameValueObject);
         // 断开玩家的socket
         wsNotifier.closeSessionForPlayer(playerId);
         String gameId = majiangGameValueObject.getId();
@@ -382,7 +380,7 @@ public class GameController {
             return vo;
         }
         majiangGameQueryService.leaveGame(majiangGameValueObject);
-        notReadyQuit(playerId, majiangGameValueObject.getId(), majiangGameValueObject);
+        notReadyQuit(playerId,  majiangGameValueObject);
         // 断开玩家的socket
         wsNotifier.closeSessionForPlayer(playerId);
         String gameId = majiangGameValueObject.getId();
@@ -628,7 +626,7 @@ public class GameController {
             return vo;
         }
         majiangPlayQueryService.readyForGame(readyForGameResult);// TODO 一起点准备的时候可能有同步问题.要靠框架解决
-        notReadyQuit(playerId, readyForGameResult.getMajiangGame().getId(), readyForGameResult.getMajiangGame());
+        notReadyQuit(playerId,  readyForGameResult.getMajiangGame());
 
         // 通知其他人
         for (String otherPlayerId : readyForGameResult.getMajiangGame().allPlayerIds()) {
@@ -1080,7 +1078,7 @@ public class GameController {
         }
     }
 
-    private void notReadyQuit(String playerId, String newGameId, MajiangGameValueObject majiangGameValueObject) {
+    private void notReadyQuit(String playerId,  MajiangGameValueObject majiangGameValueObject) {
         if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
             executorService.submit(() -> {
                 try {
@@ -1089,14 +1087,14 @@ public class GameController {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(newGameId);
+                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(majiangGameValueObject.getId());
                 for (MajiangGamePlayerDbo player : majiangGameDbo.getPlayers()) {
                     if (player.getPlayerId().equals(playerId)) {
-                        if (majiangGameDbo.getState().equals(WaitingStart.name)) {
-                            if (!PlayerReadyToStart.name.equals(player.getState())) {
+                        if (majiangGameDbo.getState().name().equals(WaitingStart.name)) {
+                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
                                 MajiangGameValueObject majiangGameValueObject1 = null;
                                 try {
-                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), newGameId);
+                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), majiangGameValueObject.getId());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -1107,7 +1105,7 @@ public class GameController {
                                     wsNotifier.notifyToQuery(otherPlayerId, scopes);
                                 }
                                 if (majiangGameValueObject1.getPlayers().size() == 0) {
-                                    gameMsgService.gameFinished(newGameId);
+                                    gameMsgService.gameFinished(majiangGameValueObject.getId());
                                 }
                                 gameMsgService.gamePlayerLeave(majiangGameValueObject1, playerId);
                                 wsNotifier.sendMessageToQuit(playerId);

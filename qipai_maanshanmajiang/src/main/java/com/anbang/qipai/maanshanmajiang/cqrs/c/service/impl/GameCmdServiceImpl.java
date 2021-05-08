@@ -60,7 +60,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         newGame.setLeaveByHangupStrategyAfterStart(new OfflineGameLeaveStrategy());
         newGame.setLeaveByHangupStrategyBeforeStart(new OfflineAndNotReadyGameLeaveStrategy());
         newGame.setLeaveByPlayerStrategyAfterStart(new OfflineGameLeaveStrategy());
-        newGame.setLeaveByPlayerStrategyBeforeStart(new OfflineGameLeaveStrategy());
+        newGame.setLeaveByPlayerStrategyBeforeStart(new OfflineAndNotReadyGameLeaveStrategy());
         newGame.setBackStrategy(new OnlineGameBackStrategy());
         newGame.create(gameId, playerId);
         gameServer.playerCreateGame(newGame, playerId);

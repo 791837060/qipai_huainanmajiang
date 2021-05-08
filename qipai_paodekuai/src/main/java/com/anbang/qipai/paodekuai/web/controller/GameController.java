@@ -29,10 +29,7 @@ import com.dml.mpgame.game.player.PlayerReadyToStart;
 import com.dml.mpgame.game.watch.WatchRecord;
 import com.dml.mpgame.game.watch.Watcher;
 import com.dml.paodekuai.pan.PanActionFrame;
-import com.dml.paodekuai.pan.PanValueObject;
-import com.dml.paodekuai.player.PaodekuaiPlayerValueObject;
 import com.dml.paodekuai.wanfa.OptionalPlay;
-import com.dml.puke.wanfa.position.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,47 +49,33 @@ import java.util.stream.Collectors;
 @RequestMapping("/game")
 public class GameController {
 
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final Automatic automatic = SpringUtil.getBean(Automatic.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private PlayerAuthService playerAuthService;
-
     @Autowired
     private GameCmdService gameCmdService;
-
     @Autowired
     private PukeGameQueryService pukeGameQueryService;
-
     @Autowired
     private PukePlayQueryService pukePlayQueryService;
-
     @Autowired
     private GamePlayWsNotifier wsNotifier;
-
     @Autowired
     private MemberGoldBalanceService memberGoldBalanceService;
-
     @Autowired
     private MemberGoldsMsgService memberGoldsMsgService;
-
     @Autowired
     private PaodekuaiGameMsgService gameMsgService;
-
     @Autowired
     private PaodekuaiResultMsgService paodekuaiResultMsgService;
-
     @Autowired
     private WiseCrackMsgServcie wiseCrackMsgServcie;
-
     @Autowired
     private WatchRecordMsgService watchRecordMsgService;
-
     @Autowired
     private PlayerInfoService playerInfoService;
-
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
-
-    private final Automatic automatic = SpringUtil.getBean(Automatic.class);
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * 新一局游戏
@@ -100,48 +83,12 @@ public class GameController {
     @RequestMapping(value = "/newgame")
     @ResponseBody
     public CommonVO newgame(String playerId, Integer panshu, Integer renshu, Double difen, OptionalPlay optionalPlay,
-                            @RequestParam(required = false) int powerLimit) {
+                            @RequestParam(required = false) int powerLimit, @RequestParam(required = false) String lianmengId) {
         CommonVO vo = new CommonVO();
         String newGameId = UUID.randomUUID().toString();
-        PukeGameValueObject pukeGameValueObject = gameCmdService.newPukeGame(newGameId, playerId, panshu, renshu, optionalPlay, difen, powerLimit);
+        PukeGameValueObject pukeGameValueObject = gameCmdService.newPukeGame(newGameId, playerId, panshu, renshu, optionalPlay, difen, powerLimit, lianmengId);
         pukeGameQueryService.newPukeGame(pukeGameValueObject);
-
-        if (pukeGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
-            executorService.submit(() -> {
-                try {
-                    int sleepTime = pukeGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
-                    Thread.sleep((sleepTime + 1) * 1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                PukeGameDbo pukeGameDbo = pukeGameQueryService.findPukeGameDboById(newGameId);
-                for (PukeGamePlayerDbo player : pukeGameDbo.getPlayers()) {
-                    if (player.getPlayerId().equals(playerId)) {
-                        if (pukeGameDbo.getState().name().equals(WaitingStart.name)) {
-                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
-                                PukeGameValueObject pukeGameValueObject1 = null;
-                                try {
-                                    pukeGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), newGameId);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                pukeGameQueryService.quit(pukeGameValueObject1);
-                                for (String otherPlayerId : pukeGameValueObject1.allPlayerIds()) {
-                                    List<QueryScope> scopes = QueryScope.scopesForState(pukeGameValueObject1.getState(), pukeGameValueObject1.findPlayerState(otherPlayerId));
-                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
-                                }
-                                if (pukeGameValueObject1.getPlayers().size() == 0) {
-                                    gameMsgService.gameFinished(newGameId);
-                                }
-                                gameMsgService.gamePlayerLeave(pukeGameValueObject1, playerId);
-                                wsNotifier.sendMessageToQuit(playerId);
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
+        notReadyQuit(playerId, pukeGameValueObject);
         String token = playerAuthService.newSessionForPlayer(playerId);
         Map data = new HashMap();
         data.put("gameId", newGameId);
@@ -166,44 +113,7 @@ public class GameController {
             return vo;
         }
         pukeGameQueryService.joinGame(pukeGameValueObject);
-
-        pukeGameQueryService.joinGame(pukeGameValueObject);
-        if (pukeGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
-            executorService.submit(() -> {
-                try {
-                    int sleepTime = pukeGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
-                    Thread.sleep((sleepTime + 1) * 1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                PukeGameDbo pukeGameDbo = pukeGameQueryService.findPukeGameDboById(gameId);
-                for (PukeGamePlayerDbo player : pukeGameDbo.getPlayers()) {
-                    if (player.getPlayerId().equals(playerId)) {
-                        if (pukeGameDbo.getState().name().equals(WaitingStart.name)) {
-                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
-                                PukeGameValueObject pukeGameValueObject1 = null;
-                                try {
-                                    pukeGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), gameId);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                pukeGameQueryService.quit(pukeGameValueObject1);
-                                for (String otherPlayerId : pukeGameValueObject1.allPlayerIds()) {
-                                    List<QueryScope> scopes = QueryScope.scopesForState(pukeGameValueObject1.getState(), pukeGameValueObject1.findPlayerState(otherPlayerId));
-                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
-                                }
-                                if (pukeGameValueObject1.getPlayers().size() == 0) {
-                                    gameMsgService.gameFinished(gameId);
-                                }
-                                gameMsgService.gamePlayerLeave(pukeGameValueObject1, playerId);
-                                wsNotifier.sendMessageToQuit(playerId);
-                            }
-                        }
-                    }
-                }
-            });
-
-        }
+        notReadyQuit(playerId, pukeGameValueObject);
 
         // 通知其他玩家
         for (String otherPlayerId : pukeGameValueObject.allPlayerIds()) {
@@ -252,6 +162,9 @@ public class GameController {
             return vo;
         }
         pukeGameQueryService.leaveGame(pukeGameValueObject);
+        if (pukeGameValueObject.getState().name().equals(WaitingStart.name)) {
+            notReadyQuit(playerId, pukeGameValueObject);
+        }
         // 断开玩家的socket
         wsNotifier.closeSessionForPlayer(playerId);
         String gameId = pukeGameValueObject.getId();
@@ -319,6 +232,9 @@ public class GameController {
             return vo;
         }
         pukeGameQueryService.leaveGame(pukeGameValueObject);
+        if (pukeGameValueObject.getState().name().equals(WaitingStart.name)) {
+            notReadyQuit(playerId, pukeGameValueObject);
+        }
         // 断开玩家的socket
         wsNotifier.closeSessionForPlayer(playerId);
         String gameId = pukeGameValueObject.getId();
@@ -520,41 +436,7 @@ public class GameController {
         pukePlayQueryService.readyForGame(readyForGameResult);// TODO 一起点准备的时候可能有同步问题.要靠框架解决
 
         PukeGameValueObject pukeGameValueObject = readyForGameResult.getPukeGame();
-        if (pukeGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
-            executorService.submit(() -> {
-                try {
-                    int sleepTime = pukeGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
-                    Thread.sleep((sleepTime + 1) * 1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                PukeGameDbo pukeGameDbo = pukeGameQueryService.findPukeGameDboById(readyForGameResult.getPukeGame().getId());
-                for (PukeGamePlayerDbo player : pukeGameDbo.getPlayers()) {
-                    if (player.getPlayerId().equals(playerId)) {
-                        if (pukeGameDbo.getState().name().equals(WaitingStart.name)) {
-                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
-                                PukeGameValueObject pukeGameValueObject1 = null;
-                                try {
-                                    pukeGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), readyForGameResult.getPukeGame().getId());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                pukeGameQueryService.quit(pukeGameValueObject1);
-                                for (String otherPlayerId : pukeGameValueObject1.allPlayerIds()) {
-                                    List<QueryScope> scopes = QueryScope.scopesForState(pukeGameValueObject1.getState(), pukeGameValueObject1.findPlayerState(otherPlayerId));
-                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
-                                }
-                                if (pukeGameValueObject1.getPlayers().size() == 0) {
-                                    gameMsgService.gameFinished(pukeGameValueObject1.getId());
-                                }
-                                gameMsgService.gamePlayerLeave(pukeGameValueObject1, playerId);
-                                wsNotifier.sendMessageToQuit(playerId);
-                            }
-                        }
-                    }
-                }
-            });
-        }
+        notReadyQuit(playerId, pukeGameValueObject);
 
         // 通知其他人
         for (String otherPlayerId : readyForGameResult.getPukeGame().allPlayerIds()) {
@@ -907,7 +789,7 @@ public class GameController {
         // 观战者接收语音
         Map<String, Object> map = gameCmdService.getwatch(gameId);
         if (!CollectionUtils.isEmpty(map)) {
-            List<String> playerIds = map.entrySet().stream().map(e -> e.getKey()).collect(Collectors.toList());
+            List<String> playerIds = map.entrySet().stream().map(e->e.getKey()).collect(Collectors.toList());
             for (String list : playerIds) {
                 if (!list.equals(playerId)) {
                     wsNotifier.notifyToListenSpeak(list, wordId, playerId, false);
@@ -1061,7 +943,7 @@ public class GameController {
     private void hintWatcher(String gameId, String flag) {
         Map<String, Object> map = gameCmdService.getwatch(gameId);
         if (!CollectionUtils.isEmpty(map)) {
-            List<String> playerIds = map.entrySet().stream().map(e -> e.getKey()).collect(Collectors.toList());
+            List<String> playerIds = map.entrySet().stream().map(e->e.getKey()).collect(Collectors.toList());
             wsNotifier.notifyToWatchQuery(playerIds, flag);
             if (WatchQueryScope.watchEnd.name().equals(flag)) {
                 gameCmdService.recycleWatch(gameId);
@@ -1162,5 +1044,43 @@ public class GameController {
         }
 
     }
+    private void notReadyQuit(String playerId, PukeGameValueObject pukeGameValueObject) {
+        if (pukeGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
+            executorService.submit(()->{
+                try {
+                    int sleepTime = pukeGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
+                    Thread.sleep((sleepTime + 1) * 1000L);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                PukeGameDbo pukeGameDbo = pukeGameQueryService.findPukeGameDboById(pukeGameValueObject.getId());
+                for (PukeGamePlayerDbo player : pukeGameDbo.getPlayers()) {
+                    if (player.getPlayerId().equals(playerId)) {
+                        if (pukeGameDbo.getState().name().equals(WaitingStart.name)) {
+                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
+                                PukeGameValueObject pukeGameValueObject1 = null;
+                                try {
+                                    pukeGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), pukeGameValueObject.getId());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                pukeGameQueryService.quit(pukeGameValueObject1);
+                                for (String otherPlayerId : pukeGameValueObject1.allPlayerIds()) {
+                                    List<QueryScope> scopes = QueryScope.scopesForState(pukeGameValueObject1.getState(),
+                                            pukeGameValueObject1.findPlayerState(otherPlayerId));
+                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
+                                }
+                                if (pukeGameValueObject1.getPlayers().size() == 0) {
+                                    gameMsgService.gameFinished(pukeGameValueObject.getId());
+                                }
+                                gameMsgService.gamePlayerLeave(pukeGameValueObject1, playerId);
+                                wsNotifier.sendMessageToQuit(playerId);
+                            }
+                        }
+                    }
+                }
+            });
 
+        }
+    }
 }

@@ -13,12 +13,15 @@ import com.anbang.qipai.maanshanmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.maanshanmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.maanshanmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.maanshanmajiang.cqrs.q.dbo.MajiangGameDbo;
+import com.anbang.qipai.maanshanmajiang.cqrs.q.dbo.MajiangGamePlayerDbo;
 import com.anbang.qipai.maanshanmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.maanshanmajiang.cqrs.q.service.MajiangPlayQueryService;
 import com.anbang.qipai.maanshanmajiang.utils.SpringUtil;
 import com.anbang.qipai.maanshanmajiang.msg.msjobj.MajiangHistoricalJuResult;
 import com.anbang.qipai.maanshanmajiang.msg.service.MaanshanMajiangGameMsgService;
 import com.anbang.qipai.maanshanmajiang.msg.service.MaanshanMajiangResultMsgService;
+import com.dml.mpgame.game.WaitingStart;
+import com.dml.mpgame.game.player.PlayerReadyToStart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -57,12 +60,13 @@ public class GamePlayWsController extends TextWebSocketHandler {
     private MaanshanMajiangGameMsgService gameMsgService;
 
     @Autowired
-    private MaanshanMajiangResultMsgService tianchangxiaohuaResultMsgService;
+    private MaanshanMajiangResultMsgService maanshanMajiangResultMsgService;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     private final Gson gson = new Gson();
 
+    @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         executorService.submit(() -> {
             CommonMO mo = gson.fromJson(message.getPayload(), CommonMO.class);
@@ -78,6 +82,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
 
     }
 
+    @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         wsNotifier.addSession(session);
         CommonMO mo = new CommonMO();
@@ -87,6 +92,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
 
     private final Automatic automatic = SpringUtil.getBean(Automatic.class);
 
+    @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String closedPlayerId = wsNotifier.findPlayerIdBySessionId(session.getId());
         wsNotifier.removeSession(session.getId());
@@ -104,6 +110,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
         if (majiangGameValueObject != null) {
             majiangGameQueryService.leaveGame(majiangGameValueObject);
             gameMsgService.gamePlayerLeave(majiangGameValueObject, closedPlayerId);
+            notReadyQuit(closedPlayerId,  majiangGameValueObject);
 
             String gameId = majiangGameValueObject.getId();
             if (majiangGameValueObject.getState().name().equals(FinishedByVote.name)
@@ -113,7 +120,7 @@ public class GamePlayWsController extends TextWebSocketHandler {
                 if (juResultDbo != null) {
                     MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
                     MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
-                    tianchangxiaohuaResultMsgService.recordJuResult(juResult);
+                    maanshanMajiangResultMsgService.recordJuResult(juResult);
                 }
                 gameMsgService.gameFinished(gameId);
             }
@@ -246,4 +253,44 @@ public class GamePlayWsController extends TextWebSocketHandler {
             }
         }
     }
+    private void notReadyQuit(String playerId, MajiangGameValueObject majiangGameValueObject) {
+        if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
+            executorService.submit(()->{
+                try {
+                    int sleepTime = majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
+                    Thread.sleep((sleepTime + 1) * 1000L);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(majiangGameValueObject.getId());
+                for (MajiangGamePlayerDbo player : majiangGameDbo.getPlayers()) {
+                    if (player.getPlayerId().equals(playerId)) {
+                        if (majiangGameDbo.getState().name().equals(WaitingStart.name)) {
+                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
+                                MajiangGameValueObject majiangGameValueObject1 = null;
+                                try {
+                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), majiangGameValueObject.getId());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                majiangGameQueryService.quit(majiangGameValueObject1);
+                                for (String otherPlayerId : majiangGameValueObject1.allPlayerIds()) {
+                                    List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject1.getState(),
+                                            majiangGameValueObject1.findPlayerState(otherPlayerId));
+                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
+                                }
+                                if (majiangGameValueObject1.getPlayers().size() == 0) {
+                                    gameMsgService.gameFinished(majiangGameValueObject.getId());
+                                }
+                                gameMsgService.gamePlayerLeave(majiangGameValueObject1, playerId);
+                                wsNotifier.sendMessageToQuit(playerId);
+                            }
+                        }
+                    }
+                }
+            });
+
+        }
+    }
+
 }

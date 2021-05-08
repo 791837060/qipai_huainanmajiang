@@ -1,11 +1,11 @@
 package com.anbang.qipai.biji.cqrs.c.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.dml.mpgame.game.extend.fpmpv.FixedPlayersMultipanAndVotetofinishGameValueObject;
 import com.dml.shisanshui.ju.JuResult;
 import com.dml.shisanshui.position.Position;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PukeGameValueObject extends FixedPlayersMultipanAndVotetofinishGameValueObject {
     private int panshu;
@@ -15,6 +15,7 @@ public class PukeGameValueObject extends FixedPlayersMultipanAndVotetofinishGame
     private Map<String, Position> playerIdPositionMap = new HashMap<>();
     private JuResult juResult;
     private int powerLimit;
+    private String lianmengId;
 
     public PukeGameValueObject(PukeGame game) {
         super(game);
@@ -26,7 +27,8 @@ public class PukeGameValueObject extends FixedPlayersMultipanAndVotetofinishGame
         if (game.getJu() != null) {
             juResult = game.getJu().getJuResult();
         }
-        powerLimit=game.getPowerLimit();
+        powerLimit = game.getPowerLimit();
+        lianmengId = game.getLianmengId();
     }
 
     public int getPanshu() {
@@ -83,5 +85,13 @@ public class PukeGameValueObject extends FixedPlayersMultipanAndVotetofinishGame
 
     public void setPowerLimit(int powerLimit) {
         this.powerLimit = powerLimit;
+    }
+
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
     }
 }

@@ -107,44 +107,7 @@ public class GameController {
         String newGameId = UUID.randomUUID().toString();
         MajiangGameValueObject majiangGameValueObject = gameCmdService.newMajiangGame(newGameId, playerId, 0, renshu, difen, powerLimit, optionalPlay, lianmengId);
         majiangGameQueryService.newMajiangGame(majiangGameValueObject);
-
-//        if (majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang() != 0) {
-//            executorService.submit(() -> {
-//                try {
-//                    int sleepTime = majiangGameValueObject.getOptionalPlay().getBuzhunbeituichushichang();
-//                    Thread.sleep((sleepTime + 1) * 1000);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(newGameId);
-//                for (MajiangGamePlayerDbo player : majiangGameDbo.getPlayers()) {
-//                    if (player.getPlayerId().equals(playerId)) {
-//                        if (majiangGameDbo.getState().name().equals(WaitingStart.name)) {
-//                            if (!PlayerReadyToStart.name.equals(player.getState().name())) {
-//                                MajiangGameValueObject majiangGameValueObject1 = null;
-//                                try {
-//                                    majiangGameValueObject1 = gameCmdService.quit(playerId, System.currentTimeMillis(), newGameId);
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                                majiangGameQueryService.quit(majiangGameValueObject1);
-//                                for (String otherPlayerId : majiangGameValueObject1.allPlayerIds()) {
-//                                    List<QueryScope> scopes = QueryScope.scopesForState(majiangGameValueObject1.getState(), majiangGameValueObject1.findPlayerState(otherPlayerId));
-//                                    wsNotifier.notifyToQuery(otherPlayerId, scopes);
-//                                }
-//                                if (majiangGameValueObject1.getPlayers().size() == 0) {
-//                                    gameMsgService.gameFinished(newGameId);
-//                                }
-//                                gameMsgService.gamePlayerLeave(majiangGameValueObject1, playerId);
-//                                wsNotifier.sendMessageToQuit(playerId);
-//                            }
-//                        }
-//                    }
-//                }
-//            });
-//        }
         notReadyQuit(playerId, majiangGameValueObject);
-
         String token = playerAuthService.newSessionForPlayer(playerId);
         Map data = new HashMap();
         data.put("gameId", newGameId);

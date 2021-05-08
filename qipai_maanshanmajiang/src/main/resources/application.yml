@@ -126,10 +126,10 @@ spring:
     name: qipai-maanshanMajiang
 
 server:
-  port: 2012
-  context-path: /maanshanMajiang
-#  port: 2013
-#  context-path: /maanshanMajiang2
+#  port: 2012
+#  context-path: /maanshanMajiang
+  port: 2013
+  context-path: /maanshanMajiang2
   connectionTimeout: 65000
   tomcat:
     max-connections: 1024

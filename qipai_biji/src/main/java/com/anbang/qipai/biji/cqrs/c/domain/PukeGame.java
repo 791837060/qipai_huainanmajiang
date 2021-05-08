@@ -40,6 +40,7 @@ public class PukeGame extends FixedPlayersMultipanAndVotetofinishGame {
     private Ju ju;                      //局
     private Double difen;               //底分
     private int powerLimit;             //淘汰分
+    private String lianmengId;
 
     private Map<String, Double> playerTotalScoreMap = new HashMap<>();
     private Map<String, Position> playerIdPositionMap = new HashMap<>();
@@ -376,6 +377,14 @@ public class PukeGame extends FixedPlayersMultipanAndVotetofinishGame {
 
     public void setPowerLimit(int powerLimit) {
         this.powerLimit = powerLimit;
+    }
+
+    public String getLianmengId() {
+        return lianmengId;
+    }
+
+    public void setLianmengId(String lianmengId) {
+        this.lianmengId = lianmengId;
     }
 
 }

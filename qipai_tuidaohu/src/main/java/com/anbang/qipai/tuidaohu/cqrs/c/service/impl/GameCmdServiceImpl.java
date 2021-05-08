@@ -45,7 +45,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
      * @return
      */
     @Override
-    public MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer panshu, Integer renshu,Double difen, OptionalPlay optionalPlay) {
+    public MajiangGameValueObject newMajiangGame(String gameId, String playerId, Integer panshu, Integer renshu,Double difen, OptionalPlay optionalPlay, String lianmengId, Integer powerLimit) {
         GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
         MajiangGame newGame = new MajiangGame();
         newGame.setPanshu(panshu);
@@ -53,6 +53,8 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         newGame.setFixedPlayerCount(renshu);
         newGame.setDifen(difen);
         newGame.setOptionalPlay(optionalPlay);
+        newGame.setPowerLimit(powerLimit);
+        newGame.setLianmengId(lianmengId);
         newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
         newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
         newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
@@ -61,64 +63,64 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         newGame.setLeaveByHangupStrategyAfterStart(new OfflineGameLeaveStrategy());
         newGame.setLeaveByHangupStrategyBeforeStart(new OfflineAndNotReadyGameLeaveStrategy());
         newGame.setLeaveByPlayerStrategyAfterStart(new OfflineGameLeaveStrategy());
-        newGame.setLeaveByPlayerStrategyBeforeStart(new HostGameLeaveStrategy(playerId));
+        newGame.setLeaveByPlayerStrategyBeforeStart(new OfflineAndNotReadyGameLeaveStrategy());
         newGame.setBackStrategy(new OnlineGameBackStrategy());
         newGame.create(gameId, playerId);
         gameServer.playerCreateGame(newGame, playerId);
         return new MajiangGameValueObject(newGame);
     }
-
-    @Override
-    public MajiangGameValueObject newMajiangGameLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu,Double difen, Integer powerLimit,
-                                                             OptionalPlay optionalPlay) {
-        GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-        MajiangGame newGame = new MajiangGame();
-        newGame.setPanshu(panshu);
-        newGame.setRenshu(renshu);
-        newGame.setFixedPlayerCount(renshu);
-
-        newGame.setOptionalPlay(optionalPlay);
-        newGame.setDifen(difen);
-        newGame.setPowerLimit(powerLimit);
-        newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
-        newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
-        newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
-        newGame.setLeaveByOfflineStrategyAfterStart(new OfflineGameLeaveStrategy());
-        newGame.setLeaveByOfflineStrategyBeforeStart(new PlayerGameLeaveStrategy());
-        newGame.setLeaveByHangupStrategyAfterStart(new OfflineGameLeaveStrategy());
-        newGame.setLeaveByHangupStrategyBeforeStart(new PlayerGameLeaveStrategy());
-        newGame.setLeaveByPlayerStrategyAfterStart(new PlayerLeaveCancelGameGameLeaveStrategy());
-        newGame.setLeaveByPlayerStrategyBeforeStart(new PlayerGameLeaveStrategy());
-        newGame.setBackStrategy(new OnlineGameBackStrategy());
-        newGame.create(gameId, playerId);
-        gameServer.playerCreateGame(newGame, playerId);
-        return new MajiangGameValueObject(newGame);
-    }
-
-    @Override
-    public MajiangGameValueObject newMajiangGamePlayerLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu,Double difen, Integer powerLimit, OptionalPlay optionalPlay, MajiangGameQueryService gameQueryService, TuiDaoHuGameMsgService gameMsgService, GamePlayWsNotifier wsNotifier) {
-        GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
-        MajiangGame newGame = new MajiangGame();
-        newGame.setPanshu(panshu);
-        newGame.setRenshu(renshu);
-        newGame.setFixedPlayerCount(renshu);
-        newGame.setOptionalPlay(optionalPlay);
-        newGame.setDifen(difen);
-        newGame.setPowerLimit(powerLimit);
-        newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
-        newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
-        newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
-        newGame.setLeaveByOfflineStrategyAfterStart(new OfflineGameLeaveStrategy());
-        newGame.setLeaveByOfflineStrategyBeforeStart(new TimeoverQuitGameLeaveStrategy(300000, gameQueryService, gameMsgService, wsNotifier));
-        newGame.setLeaveByHangupStrategyAfterStart(new OfflineGameLeaveStrategy());
-        newGame.setLeaveByHangupStrategyBeforeStart(new TimeoverQuitGameLeaveStrategy(300000, gameQueryService, gameMsgService, wsNotifier));
-        newGame.setLeaveByPlayerStrategyAfterStart(new OfflineGameLeaveStrategy());
-        newGame.setLeaveByPlayerStrategyBeforeStart(new NoPlayerCancelGameGameLeaveStrategy());
-        newGame.setBackStrategy(new OnlineGameBackStrategy());
-        newGame.create(gameId, playerId);
-        gameServer.playerCreateGame(newGame, playerId);
-        return new MajiangGameValueObject(newGame);
-    }
+//
+//    @Override
+//    public MajiangGameValueObject newMajiangGameLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu,Double difen, Integer powerLimit,
+//                                                             OptionalPlay optionalPlay) {
+//        GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+//        MajiangGame newGame = new MajiangGame();
+//        newGame.setPanshu(panshu);
+//        newGame.setRenshu(renshu);
+//        newGame.setFixedPlayerCount(renshu);
+//
+//        newGame.setOptionalPlay(optionalPlay);
+//        newGame.setDifen(difen);
+//        newGame.setPowerLimit(powerLimit);
+//        newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
+//        newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
+//        newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
+//        newGame.setLeaveByOfflineStrategyAfterStart(new OfflineGameLeaveStrategy());
+//        newGame.setLeaveByOfflineStrategyBeforeStart(new PlayerGameLeaveStrategy());
+//        newGame.setLeaveByHangupStrategyAfterStart(new OfflineGameLeaveStrategy());
+//        newGame.setLeaveByHangupStrategyBeforeStart(new PlayerGameLeaveStrategy());
+//        newGame.setLeaveByPlayerStrategyAfterStart(new PlayerLeaveCancelGameGameLeaveStrategy());
+//        newGame.setLeaveByPlayerStrategyBeforeStart(new PlayerGameLeaveStrategy());
+//        newGame.setBackStrategy(new OnlineGameBackStrategy());
+//        newGame.create(gameId, playerId);
+//        gameServer.playerCreateGame(newGame, playerId);
+//        return new MajiangGameValueObject(newGame);
+//    }
+//
+//    @Override
+//    public MajiangGameValueObject newMajiangGamePlayerLeaveAndQuit(String gameId, String playerId, Integer panshu, Integer renshu,Double difen, Integer powerLimit, OptionalPlay optionalPlay, MajiangGameQueryService gameQueryService, TuiDaoHuGameMsgService gameMsgService, GamePlayWsNotifier wsNotifier) {
+//        GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+//        MajiangGame newGame = new MajiangGame();
+//        newGame.setPanshu(panshu);
+//        newGame.setRenshu(renshu);
+//        newGame.setFixedPlayerCount(renshu);
+//        newGame.setOptionalPlay(optionalPlay);
+//        newGame.setDifen(difen);
+//        newGame.setPowerLimit(powerLimit);
+//        newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
+//        newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
+//        newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
+//        newGame.setLeaveByOfflineStrategyAfterStart(new OfflineGameLeaveStrategy());
+//        newGame.setLeaveByOfflineStrategyBeforeStart(new TimeoverQuitGameLeaveStrategy(300000, gameQueryService, gameMsgService, wsNotifier));
+//        newGame.setLeaveByHangupStrategyAfterStart(new OfflineGameLeaveStrategy());
+//        newGame.setLeaveByHangupStrategyBeforeStart(new TimeoverQuitGameLeaveStrategy(300000, gameQueryService, gameMsgService, wsNotifier));
+//        newGame.setLeaveByPlayerStrategyAfterStart(new OfflineGameLeaveStrategy());
+//        newGame.setLeaveByPlayerStrategyBeforeStart(new NoPlayerCancelGameGameLeaveStrategy());
+//        newGame.setBackStrategy(new OnlineGameBackStrategy());
+//        newGame.create(gameId, playerId);
+//        gameServer.playerCreateGame(newGame, playerId);
+//        return new MajiangGameValueObject(newGame);
+//    }
 
     @Override
     public MajiangGameValueObject joinGame(String playerId, String gameId) throws Exception {
@@ -344,7 +346,9 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
         } else {
             gameID = gameId;
         }
-        if (gameID == null) return null;
+        if (gameID == null) {
+            return null;
+        }
         MajiangGame majiangGame = null;
         try {
             majiangGame = (MajiangGame) gameServer.findGame(gameID);

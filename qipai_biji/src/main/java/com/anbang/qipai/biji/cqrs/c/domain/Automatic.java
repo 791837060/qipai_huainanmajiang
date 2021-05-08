@@ -6,35 +6,25 @@ import com.anbang.qipai.biji.cqrs.c.domain.result.PukeActionResult;
 import com.anbang.qipai.biji.cqrs.c.domain.result.ReadyToNextPanResult;
 import com.anbang.qipai.biji.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.biji.cqrs.c.service.PukePlayCmdService;
-import com.anbang.qipai.biji.cqrs.q.dbo.JuResultDbo;
-import com.anbang.qipai.biji.cqrs.q.dbo.PanResultDbo;
-import com.anbang.qipai.biji.cqrs.q.dbo.PukeGameDbo;
-import com.anbang.qipai.biji.cqrs.q.dbo.PukeGamePlayerDbo;
+import com.anbang.qipai.biji.cqrs.q.dbo.*;
 import com.anbang.qipai.biji.cqrs.q.service.PukeGameQueryService;
 import com.anbang.qipai.biji.cqrs.q.service.PukePlayQueryService;
 import com.anbang.qipai.biji.msg.msjobj.PukeHistoricalJuResult;
 import com.anbang.qipai.biji.msg.msjobj.PukeHistoricalPanResult;
 import com.anbang.qipai.biji.msg.service.BijiGameMsgService;
 import com.anbang.qipai.biji.msg.service.BijiResultMsgService;
-import com.anbang.qipai.biji.web.vo.CommonVO;
+import com.anbang.qipai.biji.remote.service.QipaiDalianmengRemoteService;
+import com.anbang.qipai.biji.remote.vo.CommonRemoteVO;
 import com.anbang.qipai.biji.websocket.GamePlayWsNotifier;
 import com.anbang.qipai.biji.websocket.QueryScope;
-import com.anbang.qipai.biji.websocket.WatchQueryScope;
 import com.dml.mpgame.game.Canceled;
+import com.dml.mpgame.game.GamePlayerValueObject;
 import com.dml.mpgame.game.Playing;
 import com.dml.mpgame.game.WaitingStart;
 import com.dml.mpgame.game.extend.multipan.WaitingNextPan;
 import com.dml.mpgame.game.extend.vote.FinishedByTuoguan;
-import com.dml.mpgame.game.extend.vote.FinishedByVote;
-import com.dml.mpgame.game.extend.vote.VoteNotPassWhenPlaying;
-import com.dml.mpgame.game.extend.vote.VotingWhenPlaying;
-import com.dml.mpgame.game.player.GamePlayerOnlineState;
 import com.dml.shisanshui.pan.PanActionFrame;
-import com.dml.shisanshui.pan.PanValueObject;
-import com.dml.shisanshui.player.ShisanshuiPlayer;
 import com.dml.shisanshui.player.ShisanshuiPlayerValueObject;
-//import com.dml.shisanshui.player.action.da.solution.DaPaiDianShuSolution;
-import com.dml.shisanshui.position.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +61,9 @@ public class Automatic {
 
     @Autowired
     private GamePlayWsNotifier wsNotifier;
+
+    @Autowired
+    private QipaiDalianmengRemoteService qipaiDalianmengRemoteService;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -130,11 +123,48 @@ public class Automatic {
                     }
 
                     if (!playerDeposit && !isPlayerOnLine(playerId)) { //没有托管&&没有打到下一盘
-
                         PukeGameDbo pukeGameDbo2 = pukeGameQueryService.findPukeGameDboById(gameId);
                         if (pukeGameDbo2.getState().name().equals(WaitingNextPan.name)) {  //游戏没有开始
                             ReadyToNextPanResult readyToNextPanResult = null;
                             Map<String, String> tuoguanzhunbeiPlayers = gameCmdService.playLeaveGameHosting(playerId, gameId, true);
+                            if (pukeGameDbo2.getLianmengId() != null) {
+                                PanResultDbo panResultDbo = pukePlayQueryService.findPanResultDbo(gameId, pukeGameDbo.getPanNo());
+                                for (BijiPanPlayerResultDbo bijiPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
+                                    if (tuoguanzhunbeiPlayers.containsKey(bijiPanPlayerResultDbo.getPlayerId())) {
+                                        CommonRemoteVO commonRemoteVO = qipaiDalianmengRemoteService.nowPowerForRemote(playerId, pukeGameDbo2.getLianmengId());
+                                        if (commonRemoteVO.isSuccess()) {
+                                            Map powerdata = new HashMap();
+                                            powerdata = (Map) commonRemoteVO.getData();
+                                            double powerbalance = (Double) powerdata.get("powerbalance");
+                                            if (bijiPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= pukeGameDbo.getPowerLimit()) {
+                                                PukeGameValueObject gameValueObject = null;
+                                                try {
+                                                    gameValueObject = gameCmdService.finishGameImmediately(gameId);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                                List<QueryScope> queryScopes = new ArrayList<>();
+                                                if (gameValueObject != null) {
+                                                    pukeGameQueryService.finishGameImmediately(gameValueObject, null);
+                                                    gameMsgService.gameFinished(gameId);
+                                                    JuResultDbo juResultDbo = pukePlayQueryService.findJuResultDbo(gameId);
+                                                    PukeHistoricalJuResult juResult = new PukeHistoricalJuResult(juResultDbo,
+                                                            pukeGameDbo);
+                                                    bijiResultMsgService.recordJuResult(juResult);
+                                                    gameMsgService.gameFinished(gameId);
+                                                    queryScopes.add(QueryScope.juResult);
+                                                    for (GamePlayerValueObject player : gameValueObject.getPlayers()) {
+                                                        wsNotifier.notifyToQuery(player.getId(), queryScopes);
+                                                    }
+                                                    logger.info("开始下一局解散," + "Time:" + System.currentTimeMillis() + ",playerId:" + playerId + ",gameId:" + gameId);
+                                                }
+                                                return;
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
                             try {
                                 readyToNextPanResult = pukePlayCmdService.autoReadyToNextPan(playerId, tuoguanzhunbeiPlayers.keySet(), gameId);
                             } catch (Exception e) {
@@ -198,7 +228,9 @@ public class Automatic {
             //加入惩罚分
             BijiJuResult juResult = (BijiJuResult) pukeGameValueObject.getJuResult();
             List<BijiJuPlayerResult> playerResultList = juResult.getPlayerResultList();
-            if (playerResultList == null) playerResultList = new ArrayList<>();
+            if (playerResultList == null) {
+                playerResultList = new ArrayList<>();
+            }
             switch (playerResultList.size()) {
                 case 0://第一局玩家没有juResult
                     switch (players.size()) {
