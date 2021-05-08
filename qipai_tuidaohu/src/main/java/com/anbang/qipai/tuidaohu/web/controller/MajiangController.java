@@ -336,44 +336,45 @@ public class MajiangController {
         if (playerIdGameIdMap != null) {
             playerIds = playerIdGameIdMap.keySet();//托管玩家集合
         }
-
-        MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-        String lianmengId = majiangGameDbo.getLianmengId();
-        if (lianmengId != null) {
-            PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, majiangGameDbo.getPanNo());
-            for (TuiDaoHuPanPlayerResultDbo tuiDaoHuPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
-                CommonRemoteVO resVo = qipaiDalianmengRemoteService.nowPowerForRemote(tuiDaoHuPanPlayerResultDbo.getPlayerId(), lianmengId);
-                if (resVo.isSuccess()) {
-                    Map powerdata = (Map) resVo.getData();
-                    double powerbalance = (Double) powerdata.get("powerbalance");
-                    if (tuiDaoHuPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= majiangGameDbo.getPowerLimit()) {
-                        try {
-                            MajiangGameValueObject gameValueObject = gameCmdService.finishGameImmediately(gameId);
-                            majiangGameQueryService.finishGameImmediately(gameValueObject);
-                            gameMsgService.gameFinished(gameId);
-                            JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
-                            MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
-                            tuidaohuResultMsgService.recordJuResult(juResult);
-                            List<String> queryScopes = new ArrayList<>();
-                            gameMsgService.gameFinished(gameId);
-                            queryScopes.add(QueryScope.juResult.name());
-                            for (String otherPlayerId : gameValueObject.allPlayerIds()) {
-                                if (!otherPlayerId.equals(playerId)) {
-                                    wsNotifier.notifyToQuery(otherPlayerId, QueryScope.scopesForState(gameValueObject.getState(), gameValueObject.findPlayerState(otherPlayerId)));
+        if (gameId != null) {
+            MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+            String lianmengId = majiangGameDbo.getLianmengId();
+            if (lianmengId != null) {
+                PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, majiangGameDbo.getPanNo());
+                for (TuiDaoHuPanPlayerResultDbo tuiDaoHuPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
+                    CommonRemoteVO resVo = qipaiDalianmengRemoteService.nowPowerForRemote(tuiDaoHuPanPlayerResultDbo.getPlayerId(), lianmengId);
+                    if (resVo.isSuccess()) {
+                        Map powerdata = (Map) resVo.getData();
+                        double powerbalance = (Double) powerdata.get("powerbalance");
+                        if (tuiDaoHuPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= majiangGameDbo.getPowerLimit()) {
+                            try {
+                                MajiangGameValueObject gameValueObject = gameCmdService.finishGameImmediately(gameId);
+                                majiangGameQueryService.finishGameImmediately(gameValueObject);
+                                gameMsgService.gameFinished(gameId);
+                                JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+                                MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
+                                tuidaohuResultMsgService.recordJuResult(juResult);
+                                List<String> queryScopes = new ArrayList<>();
+                                gameMsgService.gameFinished(gameId);
+                                queryScopes.add(QueryScope.juResult.name());
+                                for (String otherPlayerId : gameValueObject.allPlayerIds()) {
+                                    if (!otherPlayerId.equals(playerId)) {
+                                        wsNotifier.notifyToQuery(otherPlayerId, QueryScope.scopesForState(gameValueObject.getState(), gameValueObject.findPlayerState(otherPlayerId)));
+                                    }
                                 }
+                                data.put("queryScopes", queryScopes);
+                                vo.setData(data);
+                                return vo;
+                            } catch (Throwable throwable) {
+                                throwable.printStackTrace();
+                                vo.setSuccess(false);
+                                vo.setMsg(throwable.getClass().getName());
+                                return vo;
                             }
-                            data.put("queryScopes", queryScopes);
-                            vo.setData(data);
-                            return vo;
-                        } catch (Throwable throwable) {
-                            throwable.printStackTrace();
-                            vo.setSuccess(false);
-                            vo.setMsg(throwable.getClass().getName());
-                            return vo;
                         }
                     }
-                }
 
+                }
             }
         }
         ReadyToNextPanResult readyToNextPanResult;

@@ -387,8 +387,8 @@ public class PukeController {
     /**
      * 准备开始下一盘
      *
-     * @param token      玩家token
-     * @param gameId     游戏ID
+     * @param token  玩家token
+     * @param gameId 游戏ID
      */
     @RequestMapping(value = "/ready_to_next_pan")
     @ResponseBody
@@ -408,50 +408,52 @@ public class PukeController {
         if (playerIdGameIdMap != null) {
             playerIds = playerIdGameIdMap.keySet();//托管玩家集合
         }
-        PukeGameDbo pukeGameDboById = pukeGameQueryService.findPukeGameDboById(gameId);
-        String lianmengId = pukeGameDboById.getLianmengId();
-        if (lianmengId != null) {
-            PukeGameDbo pukeGameDbo = pukeGameQueryService.findPukeGameDboById(gameId);
-            PanResultDbo panResultDbo = pukePlayQueryService.findPanResultDbo(gameId, pukeGameDbo.getPanNo());
-            for (BijiPanPlayerResultDbo bijiPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
-                CommonRemoteVO commonRemoteVO = qipaiDalianmengRemoteService.nowPowerForRemote(bijiPanPlayerResultDbo.getPlayerId(), lianmengId);
-                if (commonRemoteVO.isSuccess()){
-                    Map powerdata = new HashMap();
-                    powerdata = (Map) commonRemoteVO.getData();
-                    double powerbalance = (Double) powerdata.get("powerbalance");
+        if (gameId != null) {
+            PukeGameDbo pukeGameDboById = pukeGameQueryService.findPukeGameDboById(gameId);
+            String lianmengId = pukeGameDboById.getLianmengId();
+            if (lianmengId != null) {
+                PukeGameDbo pukeGameDbo = pukeGameQueryService.findPukeGameDboById(gameId);
+                PanResultDbo panResultDbo = pukePlayQueryService.findPanResultDbo(gameId, pukeGameDbo.getPanNo());
+                for (BijiPanPlayerResultDbo bijiPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
+                    CommonRemoteVO commonRemoteVO = qipaiDalianmengRemoteService.nowPowerForRemote(bijiPanPlayerResultDbo.getPlayerId(), lianmengId);
+                    if (commonRemoteVO.isSuccess()) {
+                        Map powerdata = new HashMap();
+                        powerdata = (Map) commonRemoteVO.getData();
+                        double powerbalance = (Double) powerdata.get("powerbalance");
 //                    if (pukeGameDbo.getOptionalPlay().isJinyuanzi()) {
 //                        powerbalance -= pukeGameDbo.getOptionalPlay().getYuanzifen();
 //                    }
-                    if (bijiPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= pukeGameDbo.getPowerLimit()) {
-                        try {
-                            PukeGameValueObject gameValueObject = gameCmdService.finishGameImmediately(gameId);
-                            pukeGameQueryService.finishGameImmediately(gameValueObject);
-                            gameMsgService.gameFinished(gameId);
-                            JuResultDbo juResultDbo = pukePlayQueryService.findJuResultDbo(gameId);
-                            PukeHistoricalJuResult juResult = new PukeHistoricalJuResult(juResultDbo, pukeGameDbo);
-                            bijiResultMsgService.recordJuResult(juResult);
-                            List<String> queryScopes = new ArrayList<>();
-                            gameMsgService.gameFinished(gameId);
-                            queryScopes.add(QueryScope.juResult.name());
-                            for (String otherPlayerId : gameValueObject.allPlayerIds()) {
-                                if (!otherPlayerId.equals(playerId)) {
-                                    wsNotifier.notifyToQuery(otherPlayerId, QueryScope.scopesForState(gameValueObject.getState(), gameValueObject.findPlayerState(otherPlayerId)));
+                        if (bijiPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= pukeGameDbo.getPowerLimit()) {
+                            try {
+                                PukeGameValueObject gameValueObject = gameCmdService.finishGameImmediately(gameId);
+                                pukeGameQueryService.finishGameImmediately(gameValueObject);
+                                gameMsgService.gameFinished(gameId);
+                                JuResultDbo juResultDbo = pukePlayQueryService.findJuResultDbo(gameId);
+                                PukeHistoricalJuResult juResult = new PukeHistoricalJuResult(juResultDbo, pukeGameDbo);
+                                bijiResultMsgService.recordJuResult(juResult);
+                                List<String> queryScopes = new ArrayList<>();
+                                gameMsgService.gameFinished(gameId);
+                                queryScopes.add(QueryScope.juResult.name());
+                                for (String otherPlayerId : gameValueObject.allPlayerIds()) {
+                                    if (!otherPlayerId.equals(playerId)) {
+                                        wsNotifier.notifyToQuery(otherPlayerId, QueryScope.scopesForState(gameValueObject.getState(), gameValueObject.findPlayerState(otherPlayerId)));
+                                    }
                                 }
+                                data.put("queryScopes", queryScopes);
+                                vo.setData(data);
+                                return vo;
+                            } catch (Throwable throwable) {
+                                throwable.printStackTrace();
+                                vo.setSuccess(false);
+                                vo.setMsg(throwable.getClass().getName());
+                                return vo;
                             }
-                            data.put("queryScopes", queryScopes);
-                            vo.setData(data);
-                            return vo;
-                        } catch (Throwable throwable) {
-                            throwable.printStackTrace();
-                            vo.setSuccess(false);
-                            vo.setMsg(throwable.getClass().getName());
-                            return vo;
                         }
                     }
                 }
+
+
             }
-
-
         }
         ReadyToNextPanResult readyToNextPanResult;
         try {
