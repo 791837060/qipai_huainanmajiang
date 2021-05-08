@@ -3,6 +3,9 @@ package com.anbang.qipai.shouxianmajiang.websocket;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.VoteNotPassWhenXiapiao;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.VotingWhenXiapiao;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.XiapiaoState;
 import com.dml.mpgame.game.Canceled;
 import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.GameState;
@@ -28,6 +31,8 @@ public enum QueryScope {
 			scopes.add(QueryScope.gameInfo);
 		} else if (gameState.name().equals(Canceled.name)) {
 			scopes.add(gameInfo);
+        } else if (gameState.name().equals(XiapiaoState.name)) {
+            scopes.add(QueryScope.gameInfo);
 		} else if (gameState.name().equals(Playing.name)) {
 			scopes.add(gameInfo);
 			scopes.add(panForMe);
@@ -39,6 +44,12 @@ public enum QueryScope {
 			scopes.add(QueryScope.gameInfo);
 			scopes.add(QueryScope.gameFinishVote);
 			scopes.add(QueryScope.panForMe);
+        } else if (gameState.name().equals(VotingWhenXiapiao.name)) {
+            scopes.add(QueryScope.gameInfo);
+            scopes.add(QueryScope.gameFinishVote);
+        } else if (gameState.name().equals(VoteNotPassWhenXiapiao.name)) {
+            scopes.add(QueryScope.gameInfo);
+            scopes.add(QueryScope.gameFinishVote);
 		} else if (gameState.name().equals(FinishedByVote.name)) {
 			scopes.add(juResult);
 		} else if (gameState.name().equals(WaitingNextPan.name)) {

@@ -48,6 +48,9 @@ public class MajiangGameQueryService {
     @Autowired
     private PanResultDboDao panResultDboDao;
 
+    @Autowired
+    private MajiangGamePlayerXiapiaoDboDao majiangGamePlayerXiapiaoDboDao;
+
     public void removeGamedata(long endTime) {
         new Thread() {
             @Override
@@ -59,6 +62,7 @@ public class MajiangGameQueryService {
                 panActionFrameDboDao.removeByTime(endTime);
                 panResultDboDao.removeByTime(endTime);
                 watchRecordDao.removeByTime(endTime);
+                majiangGamePlayerXiapiaoDboDao.removeByTime(endTime);
             }
         }.start();
     }

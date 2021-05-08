@@ -27,10 +27,7 @@ import com.dml.mpgame.game.extend.vote.VoteNotPassWhenPlaying;
 import com.dml.mpgame.game.player.GamePlayer;
 import com.dml.mpgame.game.player.PlayerPlaying;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
     private int panshu;                  //盘数
@@ -189,6 +186,50 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
         }
         result.setMajiangGame(new MajiangGameValueObject(this));
         return result;
+    }
+
+    public XiapiaoResult xiapiao(String playerId, int piaofen) throws Exception {
+        XiapiaoResult xiapiaoResult = new XiapiaoResult();
+        List<String> playerIdList = new ArrayList<>(this.playerpiaofenMap.keySet());
+        playerpiaofenMap.put(playerId,piaofen);
+        this.playerpiaofenMap.put(playerId,piaofen);
+        this.playerXiapiaoStateMap.put(playerId,MajiangPlayerXiapiaoState.over);
+        if (state.name().equals(VoteNotPassWhenXiapiao.name)) {
+            state = new XiapiaoState();
+        }
+        updatePlayerState(playerId, new PlayerAfterXiapiao());
+        boolean start = true;
+        int xiaopiaoOverPlayerCount=0;
+        Map<String, String> depositPlayerList = ju.getDepositPlayerList();
+        for (String pid : playerIdList) {
+            if (MajiangPlayerXiapiaoState.waitForxiapiao.equals(this.playerXiapiaoStateMap.get(pid))) {
+                start = false;
+            }else if (MajiangPlayerXiapiaoState.over.equals(this.playerXiapiaoStateMap.get(pid))){
+                xiaopiaoOverPlayerCount++;
+            }
+        }
+        if (xiaopiaoOverPlayerCount+depositPlayerList.size()==ju.getCurrentPan().getMajiangPlayerIdMajiangPlayerMap().size()){
+            start=true;
+            for (String tuogaunPlayerId:depositPlayerList.keySet()) {
+                this.playerXiapiaoStateMap.put(tuogaunPlayerId,MajiangPlayerXiapiaoState.over);
+            }
+        }
+        if (start) {
+            if (ju.getCurrentPan().getNo()==1){
+                ju.startFirstPan(allPlayerIds());
+            }else {
+                ju.startNextPan();
+            }
+            state = new Playing();
+            updateAllPlayersState(new PlayerPlaying());
+            PanActionFrame firstActionFrame=ju.getCurrentPan().findLatestActionFrame();
+            xiapiaoResult.setFirstActionFrame(firstActionFrame);
+        }
+        MajiangGameValueObject majiangGame = new MajiangGameValueObject(this);
+        majiangGame.setPlayerXiapiaoStateMap(playerXiapiaoStateMap);
+        majiangGame.setPlayerpiaofenMap(playerpiaofenMap);
+        xiapiaoResult.setMajiangGame(majiangGame);
+        return xiapiaoResult;
     }
 
 
@@ -350,5 +391,21 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
 
     public void setLianmengId(String lianmengId) {
         this.lianmengId = lianmengId;
+    }
+
+    public Map<String, MajiangPlayerXiapiaoState> getPlayerXiapiaoStateMap() {
+        return playerXiapiaoStateMap;
+    }
+
+    public void setPlayerXiapiaoStateMap(Map<String, MajiangPlayerXiapiaoState> playerXiapiaoStateMap) {
+        this.playerXiapiaoStateMap = playerXiapiaoStateMap;
+    }
+
+    public Map<String, Integer> getPlayerpiaofenMap() {
+        return playerpiaofenMap;
+    }
+
+    public void setPlayerpiaofenMap(Map<String, Integer> playerpiaofenMap) {
+        this.playerpiaofenMap = playerpiaofenMap;
     }
 }

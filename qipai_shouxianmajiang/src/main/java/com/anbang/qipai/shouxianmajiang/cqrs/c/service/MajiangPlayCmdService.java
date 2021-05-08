@@ -3,6 +3,7 @@ package com.anbang.qipai.shouxianmajiang.cqrs.c.service;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.ReadyToNextPanResult;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.XiapiaoResult;
 
 import java.util.Set;
 
@@ -19,5 +20,9 @@ public interface MajiangPlayCmdService {
     ReadyToNextPanResult readyToNextPan(String playerId, Set<String> playerIds) throws Exception;
 
 	ReadyToNextPanResult autoReadyToNextPan(String playerId, Set<String> playerIds,String gameId) throws Exception;
+
+    XiapiaoResult xiapiao(String playerId, Integer piaofen) throws Exception;
+
+    XiapiaoResult xiapiao(String playerId, Integer piaofen,String gameId) throws Exception;
 
 }

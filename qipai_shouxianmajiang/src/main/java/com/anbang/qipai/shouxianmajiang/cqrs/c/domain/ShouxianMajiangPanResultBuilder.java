@@ -7,6 +7,7 @@ import com.dml.majiang.pan.frame.PanValueObject;
 import com.dml.majiang.pan.result.CurrentPanResultBuilder;
 import com.dml.majiang.pan.result.PanResult;
 import com.dml.majiang.player.MajiangPlayer;
+import com.dml.majiang.player.menfeng.PlayersMenFengDeterminer;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -37,6 +38,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
 
         ShouxianMajiangPengGangActionStatisticsListener fangGangCounter = ju.getActionStatisticsListenerManager().findListener(ShouxianMajiangPengGangActionStatisticsListener.class); //碰杠统计检测器
         Map<String, Integer> playerFangGangMap = fangGangCounter.getPlayerIdFangGangShuMap();
+        ShouxianMajiangPlayersMenFengDeterminer playersMenFengDeterminerForFirstPan = (ShouxianMajiangPlayersMenFengDeterminer)ju.getPlayersMenFengDeterminerForFirstPan();
 
         List<MajiangPlayer> huPlayers = currentPan.findAllHuPlayers();      //胡牌玩家集合
         ShouxianMajiangPanResult shouxianmajiangPanResult = new ShouxianMajiangPanResult();      //局结果

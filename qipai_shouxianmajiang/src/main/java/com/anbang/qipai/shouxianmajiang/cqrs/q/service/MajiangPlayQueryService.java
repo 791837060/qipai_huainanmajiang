@@ -1,6 +1,8 @@
 package com.anbang.qipai.shouxianmajiang.cqrs.q.service;
 
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.*;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.XiapiaoResult;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.XiapiaoState;
 import com.anbang.qipai.shouxianmajiang.cqrs.q.dao.*;
 import com.anbang.qipai.shouxianmajiang.cqrs.q.dbo.*;
 import com.anbang.qipai.shouxianmajiang.plan.bean.PlayerInfo;
@@ -38,6 +40,9 @@ public class MajiangPlayQueryService {
     @Autowired
     private PanActionFrameDboDao panActionFrameDboDao;
 
+    @Autowired
+    private MajiangGamePlayerXiapiaoDboDao majiangGamePlayerXiapiaoDboDao;
+
     private LiangangangPanActionFramePlayerViewFilter pvFilter = new LiangangangPanActionFramePlayerViewFilter();
 
     public PanActionFrame findAndFilterCurrentPanValueObjectForPlayer(String gameId, String playerId) throws Exception {
@@ -70,6 +75,30 @@ public class MajiangPlayQueryService {
         return panActionFrame.getNo();
     }
 
+    public void xiapiao(XiapiaoResult xiapiaoResult) {
+        MajiangGameValueObject majiangGame = xiapiaoResult.getMajiangGame();
+        Map<String, PlayerInfo> playerInfoMap = new HashMap<>();
+        majiangGame.allPlayerIds().forEach((pid) -> playerInfoMap.put(pid, playerInfoDao.findById(pid)));
+        MajiangGameDbo majiangGameDbo = new MajiangGameDbo(majiangGame, playerInfoMap);
+        majiangGameDboDao.save(majiangGameDbo);
+
+        MajiangGamePlayerXiapiaoDbo xiapiaoDbo = new MajiangGamePlayerXiapiaoDbo(majiangGame);
+        majiangGamePlayerXiapiaoDboDao.updateMajiangGamePlayerXiapiaoDbo(xiapiaoDbo.getGameId(), xiapiaoDbo.getPanNo(),
+                xiapiaoDbo.getPlayerXiapiaoStateMap(), xiapiaoDbo.getPlayerpiaofenMap());
+        if (xiapiaoResult.getFirstActionFrame() != null) {
+            gameLatestPanActionFrameDboDao.save(majiangGame.getId(),
+                    xiapiaoResult.getFirstActionFrame());
+            // 记录一条Frame，回放的时候要做
+            String gameId = majiangGame.getId();
+            int panNo = xiapiaoResult.getFirstActionFrame().getPanAfterAction().getNo();
+            int actionNo = xiapiaoResult.getFirstActionFrame().getNo();
+            PanActionFrameDbo panActionFrameDbo = new PanActionFrameDbo(gameId, panNo, actionNo);
+            panActionFrameDbo.setPanActionFrame(xiapiaoResult.getFirstActionFrame());
+            panActionFrameDboDao.save(panActionFrameDbo);
+        }
+    }
+
+
     public void readyForGame(ReadyForGameResult readyForGameResult) {
         MajiangGameValueObject majiangGame = readyForGameResult.getMajiangGame();
         Map<String, PlayerInfo> playerInfoMap = new HashMap<>();
@@ -87,6 +116,11 @@ public class MajiangPlayQueryService {
             PanActionFrameDbo panActionFrameDbo = new PanActionFrameDbo(gameId, panNo, actionNo);
             panActionFrameDbo.setPanActionFrame(panActionFrame);
             panActionFrameDboDao.save(panActionFrameDbo);
+            MajiangGamePlayerXiapiaoDbo xiapiaoDbo = new MajiangGamePlayerXiapiaoDbo(majiangGame);
+            majiangGamePlayerXiapiaoDboDao.addMajiangGamePlayerXiapiaoDbo(xiapiaoDbo);
+        } else if (majiangGame.getState().name().equals(XiapiaoState.name)) {
+            MajiangGamePlayerXiapiaoDbo xiapiaoDbo = new MajiangGamePlayerXiapiaoDbo(majiangGame);
+            majiangGamePlayerXiapiaoDboDao.addMajiangGamePlayerXiapiaoDbo(xiapiaoDbo);
         }
     }
 
@@ -97,7 +131,11 @@ public class MajiangPlayQueryService {
         majiangGame.allPlayerIds().forEach((pid) -> playerInfoMap.put(pid, playerInfoDao.findById(pid)));
         MajiangGameDbo majiangGameDbo = new MajiangGameDbo(majiangGame, playerInfoMap);
         majiangGameDboDao.save(majiangGameDbo);
-
+        if (majiangGame.getState().name().equals(XiapiaoState.name)
+                || majiangGame.getState().name().equals(Playing.name)) {
+            MajiangGamePlayerXiapiaoDbo xiapiaoDbo = new MajiangGamePlayerXiapiaoDbo(majiangGame);
+            majiangGamePlayerXiapiaoDboDao.addMajiangGamePlayerXiapiaoDbo(xiapiaoDbo);
+        }
         if (readyToNextPanResult.getFirstActionFrame() != null) {
             gameLatestPanActionFrameDboDao.save(majiangGame.getId(),
                     readyToNextPanResult.getFirstActionFrame());
@@ -159,5 +197,9 @@ public class MajiangPlayQueryService {
 
     public List<PanActionFrameDbo> findPanActionFrameDboForBackPlay(String gameId, int panNo) {
         return panActionFrameDboDao.findByGameIdAndPanNo(gameId, panNo);
+    }
+
+    public MajiangGamePlayerXiapiaoDbo findLastPlayerXiapiaoDboByGameId(String gameId) {
+        return majiangGamePlayerXiapiaoDboDao.findLastByGameId(gameId);
     }
 }

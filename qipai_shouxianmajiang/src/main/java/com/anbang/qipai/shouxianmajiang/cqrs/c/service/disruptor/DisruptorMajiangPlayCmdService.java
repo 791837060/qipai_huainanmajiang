@@ -3,6 +3,7 @@ package com.anbang.qipai.shouxianmajiang.cqrs.c.service.disruptor;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.ReadyToNextPanResult;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.XiapiaoResult;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.service.impl.MajiangPlayCmdServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,5 +102,29 @@ public class DisruptorMajiangPlayCmdService extends DisruptorCmdServiceBase impl
 				majiangPlayCmdServiceImpl.autoReadyToNextPan(cmd.getParameter(),cmd.getParameter(),cmd.getParameter()));
 		return result.getResult();
 	}
+
+    @Override
+    public XiapiaoResult xiapiao(String playerId, Integer piaofen) throws Exception {
+        CommonCommand cmd = new CommonCommand(MajiangPlayCmdServiceImpl.class.getName(), "xiapiao", playerId, piaofen);
+        DeferredResult<XiapiaoResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () ->
+                majiangPlayCmdServiceImpl.xiapiao(cmd.getParameter(), cmd.getParameter()));
+        try {
+            return result.getResult();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public XiapiaoResult xiapiao(String playerId, Integer piaofen,String gameID) throws Exception {
+        CommonCommand cmd = new CommonCommand(MajiangPlayCmdServiceImpl.class.getName(), "xiapiao", playerId, piaofen,gameID);
+        DeferredResult<XiapiaoResult> result = publishEvent(disruptorFactory.getCoreCmdDisruptor(), cmd, () ->
+                majiangPlayCmdServiceImpl.xiapiao(cmd.getParameter(), cmd.getParameter(),cmd.getParameter()));
+        try {
+            return result.getResult();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
 }

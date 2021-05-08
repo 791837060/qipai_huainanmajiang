@@ -271,7 +271,13 @@ public class GameController {
     public CommonVO watchingInfo(String gameId) {
         CommonVO vo = new CommonVO();
         MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-        GameVO gameVO = new GameVO(majiangGameDbo);
+        MajiangGamePlayerXiapiaoDbo majiangGamePlayerXiapiaoDbo = majiangPlayQueryService.findLastPlayerXiapiaoDboByGameId(gameId);
+        GameVO gameVO;
+        if (majiangGamePlayerXiapiaoDbo != null) {
+            gameVO = new GameVO(majiangGameDbo, majiangGamePlayerXiapiaoDbo);
+        } else {
+            gameVO = new GameVO(majiangGameDbo);
+        }
         Map data = new HashMap();
         data.put("game", gameVO);
         vo.setData(data);
@@ -545,8 +551,18 @@ public class GameController {
     public CommonVO info(String gameId) {
         CommonVO vo = new CommonVO();
         MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-        GameVO gameVO = new GameVO(majiangGameDbo);
-        tuoguan(gameId, gameVO);
+        MajiangGamePlayerXiapiaoDbo majiangGamePlayerXiapiaoDbo = majiangPlayQueryService.findLastPlayerXiapiaoDboByGameId(gameId);
+        GameVO gameVO;
+        if (majiangGamePlayerXiapiaoDbo != null) {
+            gameVO = new GameVO(majiangGameDbo, majiangGamePlayerXiapiaoDbo);
+        } else {
+            gameVO = new GameVO(majiangGameDbo);
+        }
+        try {
+            tuoguan(gameId, gameVO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         Map data = new HashMap();
         data.put("game", gameVO);
@@ -889,7 +905,13 @@ public class GameController {
         }
         MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
         majiangGameDbo.setPanNo(panNo);
-        GameVO gameVO = new GameVO(majiangGameDbo);
+        MajiangGamePlayerXiapiaoDbo majiangGamePlayerXiapiaoDbo = majiangPlayQueryService.findLastPlayerXiapiaoDboByGameId(gameId);
+        GameVO gameVO;
+        if (majiangGamePlayerXiapiaoDbo != null) {
+            gameVO = new GameVO(majiangGameDbo, majiangGamePlayerXiapiaoDbo);
+        } else {
+            gameVO = new GameVO(majiangGameDbo);
+        }
         PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, panNo);
         data.put("panResult", new PanResultVO(panResultDbo, majiangGameDbo));
         data.put("game", gameVO);

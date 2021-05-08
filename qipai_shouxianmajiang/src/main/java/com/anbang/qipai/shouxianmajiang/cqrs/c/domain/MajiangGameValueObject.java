@@ -1,5 +1,6 @@
 package com.anbang.qipai.shouxianmajiang.cqrs.c.domain;
 
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.MajiangPlayerXiapiaoState;
 import com.dml.majiang.ju.result.JuResult;
 import com.dml.mpgame.game.extend.fpmpv.FixedPlayersMultipanAndVotetofinishGameValueObject;
 
@@ -26,6 +27,8 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
      */
     private Map<String, Double> playeTotalScoreMap = new HashMap<>();
     private Set<String> xipaiPlayerIds = new HashSet<>();
+    private Map<String, MajiangPlayerXiapiaoState> playerXiapiaoStateMap;
+    private Map<String,Integer> playerpiaofenMap;
     private JuResult juResult;
     private Double difen;
     private int powerLimit;
@@ -38,6 +41,8 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
         optionalPlay = majiangGame.getOptionalPlay();
         playeTotalScoreMap.putAll(majiangGame.getPlayeTotalScoreMap());
         xipaiPlayerIds = new HashSet<>(majiangGame.getXipaiPlayerIds());
+        playerpiaofenMap=majiangGame.getPlayerpiaofenMap();
+        playerXiapiaoStateMap = majiangGame.getPlayerXiapiaoStateMap();
         powerLimit = majiangGame.getPowerLimit();
         difen = majiangGame.getDifen();
         if (majiangGame.getJu() != null) {
@@ -118,5 +123,21 @@ public class MajiangGameValueObject extends FixedPlayersMultipanAndVotetofinishG
 
     public void setLianmengId(String lianmengId) {
         this.lianmengId = lianmengId;
+    }
+
+    public Map<String, MajiangPlayerXiapiaoState> getPlayerXiapiaoStateMap() {
+        return playerXiapiaoStateMap;
+    }
+
+    public void setPlayerXiapiaoStateMap(Map<String, MajiangPlayerXiapiaoState> playerXiapiaoStateMap) {
+        this.playerXiapiaoStateMap = playerXiapiaoStateMap;
+    }
+
+    public Map<String, Integer> getPlayerpiaofenMap() {
+        return playerpiaofenMap;
+    }
+
+    public void setPlayerpiaofenMap(Map<String, Integer> playerpiaofenMap) {
+        this.playerpiaofenMap = playerpiaofenMap;
     }
 }

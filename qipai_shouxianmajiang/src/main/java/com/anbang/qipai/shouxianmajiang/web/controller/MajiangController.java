@@ -4,13 +4,13 @@ import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.Automatic;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.MajiangActionResult;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.MajiangGameValueObject;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.ReadyToNextPanResult;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.XiapiaoResult;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.service.GameCmdService;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.service.PlayerAuthService;
 import com.anbang.qipai.shouxianmajiang.cqrs.q.dbo.JuResultDbo;
 import com.anbang.qipai.shouxianmajiang.cqrs.q.dbo.MajiangGameDbo;
 import com.anbang.qipai.shouxianmajiang.cqrs.q.dbo.PanResultDbo;
-
 import com.anbang.qipai.shouxianmajiang.cqrs.q.dbo.ShouxianMajiangPanPlayerResultDbo;
 import com.anbang.qipai.shouxianmajiang.cqrs.q.service.MajiangGameQueryService;
 import com.anbang.qipai.shouxianmajiang.cqrs.q.service.MajiangPlayQueryService;
@@ -52,49 +52,35 @@ import java.util.stream.Collectors;
 @RequestMapping("/mj")
 public class MajiangController {
 
+    private final Gson gson = new Gson();
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Automatic automatic = SpringUtil.getBean(Automatic.class);
     @Autowired
     private MajiangPlayCmdService majiangPlayCmdService;
-
     @Autowired
     private MajiangPlayQueryService majiangPlayQueryService;
-
     @Autowired
     private MajiangGameQueryService majiangGameQueryService;
-
     @Autowired
     private PlayerAuthService playerAuthService;
-
     @Autowired
     private PlayerInfoService playerInfoService;
-
     @Autowired
     private MemberGoldBalanceService memberGoldBalanceService;
-
     @Autowired
     private MemberGoldsMsgService memberGoldsMsgService;
-
     @Autowired
     private GamePlayWsNotifier wsNotifier;
-    
     @Autowired
     private ShouxianMajiangResultMsgService shouxianMajiangResultMsgService;
     @Autowired
     private ShouxianMajiangGameMsgService gameMsgService;
-
     @Autowired
     private GameCmdService gameCmdService;
-
     @Autowired
     private QipaiDalianmengRemoteService qipaiDalianmengRemoteService;
-
     @Autowired
     private HttpClient httpClient;
-
-    private final Gson gson = new Gson();
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private final Automatic automatic = SpringUtil.getBean(Automatic.class);
 
     /**
      * 当前盘我应该看到的所有信息 行牌的通知
@@ -161,6 +147,47 @@ public class MajiangController {
             return vo;
         }
         data.put("juResult", new JuResultVO(juResultDbo, majiangGameDbo));
+        return vo;
+    }
+
+    /**
+     * 玩家下漂
+     */
+    @RequestMapping(value = "/xiapiao")
+    @ResponseBody
+    public CommonVO xiapiao(String token, int piaofen) {
+        CommonVO vo = new CommonVO();
+        Map data = new HashMap();
+        vo.setData(data);
+        String playerId = playerAuthService.getPlayerIdByToken(token);
+        if (playerId == null) {
+            vo.setSuccess(false);
+            vo.setMsg("invalid token");
+            return vo;
+        }
+        XiapiaoResult xiapiaoResult;
+        try {
+            xiapiaoResult = majiangPlayCmdService.xiapiao(playerId, piaofen);
+        } catch (Exception e) {
+            vo.setSuccess(false);
+            vo.setMsg(e.getClass().getName());
+            return vo;
+        }
+        majiangPlayQueryService.xiapiao(xiapiaoResult);
+        // 通知其他人
+        for (String otherPlayerId : xiapiaoResult.getMajiangGame().allPlayerIds()) {
+            if (!otherPlayerId.equals(playerId)) {
+                wsNotifier.notifyToQuery(otherPlayerId, QueryScope.scopesForState(xiapiaoResult.getMajiangGame().getState(),
+                        xiapiaoResult.getMajiangGame().findPlayerState(otherPlayerId)));
+            }
+        }
+
+        List<QueryScope> queryScopes = new ArrayList<>();
+        queryScopes.add(QueryScope.gameInfo);
+        if (xiapiaoResult.getFirstActionFrame() != null) {
+            queryScopes.add(QueryScope.panForMe);
+        }
+        data.put("queryScopes", queryScopes);
         return vo;
     }
 
@@ -337,43 +364,45 @@ public class MajiangController {
             playerIds = playerIdGameIdMap.keySet();//托管玩家集合
         }
 
-        MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
-        String lianmengId = majiangGameDbo.getLianmengId();
-        if (lianmengId != null) {
-            PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, majiangGameDbo.getPanNo());
-            for (ShouxianMajiangPanPlayerResultDbo shouxianMajiangPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
-                CommonRemoteVO resVo = qipaiDalianmengRemoteService.nowPowerForRemote(shouxianMajiangPanPlayerResultDbo.getPlayerId(), lianmengId);
-                if (resVo.isSuccess()) {
-                    Map powerdata = (Map) resVo.getData();
-                    double powerbalance = (Double) powerdata.get("powerbalance");
-                    if (shouxianMajiangPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= majiangGameDbo.getPowerLimit()) {
-                        try {
-                            MajiangGameValueObject gameValueObject = gameCmdService.finishGameImmediately(gameId);
-                            majiangGameQueryService.finishGameImmediately(gameValueObject);
-                            gameMsgService.gameFinished(gameId);
-                            JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
-                            MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
-                            shouxianMajiangResultMsgService.recordJuResult(juResult);
-                            List<String> queryScopes = new ArrayList<>();
-                            gameMsgService.gameFinished(gameId);
-                            queryScopes.add(QueryScope.juResult.name());
-                            for (String otherPlayerId : gameValueObject.allPlayerIds()) {
-                                if (!otherPlayerId.equals(playerId)) {
-                                    wsNotifier.notifyToQuery(otherPlayerId, QueryScope.scopesForState(gameValueObject.getState(), gameValueObject.findPlayerState(otherPlayerId)));
+        if (gameId != null) {
+            MajiangGameDbo majiangGameDbo = majiangGameQueryService.findMajiangGameDboById(gameId);
+            String lianmengId = majiangGameDbo.getLianmengId();
+            if (lianmengId != null) {
+                PanResultDbo panResultDbo = majiangPlayQueryService.findPanResultDbo(gameId, majiangGameDbo.getPanNo());
+                for (ShouxianMajiangPanPlayerResultDbo shouxianMajiangPanPlayerResultDbo : panResultDbo.getPlayerResultList()) {
+                    CommonRemoteVO resVo = qipaiDalianmengRemoteService.nowPowerForRemote(shouxianMajiangPanPlayerResultDbo.getPlayerId(), lianmengId);
+                    if (resVo.isSuccess()) {
+                        Map powerdata = (Map) resVo.getData();
+                        double powerbalance = (Double) powerdata.get("powerbalance");
+                        if (shouxianMajiangPanPlayerResultDbo.getPlayerResult().getTotalScore() + powerbalance <= majiangGameDbo.getPowerLimit()) {
+                            try {
+                                MajiangGameValueObject gameValueObject = gameCmdService.finishGameImmediately(gameId);
+                                majiangGameQueryService.finishGameImmediately(gameValueObject);
+                                gameMsgService.gameFinished(gameId);
+                                JuResultDbo juResultDbo = majiangPlayQueryService.findJuResultDbo(gameId);
+                                MajiangHistoricalJuResult juResult = new MajiangHistoricalJuResult(juResultDbo, majiangGameDbo);
+                                shouxianMajiangResultMsgService.recordJuResult(juResult);
+                                List<String> queryScopes = new ArrayList<>();
+                                gameMsgService.gameFinished(gameId);
+                                queryScopes.add(QueryScope.juResult.name());
+                                for (String otherPlayerId : gameValueObject.allPlayerIds()) {
+                                    if (!otherPlayerId.equals(playerId)) {
+                                        wsNotifier.notifyToQuery(otherPlayerId, QueryScope.scopesForState(gameValueObject.getState(), gameValueObject.findPlayerState(otherPlayerId)));
+                                    }
                                 }
+                                data.put("queryScopes", queryScopes);
+                                vo.setData(data);
+                                return vo;
+                            } catch (Throwable throwable) {
+                                throwable.printStackTrace();
+                                vo.setSuccess(false);
+                                vo.setMsg(throwable.getClass().getName());
+                                return vo;
                             }
-                            data.put("queryScopes", queryScopes);
-                            vo.setData(data);
-                            return vo;
-                        } catch (Throwable throwable) {
-                            throwable.printStackTrace();
-                            vo.setSuccess(false);
-                            vo.setMsg(throwable.getClass().getName());
-                            return vo;
                         }
                     }
-                }
 
+                }
             }
         }
         ReadyToNextPanResult readyToNextPanResult;
@@ -411,7 +440,7 @@ public class MajiangController {
     private void hintWatcher(String gameId, String flag) {
         Map<String, Object> map = gameCmdService.getwatch(gameId);
         if (!CollectionUtils.isEmpty(map)) {
-            List<String> playerIds = map.entrySet().stream().map(e -> e.getKey()).collect(Collectors.toList());
+            List<String> playerIds = map.entrySet().stream().map(e->e.getKey()).collect(Collectors.toList());
             wsNotifier.notifyToWatchQuery(playerIds, flag);
             if (WatchQueryScope.watchEnd.name().equals(flag)) {
                 gameCmdService.recycleWatch(gameId);

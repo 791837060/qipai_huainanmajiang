@@ -1,6 +1,10 @@
 package com.anbang.qipai.shouxianmajiang.cqrs.c.service.impl;
 
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.*;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.GameNotXiapiao;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.VoteNotPassWhenXiapiao;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.XiapiaoResult;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.XiapiaoState;
 import com.anbang.qipai.shouxianmajiang.cqrs.c.service.MajiangPlayCmdService;
 import com.highto.framework.concurrent.DeferredResult;
 import com.highto.framework.ddd.CommonCommand;
@@ -121,6 +125,38 @@ public class MajiangPlayCmdServiceImpl extends CmdServiceBase implements Majiang
         }
         readyToNextPanResult.setMajiangGame(new MajiangGameValueObject(majiangGame));
         return readyToNextPanResult;
+    }
+
+    @Override
+    public XiapiaoResult xiapiao(String playerId, Integer piaofen) throws Exception {
+        GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+        String gameId = gameServer.findBindGameId(playerId);
+        if (gameId == null) {
+            throw new PlayerNotInGameException();
+        }
+        MajiangGame majiangGame = (MajiangGame) gameServer.findGame(gameId);
+        if (!(majiangGame.getState().name().equals(XiapiaoState.name)
+                || majiangGame.getState().name().equals(VoteNotPassWhenXiapiao.name))) {
+            throw new GameNotXiapiao();
+        }
+        XiapiaoResult xiapiaoResult = majiangGame.xiapiao(playerId, piaofen);
+        return xiapiaoResult;
+    }
+
+    @Override
+    public XiapiaoResult xiapiao(String playerId, Integer piaofen, String gameId) throws Exception {
+        GameServer gameServer = singletonEntityRepository.getEntity(GameServer.class);
+        if (gameId == null) {
+            gameId = gameServer.findBindGameId(playerId);
+            if (gameId == null) {
+                throw new PlayerNotInGameException();
+            }
+        }
+        MajiangGame majiangGame = (MajiangGame) gameServer.findGame(gameId);
+        if (!(majiangGame.getState().name().equals(XiapiaoState.name) || majiangGame.getState().name().equals(VoteNotPassWhenXiapiao.name))) {
+            throw new GameNotXiapiao();
+        }
+        return majiangGame.xiapiao(playerId, piaofen);
     }
 
 }

@@ -26,6 +26,7 @@ public class ShouxianMajiangPlayersMenFengDeterminer implements PlayersMenFengDe
      * @param ju            当前局
      * @throws Exception
      */
+    private int lianZhuangCount = 1;
     @Override
     public void determinePlayersMenFeng(Ju ju) throws Exception {
         Pan currentPan = ju.getCurrentPan();
@@ -42,6 +43,11 @@ public class ShouxianMajiangPlayersMenFengDeterminer implements PlayersMenFengDe
         if (huList.size() == 1) { //一人胡
             // 再计算要顺时针移几步到东
             MajiangPosition p = latestFinishedPanResult.playerMenFeng(huPlayerId);
+            if (p.equals(MajiangPosition.dong)){
+                lianZhuangCount++;
+            }else {
+                lianZhuangCount=1;
+            }
             int n = 0;
             while (true) {
                 MajiangPosition np = MajiangPositionUtil.nextPositionClockwise(p);
@@ -55,31 +61,7 @@ public class ShouxianMajiangPlayersMenFengDeterminer implements PlayersMenFengDe
             // 最后给所有玩家设置门风
             List<String> allPlayerIds = latestFinishedPanResult.allPlayerIds();
             for (String playerId : allPlayerIds) {
-                MajiangPosition playerMenFeng = latestFinishedPanResult.playerMenFeng(playerId);
-                MajiangPosition newPlayerMenFeng = playerMenFeng;
-                for (int i = 0; i < n; i++) {
-                    newPlayerMenFeng = MajiangPositionUtil.nextPositionClockwise(newPlayerMenFeng);
-                }
-                currentPan.updatePlayerMenFeng(playerId, newPlayerMenFeng);
-            }
-        } else if (huList.size() > 1) { //一炮多响
-            // 再计算要顺时针移几步到东
-            MajiangPosition p = latestFinishedPanResult.playerMenFeng(huList.get(0).getDianpaoPlayerId());
-            int n = 0;
-            while (true) {
-                MajiangPosition np = MajiangPositionUtil.nextPositionClockwise(p);
-                n++;
-                if (np.equals(MajiangPosition.dong)) {
-                    break;
-                } else {
-                    p = np;
-                }
-            }
-            // 最后给所有玩家设置门风
-            List<String> allPlayerIds = latestFinishedPanResult.allPlayerIds();
-            for (String playerId : allPlayerIds) {
-                MajiangPosition playerMenFeng = latestFinishedPanResult.playerMenFeng(playerId);
-                MajiangPosition newPlayerMenFeng = playerMenFeng;
+                MajiangPosition newPlayerMenFeng = latestFinishedPanResult.playerMenFeng(playerId);
                 for (int i = 0; i < n; i++) {
                     newPlayerMenFeng = MajiangPositionUtil.nextPositionClockwise(newPlayerMenFeng);
                 }
@@ -93,4 +75,11 @@ public class ShouxianMajiangPlayersMenFengDeterminer implements PlayersMenFengDe
         }
     }
 
+    public int getLianZhuangCount() {
+        return lianZhuangCount;
+    }
+
+    public void setLianZhuangCount(int lianZhuangCount) {
+        this.lianZhuangCount = lianZhuangCount;
+    }
 }

@@ -125,7 +125,7 @@ spring:
     name: qipai-shouxianmajiang
 
 server:
-  port: 2014
+  port: 2016
 #  context-path: /shouxianmajiang
   connectionTimeout: 6000
   tomcat:

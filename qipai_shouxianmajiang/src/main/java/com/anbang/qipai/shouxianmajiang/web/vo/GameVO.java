@@ -5,9 +5,13 @@ import java.util.List;
 import java.util.Set;
 
 import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.OptionalPlay;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.VoteNotPassWhenXiapiao;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.VotingWhenXiapiao;
+import com.anbang.qipai.shouxianmajiang.cqrs.c.domain.piao.XiapiaoState;
 import com.anbang.qipai.shouxianmajiang.cqrs.q.dbo.MajiangGameDbo;
 
 
+import com.anbang.qipai.shouxianmajiang.cqrs.q.dbo.MajiangGamePlayerXiapiaoDbo;
 import com.dml.mpgame.game.Canceled;
 import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.Playing;
@@ -31,14 +35,54 @@ public class GameVO {
     private String state;// 原来是 waitingStart, playing, waitingNextPan, finished
     private List<String> tuoguanPlayerIds=new ArrayList<>();
 
-    public GameVO(MajiangGameDbo majiangGameDbo) {
+
+    public GameVO(MajiangGameDbo majiangGameDbo, MajiangGamePlayerXiapiaoDbo majiangGamePlayerXiapiaoDbo) {
         id = majiangGameDbo.getId();
+        difen=majiangGameDbo.getDifen();
+        optionalPlay=majiangGameDbo.getOptionalPlay();
         panshu = majiangGameDbo.getPanshu();
         renshu = majiangGameDbo.getRenshu();
+        panNo = majiangGameDbo.getPanNo();
+        playerList = new ArrayList<>();
+        majiangGameDbo.getPlayers().forEach((dbo) -> playerList.add(new MajiangGamePlayerVO(dbo,majiangGamePlayerXiapiaoDbo)));
+        String sn = majiangGameDbo.getState().name();
+        if (sn.equals(Canceled.name)) {
+            state = "canceled";
+        } else if (sn.equals(Finished.name)) {
+            state = "finished";
+        } else if (sn.equals(FinishedByVote.name)) {
+            state = "finishedbyvote";
+        } else if (sn.equals(Playing.name)) {
+            state = "playing";
+        } else if (sn.equals(VotingWhenPlaying.name)) {
+            state = "playing";
+        } else if (sn.equals(VoteNotPassWhenPlaying.name)) {
+            state = "playing";
+        } else if (sn.equals(VotingWhenWaitingNextPan.name)) {
+            state = "waitingNextPan";
+        } else if (sn.equals(VoteNotPassWhenWaitingNextPan.name)) {
+            state = "waitingNextPan";
+        } else if (sn.equals(WaitingNextPan.name)) {
+            state = "waitingNextPan";
+        } else if (sn.equals(WaitingStart.name)) {
+            state = "waitingStart";
+        } else if (sn.equals(XiapiaoState.name)) {
+            state = "xiapiao";
+        } else if (sn.equals(VotingWhenXiapiao.name)) {
+            state = "xiapiao";
+        } else if (sn.equals(VoteNotPassWhenXiapiao.name)) {
+            state = "xiapiao";
+        } else {
+        }
+    }
+
+    public GameVO(MajiangGameDbo majiangGameDbo) {
+        id = majiangGameDbo.getId();
         difen=majiangGameDbo.getDifen();
-        panNo=majiangGameDbo.getPanNo();
-        xipaiPlayerIds = majiangGameDbo.getXipaiPlayerIds();
         optionalPlay=majiangGameDbo.getOptionalPlay();
+        panshu = majiangGameDbo.getPanshu();
+        renshu = majiangGameDbo.getRenshu();
+        panNo = majiangGameDbo.getPanNo();
         playerList = new ArrayList<>();
         majiangGameDbo.getPlayers().forEach((dbo) -> playerList.add(new MajiangGamePlayerVO(dbo)));
         String sn = majiangGameDbo.getState().name();
@@ -62,10 +106,15 @@ public class GameVO {
             state = "waitingNextPan";
         } else if (sn.equals(WaitingStart.name)) {
             state = "waitingStart";
+        } else if (sn.equals(XiapiaoState.name)) {
+            state = "xiapiao";
+        } else if (sn.equals(VotingWhenXiapiao.name)) {
+            state = "xiapiao";
+        } else if (sn.equals(VoteNotPassWhenXiapiao.name)) {
+            state = "xiapiao";
         } else {
         }
     }
-
     public Set<String> getXipaiPlayerIds() {
         return xipaiPlayerIds;
     }
