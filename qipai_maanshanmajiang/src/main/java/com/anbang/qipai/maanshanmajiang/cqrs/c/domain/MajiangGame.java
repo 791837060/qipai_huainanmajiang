@@ -59,7 +59,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
         ju.setZhuangDeterminerForFirstPan(new MenFengDongZhuangDeterminer());                                         //第一盘东风坐庄
         ju.setZhuangDeterminerForNextPan(new MenFengDongZhuangDeterminer());                                          //下一盘东风坐庄
         ju.setAvaliablePaiFiller(new MaanshanMajiangFaRandomAvaliablePaiFiller(currentTime + 2, optionalPlay));  //填充可用牌
-        ju.setFaPaiStrategy(new MaanshanMajiangFaPaiStrategy(13, optionalPlay));                 //顺序发牌
+        ju.setFaPaiStrategy(new MaanshanMajiangFaPaiStrategyTest(13, optionalPlay));                 //顺序发牌
         ju.setCurrentPanFinishiDeterminer(new MaanshanMajiangPanFinishiDeterminer());                                 //盘结束条件
         ju.setJuFinishiDeterminer(new MaanshanMajiangFixedPanNumbersJuFinishiDeterminer(60, optionalPlay));//局结束条件
         ju.setCurrentPanPublicWaitingPlayerDeterminer(new WaitDaPlayerPanPublicWaitingPlayerDeterminer());            //等待出牌
