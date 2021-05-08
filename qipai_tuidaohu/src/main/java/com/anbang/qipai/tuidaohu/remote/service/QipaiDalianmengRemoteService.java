@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 会员中心远程服务
  */
-//@FeignClient("qipai-dalianmeng/dalianmeng")
-@FeignClient("qipai-dalianmeng")
+@FeignClient("qipai-dalianmeng/dalianmeng")
+//@FeignClient("qipai-dalianmeng")
 public interface QipaiDalianmengRemoteService {
 
     @RequestMapping(value = "/power/nowPowerForRemote")
