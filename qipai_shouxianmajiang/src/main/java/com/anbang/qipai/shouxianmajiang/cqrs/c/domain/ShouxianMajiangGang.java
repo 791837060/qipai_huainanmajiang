@@ -39,7 +39,7 @@ public class ShouxianMajiangGang {
      * @param fangGangCount 放杠数量
      */
     public void calculate(int playerCount, int fangGangCount) {
-        value = ((anGangShu * 2+zimoMingGangShu) * (playerCount - 1)) + ((fangGangmingGangShu - fangGangCount) * 3);
+        value = ((anGangShu * 2+zimoMingGangShu) * (playerCount - 1)) + ((fangGangmingGangShu - fangGangCount));
     }
 
     public int jiesuan(int delta) {

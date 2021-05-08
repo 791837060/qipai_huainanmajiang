@@ -11,38 +11,43 @@ public class ShouxianMajiangHushu {
 //    private boolean tianhu;             //天胡；
 //    private boolean dihu;               //地胡；
 
-//    private boolean qingyise;           //清一色
-    private boolean gangshangkaihua=false;    //杠上开花
+    //    private boolean qingyise;           //清一色
+    private boolean gangshangkaihua = false;    //杠上开花
 //    private boolean qiangganghu;        //抢杠胡
 
-//    private boolean qixiaodui;          //七小对
+    //    private boolean qixiaodui;          //七小对
 //    private boolean haohuaqixiaodui;    //豪华七小对
 //    private boolean yitiaolong;         //一条龙
 //    private boolean pengpenghu;         //碰碰胡
 //
 //    private boolean shisanyao;          //十三幺
-    private boolean duyi=false;
-    private boolean yaojiu=false;
-    private boolean hongzhong=false;
+    private boolean duyi = false;
+    private boolean yaojiu = false;
+    private boolean hongzhong = false;
 
     private int value;
 
     public void calculate() {
         int hushu = 0;
-        if (hu || zimoHu) {
-            hushu = 2;
+        if (hu) {
+            hushu++;
         }
-        if (gangshangkaihua){
+
+
+        if (duyi) {
+            hushu++;
+        }
+        if (yaojiu) {
+            hushu++;
+        }
+        if (hongzhong) {
+            hushu++;
+        }
+        if (zimoHu) {
             hushu*=2;
         }
-        if (duyi){
-            hushu*=2;
-        }
-        if (yaojiu){
-            hushu*=2;
-        }
-        if (hongzhong){
-            hushu*=2;
+        if (gangshangkaihua) {
+            hushu += 2;
         }
 //        if (tianhu || dihu) {
 //            hushu = 9;

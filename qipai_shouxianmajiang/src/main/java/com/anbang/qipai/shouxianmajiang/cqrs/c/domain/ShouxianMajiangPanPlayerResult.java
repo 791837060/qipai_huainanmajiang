@@ -8,9 +8,11 @@ public class ShouxianMajiangPanPlayerResult extends PanPlayerResult {
 
     private ShouxianMajiangGang gang;
 
-    private int xiapaoCount;
+    private int xiapaoCount = 0;            //个人设定的跑分
 
-    private int paofen;
+    private int paofen = 0;                 //跑分实际输赢分数
+
+    private int lianzhuangfen = 0;
     /**
      * 一盘的结算分
      */
@@ -19,7 +21,6 @@ public class ShouxianMajiangPanPlayerResult extends PanPlayerResult {
      * 可能为负数
      */
     private Double totalScore;
-
 
 
     public ShouxianMajiangHushu getHufen() {
@@ -68,5 +69,13 @@ public class ShouxianMajiangPanPlayerResult extends PanPlayerResult {
 
     public void setPaofen(int paofen) {
         this.paofen = paofen;
+    }
+
+    public int getLianzhuangfen() {
+        return lianzhuangfen;
+    }
+
+    public void setLianzhuangfen(int lianzhuangfen) {
+        this.lianzhuangfen = lianzhuangfen;
     }
 }

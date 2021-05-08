@@ -85,6 +85,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
         ShouxianMajiangPanResultBuilder tuiDaoHuPanResultBuilder = new ShouxianMajiangPanResultBuilder();                 //盘记分结果
         tuiDaoHuPanResultBuilder.setDifen(difen);
         tuiDaoHuPanResultBuilder.setOptionalPlay(optionalPlay);
+        tuiDaoHuPanResultBuilder.setPlayerpiaofenMap(playerpiaofenMap);
         ju.setCurrentPanResultBuilder(tuiDaoHuPanResultBuilder);
         ShouxianMajiangHuPaiSolutionsTipsFilter tuiDaoHuHuPaiSolutionsTipsFilter = new ShouxianMajiangHuPaiSolutionsTipsFilter();
         tuiDaoHuHuPaiSolutionsTipsFilter.setOptionalPlay(optionalPlay);

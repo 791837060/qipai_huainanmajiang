@@ -8,6 +8,7 @@ import com.dml.majiang.pan.result.CurrentPanResultBuilder;
 import com.dml.majiang.pan.result.PanResult;
 import com.dml.majiang.player.MajiangPlayer;
 import com.dml.majiang.player.menfeng.PlayersMenFengDeterminer;
+import com.dml.majiang.position.MajiangPosition;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -15,7 +16,7 @@ import java.util.*;
 public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder {
     private OptionalPlay optionalPlay;           //清一色
     private Double difen;                   //底分
-    private Map<String,Integer> playerpiaofenMap=new HashMap<>();
+    private Map<String, Integer> playerpiaofenMap = new HashMap<>();
 
 
     /**
@@ -38,7 +39,8 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
 
         ShouxianMajiangPengGangActionStatisticsListener fangGangCounter = ju.getActionStatisticsListenerManager().findListener(ShouxianMajiangPengGangActionStatisticsListener.class); //碰杠统计检测器
         Map<String, Integer> playerFangGangMap = fangGangCounter.getPlayerIdFangGangShuMap();
-        ShouxianMajiangPlayersMenFengDeterminer playersMenFengDeterminerForFirstPan = (ShouxianMajiangPlayersMenFengDeterminer)ju.getPlayersMenFengDeterminerForFirstPan();
+        ShouxianMajiangPlayersMenFengDeterminer playersMenFengDeterminerForFirstPan = (ShouxianMajiangPlayersMenFengDeterminer) ju.getPlayersMenFengDeterminerForNextPan();
+        int lianZhuangCount = playersMenFengDeterminerForFirstPan.getLianZhuangCount();
 
         List<MajiangPlayer> huPlayers = currentPan.findAllHuPlayers();      //胡牌玩家集合
         ShouxianMajiangPanResult shouxianmajiangPanResult = new ShouxianMajiangPanResult();      //局结果
@@ -53,7 +55,6 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
             ShouxianMajiangHu hu = (ShouxianMajiangHu) huPlayer.getHu();
             dianPaoPlayerId = hu.getDianpaoPlayerId();
             MajiangPlayer dianpaoPlayer = currentPan.findPlayerById(dianPaoPlayerId);
-            dianpaoPlayer.setHu(null);// 财神吊时有其他人胡，其他人优先胡
             MajiangPlayer xiajiaPlayer = currentPan.findXiajia(dianpaoPlayer);
             // 按点炮者开始遍历出最先胡并把其他胡变为null
             boolean anyPlayerHu = false;
@@ -72,7 +73,6 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 }
                 xiajiaPlayer = currentPan.findXiajia(xiajiaPlayer);
             }
-            //抢杠胡
             // 结算胡数
             ShouxianMajiangHushu huPlayerHufen = hu.getHufen();
             ShouxianMajiangPanPlayerResult huPlayerResult = new ShouxianMajiangPanPlayerResult();
@@ -80,7 +80,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
             huPlayerResult.setHufen(huPlayerHufen);
             // 放炮玩家输给胡家的胡数
             int delta = huPlayerHufen.getValue();
-            huPlayerHufen.setValue(huPlayerHufen.getValue() * (playerIdList.size() - 1)); //每人共赢分
+            huPlayerHufen.setValue(huPlayerHufen.getValue()); //每人共赢分
             // 计算杠分
             Integer fangGangCount = playerFangGangMap.get(huPlayer.getId());
             if (fangGangCount == null) {
@@ -89,18 +89,21 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
             ShouxianMajiangGang gang = new ShouxianMajiangGang(huPlayer);
             gang.calculate(playerIdList.size(), fangGangCount);
             huPlayerResult.setGang(gang);
+            //计算跑分
             huPlayerResult.setXiapaoCount(playerpiaofenMap.get(huPlayer.getId()));
-            huPlayerResult.setPaofen(playerpiaofenMap.get(huPlayer.getId())+playerpiaofenMap.get(dianPaoPlayerId));
+            huPlayerResult.setPaofen(playerpiaofenMap.get(huPlayer.getId()) + playerpiaofenMap.get(dianPaoPlayerId));
+            huPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? lianZhuangCount : 0);
             playerResultList.add(huPlayerResult);
             MajiangPlayer finalHuPlayer = huPlayer;
             ShouxianMajiangHu finalHu = hu;
-            playerIdList.forEach((playerId)->{
+            playerIdList.forEach((playerId) -> {
                 if (playerId.equals(finalHuPlayer.getId())) {
                     // 胡家已经计算过了
                 } else if (playerId.equals(finalHu.getDianpaoPlayerId())) { //计算点炮玩家分数
                     MajiangPlayer buHuplayer = currentPan.findPlayerById(playerId);
                     ShouxianMajiangPanPlayerResult buHuPlayerResult = new ShouxianMajiangPanPlayerResult();
                     buHuPlayerResult.setPlayerId(playerId);
+
                     buHuPlayerResult.setHufen(ShouxianMajiangJiesuanCalculator.calculateBestHuFenForBuhuPlayer(buHuplayer, optionalPlay));
                     ShouxianMajiangHushu hufen = buHuPlayerResult.getHufen();
                     hufen.jiesuan(-delta);
@@ -112,6 +115,10 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                     ShouxianMajiangGang gang1 = new ShouxianMajiangGang(buHuplayer);
                     gang1.calculate(playerIdList.size(), fangGangCount1);
                     buHuPlayerResult.setGang(gang1);
+                    //计算跑分
+                    buHuPlayerResult.setXiapaoCount(playerpiaofenMap.get(playerId));
+                    buHuPlayerResult.setPaofen(-playerpiaofenMap.get(playerId) - playerpiaofenMap.get(finalHuPlayer.getId()));
+                    buHuPlayerResult.setLianzhuangfen(finalHuPlayer.getMenFeng().equals(MajiangPosition.dong) ? -lianZhuangCount : 0);
                     playerResultList.add(buHuPlayerResult);
                 } else { //计算非胡玩家分数
                     MajiangPlayer buHuplayer = currentPan.findPlayerById(playerId);
@@ -147,7 +154,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
 
             playerResultList.forEach((playerResult) -> {
                 // 计算当盘总分
-                int score = playerResult.getHufen().getValue() + playerResult.getGang().getValue()+playerResult.getPaofen();
+                int score = playerResult.getHufen().getValue() + playerResult.getGang().getValue() + playerResult.getPaofen() + playerResult.getLianzhuangfen();
                 playerResult.setScore(new BigDecimal(Double.toString(difen)).multiply(new BigDecimal(Double.toString(score))).doubleValue());
                 // 计算累计总分
                 if (latestFinishedPanResult != null) {
@@ -183,8 +190,11 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 ShouxianMajiangGang gang = new ShouxianMajiangGang(huPlayer);
                 gang.calculate(playerIdList.size(), fangGangCount);
                 huPlayerResult.setGang(gang);
+                huPlayerResult.setXiapaoCount(playerpiaofenMap.get(huPlayer.getId()));
+                huPlayerResult.setPaofen(playerpiaofenMap.get(huPlayer.getId()) + playerpiaofenMap.get(dianPaoPlayerId));
+                huPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? lianZhuangCount : 0);
                 playerResultList.add(huPlayerResult);
-                playerIdList.forEach((playerId)->{
+                playerIdList.forEach((playerId) -> {
                     if (playerId.equals(huPlayer.getId())) {
                         // 胡家已经计算过了
                     } else if (playerId.equals(hu.getDianpaoPlayerId())) { //计算点炮玩家分数
@@ -202,6 +212,9 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                         ShouxianMajiangGang gang1 = new ShouxianMajiangGang(buHuplayer);
                         gang1.calculate(playerIdList.size(), fangGangCount1);
                         buHuPlayerResult.setGang(gang1);
+                        buHuPlayerResult.setXiapaoCount(playerpiaofenMap.get(playerId));
+                        buHuPlayerResult.setPaofen(-playerpiaofenMap.get(playerId) - playerpiaofenMap.get(huPlayer.getId()));
+                        buHuPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? -lianZhuangCount : 0);
                         playerResultList.add(buHuPlayerResult);
                     } else { //计算非胡玩家分数
                         MajiangPlayer buHuplayer = currentPan.findPlayerById(playerId);
@@ -216,6 +229,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                         ShouxianMajiangGang gang1 = new ShouxianMajiangGang(buHuplayer);
                         gang1.calculate(playerIdList.size(), fangGangCount1);
                         buHuPlayerResult.setGang(gang1);
+
                         playerResultList.add(buHuPlayerResult);
                     }
                 });
@@ -291,6 +305,15 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 ShouxianMajiangGang gang = new ShouxianMajiangGang(huPlayer);
                 gang.calculate(playerIdList.size(), fangGangCount);
                 huPlayerResult.setGang(gang);
+                huPlayerResult.setXiapaoCount(playerpiaofenMap.get(huPlayer.getId()));
+                huPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? lianZhuangCount : 0);
+                int tarenpaofen = 0;
+                for (String playerID : playerpiaofenMap.keySet()) {
+                    if (!playerID.equals(huPlayer.getId())) {
+                        tarenpaofen += playerpiaofenMap.get(playerID);
+                    }
+                }
+                huPlayerResult.setPaofen(tarenpaofen + playerpiaofenMap.get(huPlayer.getId()) * (playerIdList.size() - 1));
                 playerResultList.add(huPlayerResult);
 
                 for (String playerId : playerIdList) {
@@ -312,6 +335,9 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                         ShouxianMajiangGang gang1 = new ShouxianMajiangGang(buHuPlayer);
                         gang1.calculate(playerIdList.size(), fangGangCount1);
                         buHuPlayerResult.setGang(gang1);
+                        buHuPlayerResult.setXiapaoCount(playerpiaofenMap.get(playerId));
+                        buHuPlayerResult.setPaofen(-playerpiaofenMap.get(playerId) - playerpiaofenMap.get(huPlayer.getId()));
+                        buHuPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? -lianZhuangCount : 0);
                         playerResultList.add(buHuPlayerResult);
                     }
                 }
@@ -334,7 +360,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
 
             playerResultList.forEach((playerResult) -> {
                 // 计算当盘总分
-                int score = playerResult.getHufen().getValue() + playerResult.getGang().getValue() ;
+                int score = playerResult.getHufen().getValue() + playerResult.getGang().getValue() + playerResult.getLianzhuangfen() + playerResult.getPaofen();
                 playerResult.setScore(new BigDecimal(Double.toString(difen)).multiply(new BigDecimal(Double.toString(score))).doubleValue());
                 // 计算累计总分
                 if (latestFinishedPanResult != null) {
@@ -385,7 +411,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
             }
             playerResultList.forEach((playerResult) -> {
                 // 计算当盘总分
-                int score = playerResult.getHufen().getValue() + playerResult.getGang().getValue() ;
+                int score = playerResult.getHufen().getValue() + playerResult.getGang().getValue();
                 playerResult.setScore(new BigDecimal(Double.toString(difen)).multiply(new BigDecimal(Double.toString(score))).doubleValue());
                 // 计算累计总分
                 if (latestFinishedPanResult != null) {
@@ -416,5 +442,13 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
 
     public void setDifen(Double difen) {
         this.difen = difen;
+    }
+
+    public Map<String, Integer> getPlayerpiaofenMap() {
+        return playerpiaofenMap;
+    }
+
+    public void setPlayerpiaofenMap(Map<String, Integer> playerpiaofenMap) {
+        this.playerpiaofenMap = playerpiaofenMap;
     }
 }
