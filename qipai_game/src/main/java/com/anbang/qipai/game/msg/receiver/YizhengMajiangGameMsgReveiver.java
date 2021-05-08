@@ -57,8 +57,8 @@ public class YizhengMajiangGameMsgReveiver {
                     }
                 }
                 gameService.saveGameRoom(room);
-                memberLatAndLonService.del(playerId);
-                gameService.yizhengMajiangPlayerQuitQame(gameId, playerId);
+                memberLatAndLonService.deleteMemberLatAndLon(playerId);
+                gameService.playerQuitGame(Game.yizhengMajiang,gameId, playerId);
             }
         }
         if ("ju canceled".equals(msg)) {// 取消游戏
@@ -75,7 +75,7 @@ public class YizhengMajiangGameMsgReveiver {
                         int amount = playersRecord.get(i).getPayGold();
                         qipaiMembersRomoteService.gold_givegoldtomember(playersRecord.get(i).getPlayerId(), amount,
                                 "back gold to leave game");
-                        memberLatAndLonService.del(playersRecord.get(i).getPlayerId());
+                        memberLatAndLonService.deleteMemberLatAndLon(playersRecord.get(i).getPlayerId());
                     }
                     gameService.saveGameRoom(gameRoom);
                 }
@@ -96,7 +96,7 @@ public class YizhengMajiangGameMsgReveiver {
                         int amount = playersRecord.get(i).getPayGold();
                         qipaiMembersRomoteService.gold_givegoldtomember(playersRecord.get(i).getPlayerId(), amount,
                                 "back gold to leave game");
-                        memberLatAndLonService.del(playersRecord.get(i).getPlayerId());
+                        memberLatAndLonService.deleteMemberLatAndLon(playersRecord.get(i).getPlayerId());
                     }
                     gameService.saveGameRoom(gameRoom);
                 }

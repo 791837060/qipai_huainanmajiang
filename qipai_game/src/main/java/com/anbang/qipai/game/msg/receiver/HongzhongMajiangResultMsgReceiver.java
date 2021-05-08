@@ -66,7 +66,7 @@ public class HongzhongMajiangResultMsgReceiver {
                         majiangHistoricalResult.setPanshu(((Double) map.get("panshu")).intValue());
                         majiangHistoricalResult.setLastPanNo(((Double) map.get("lastPanNo")).intValue());
                         majiangHistoricalResult.setFinishTime(((Double) map.get("finishTime")).longValue());
-                        memberLatAndLonService.hongzhongMajiangDels(juPlayerResultList);
+                        juPlayerResultList.forEach(gameJuPlayerResult -> memberLatAndLonService.deleteMemberLatAndLon(gameJuPlayerResult.playerId()));
                         majiangHistoricalResultService.addGameHistoricalResult(majiangHistoricalResult);
                     }
                 }

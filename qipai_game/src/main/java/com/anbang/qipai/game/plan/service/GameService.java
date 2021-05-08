@@ -208,61 +208,10 @@ public class GameService {
         return memberGameRoomDao.findByMemberIdAndGameRoomId(memberId, GameRoomId);
     }
 
-    public void yangzhouMajiangPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.yangzhouMajiang, serverGameId, playerId);
+    public void playerQuitGame(Game game,String serverGameId, String playerId) {
+        memberGameRoomDao.remove(game, serverGameId, playerId);
     }
 
-    public void yizhengMajiangPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.yizhengMajiang, serverGameId, playerId);
-    }
-
-    public void paodekuaiPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.paodekuai, serverGameId, playerId);
-    }
-
-    public void huangshibaPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.huangshiba, serverGameId, playerId);
-    }
-
-    public void bohuPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.bohu, serverGameId, playerId);
-    }
-
-    public void guandanPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.guandan, serverGameId, playerId);
-    }
-
-    public void bijiPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.biji, serverGameId, playerId);
-    }
-
-    public void doudizhuPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.doudizhu, serverGameId, playerId);
-    }
-
-    public void taizhouMajiangPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.taizhouMajiang, serverGameId, playerId);
-    }
-
-    public void tianchangxiaohuaPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.tianchangxiaohua, serverGameId, playerId);
-    }
-
-    public void taixingMajiangPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.taixingMajiang, serverGameId, playerId);
-    }
-
-    public void gaoyouMajiangPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.gaoyouMajiang, serverGameId, playerId);
-    }
-
-    public void hongzhongMajiangPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.hongzhongMajiang, serverGameId, playerId);
-    }
-
-    public void maanshanMajiangPlayerQuitQame(String serverGameId, String playerId) {
-        memberGameRoomDao.remove(Game.maanshanMajiang, serverGameId, playerId);
-    }
 
     public void expireMemberGameRoom(Game game, String serverGameId) {
         memberGameRoomDao.removeExpireRoom(game, serverGameId);

@@ -53,8 +53,8 @@ public class GuandanGameMsgReceiver {
                         }
                     }
                     gameService.saveGameRoom(room);
-                memberLatAndLonService.del(playerId);
-                gameService.guandanPlayerQuitQame(gameId, playerId);
+                memberLatAndLonService.deleteMemberLatAndLon(playerId);
+                gameService.playerQuitGame(Game.guandan,gameId, playerId);
             }
         }
         if ("ju canceled".equals(msg)) {// 取消游戏
@@ -69,7 +69,7 @@ public class GuandanGameMsgReceiver {
                     if (gameRoom.getCurrentPanNum() == 0 ) {
                         int amount = playersRecord.get(i).getPayGold();
                         qipaiMembersRomoteService.gold_givegoldtomember(playersRecord.get(i).getPlayerId(), amount, "back gold to leave game");
-                        memberLatAndLonService.del(playersRecord.get(i).getPlayerId());
+                        memberLatAndLonService.deleteMemberLatAndLon(playersRecord.get(i).getPlayerId());
                     }
                     gameService.saveGameRoom(gameRoom);
                 }
@@ -88,7 +88,7 @@ public class GuandanGameMsgReceiver {
                     if (gameRoom.getCurrentPanNum() == 0 ) {
                         int amount = playersRecord.get(i).getPayGold();
                         qipaiMembersRomoteService.gold_givegoldtomember(playersRecord.get(i).getPlayerId(), amount, "back gold to leave game");
-                        memberLatAndLonService.del(playersRecord.get(i).getPlayerId());
+                        memberLatAndLonService.deleteMemberLatAndLon(playersRecord.get(i).getPlayerId());
                     }
                     gameService.saveGameRoom(gameRoom);
                 }

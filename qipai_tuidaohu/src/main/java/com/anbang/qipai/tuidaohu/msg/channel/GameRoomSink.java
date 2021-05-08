@@ -5,8 +5,8 @@ import org.springframework.messaging.SubscribableChannel;
 
 public interface GameRoomSink {
 
-	String TUIDAOHUROOM = "tuidaohuGameRoom";
+	String HONGZHONGMAJIANGGAMEROOM = "hongzhongMajiangGameRoom";
 
 	@Input
-	SubscribableChannel tuidaohuGameRoom();
+	SubscribableChannel hongzhongMajiangGameRoom();
 }
