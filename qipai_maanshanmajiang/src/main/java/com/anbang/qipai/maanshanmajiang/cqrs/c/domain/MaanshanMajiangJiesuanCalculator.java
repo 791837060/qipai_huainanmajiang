@@ -219,6 +219,11 @@ public class MaanshanMajiangJiesuanCalculator {
 
         boolean yadang = isYadang(shoupaixingWuguanJiesuancanshu, shoupaiPaiXing, player);
         boolean kuyazhi = isKuyazhi(shoupaixingWuguanJiesuancanshu, currentPan, zimoHu) && yadang;
+        if (qianggangHu) {
+            if (yadang) {
+                kuyazhi = true;//抢杠胡加压档算枯压支
+            }
+        }
 
         boolean shixiao = false, shilao = false, quanxiao = false, quanlao = false;//十小 十老 全小 全老
         int xiaoCount = 0, laoCount = 0, allCount = 0;
