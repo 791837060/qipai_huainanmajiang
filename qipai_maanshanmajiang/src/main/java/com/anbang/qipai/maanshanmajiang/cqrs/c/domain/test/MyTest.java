@@ -49,16 +49,16 @@ public class MyTest {
 
         MajiangPlayer majiangPlayer = new MajiangPlayer();
 
-        majiangPlayer.addShoupai(MajiangPai.sitong);
-        majiangPlayer.addShoupai(MajiangPai.sitong);
+        majiangPlayer.addShoupai(MajiangPai.yitong);
+        majiangPlayer.addShoupai(MajiangPai.ertong);
+        majiangPlayer.addShoupai(MajiangPai.santong);
+        majiangPlayer.addShoupai(MajiangPai.santong);
         majiangPlayer.addShoupai(MajiangPai.sitong);
         majiangPlayer.addShoupai(MajiangPai.wutong);
-        majiangPlayer.addShoupai(MajiangPai.liutong);
-        majiangPlayer.addShoupai(MajiangPai.jiutong);
-        majiangPlayer.addShoupai(MajiangPai.jiutong);
-//        majiangPlayer.addShoupai(MajiangPai.ertong);
-//        majiangPlayer.addShoupai(MajiangPai.santong);
-//        majiangPlayer.addShoupai(MajiangPai.santong);
+        majiangPlayer.addShoupai(MajiangPai.yitiao);
+        majiangPlayer.addShoupai(MajiangPai.ertiao);
+        majiangPlayer.addShoupai(MajiangPai.jiutiao);
+        majiangPlayer.addShoupai(MajiangPai.jiutiao);
 //        majiangPlayer.addShoupai(MajiangPai.santong);
 //        majiangPlayer.addShoupai(MajiangPai.santong);
 //        majiangPlayer.addShoupai(MajiangPai.dongfeng);
@@ -67,15 +67,15 @@ public class MyTest {
 
         PengchuPaiZu pengchuPaiZu = new PengchuPaiZu();
         Kezi kezi = new Kezi();
-        kezi.setPaiType(MajiangPai.yiwan);
+        kezi.setPaiType(MajiangPai.liutong);
         pengchuPaiZu.setKezi(kezi);
         majiangPlayer.getPengchupaiZuList().add(pengchuPaiZu);
 
-        PengchuPaiZu pengchuPaiZu2 = new PengchuPaiZu();
-        Kezi kezi2 = new Kezi();
-        kezi2.setPaiType(MajiangPai.batong);
-        pengchuPaiZu2.setKezi(kezi2);
-        majiangPlayer.getPengchupaiZuList().add(pengchuPaiZu2);
+//        PengchuPaiZu pengchuPaiZu2 = new PengchuPaiZu();
+//        Kezi kezi2 = new Kezi();
+//        kezi2.setPaiType(MajiangPai.batong);
+//        pengchuPaiZu2.setKezi(kezi2);
+//        majiangPlayer.getPengchupaiZuList().add(pengchuPaiZu2);
 
 //        PengchuPaiZu pengchuPaiZu3 = new PengchuPaiZu();
 //        Kezi kezi3 = new Kezi();
@@ -167,9 +167,9 @@ public class MyTest {
 
 //        MaanshanMajiangHu hu = MaanshanMajiangJiesuanCalculator.calculateBestZimoHu(false, gouXingPanHu, majiangPlayer, majiangMoAction, optionalPlay, pan);
 
-        majiangPlayer.getShoupaiCalculator().addPai(MajiangPai.qitong);
-        MaanshanMajiangHu hu = MaanshanMajiangJiesuanCalculator.calculateBestDianpaoHu(false, gouXingPanHu, majiangPlayer, MajiangPai.qitong, optionalPlay, pan);
-        majiangPlayer.getShoupaiCalculator().removePai(MajiangPai.qitong);
+        majiangPlayer.getShoupaiCalculator().addPai(MajiangPai.santiao);
+        MaanshanMajiangHu hu = MaanshanMajiangJiesuanCalculator.calculateBestDianpaoHu(false, gouXingPanHu, majiangPlayer, MajiangPai.santiao, optionalPlay, pan);
+        majiangPlayer.getShoupaiCalculator().removePai(MajiangPai.santiao);
 
         assert hu != null;
         System.out.println("结束！" + "|" + hu.getHufen().getValue());

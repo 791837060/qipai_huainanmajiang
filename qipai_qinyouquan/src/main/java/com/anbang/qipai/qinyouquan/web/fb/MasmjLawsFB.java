@@ -43,6 +43,8 @@ public class MasmjLawsFB {
                 tuoguan = "15";
             } else if (lawName.equals("tss")) {         //30秒后进入托管
                 tuoguan = "30";
+            } else if (lawName.equals("ssw")) {         //45秒托管
+                tuoguan = "45";
             } else if (lawName.equals("tls")) {         //60秒后进入托管
                 tuoguan = "60";
             } else if (lawName.equals("tjs")) {         //90秒后进入托管
