@@ -292,6 +292,8 @@ public class BijiJiesuanScore {
             }
             if (lianxu == 9) {
                 quanshun = true;
+            }else if (lianxu==8&&dianshuArray[13]>=1){
+                quanshun = true;
             }
 
         }

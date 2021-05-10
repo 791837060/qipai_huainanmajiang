@@ -4,6 +4,7 @@ import com.anbang.qipai.biji.cqrs.c.domain.result.BijiJuResult;
 import com.anbang.qipai.biji.cqrs.c.domain.result.BijiPanPlayerResult;
 import com.anbang.qipai.biji.cqrs.c.domain.result.BijiPanResult;
 import com.anbang.qipai.biji.cqrs.c.domain.result.PukeActionResult;
+import com.anbang.qipai.biji.cqrs.c.domain.test.EveryPlayerShisanzhangFapaiStrategyTest;
 import com.anbang.qipai.biji.utils.SpringUtil;
 import com.dml.mpgame.game.Finished;
 import com.dml.mpgame.game.Playing;
@@ -56,8 +57,8 @@ public class PukeGame extends FixedPlayersMultipanAndVotetofinishGame {
         ju.setAvaliablePaiFiller(new BijiAvaliablePaiFiller());                                                             //可用牌
         ju.setLuanpaiStrategyForFirstPan(new RandomLuanPaiStrategy(startTime));                                             //首盘乱牌策略
         ju.setLuanpaiStrategyForNextPan(new RandomLuanPaiStrategy(startTime + 1));                                     //下一盘乱牌策略
-        ju.setFapaiStrategyForFirstPan(new EveryPlayerShisanzhangFapaiStrategy());                                          //首盘发牌策略
-        ju.setFapaiStrategyForNextPan(new EveryPlayerShisanzhangFapaiStrategy());                                           //下一盘发牌策略
+        ju.setFapaiStrategyForFirstPan(new EveryPlayerShisanzhangFapaiStrategyTest());                                          //首盘发牌策略
+        ju.setFapaiStrategyForNextPan(new EveryPlayerShisanzhangFapaiStrategyTest());                                           //下一盘发牌策略
         ju.setShoupaiSortStrategy(new DianshuOrHuaseShoupaiSortStrategy());                                                 //理牌策略
         ju.setChupaiDaoCalculator(new BijiChupaiDaoCalculator());                                                           //牌型计算器
 

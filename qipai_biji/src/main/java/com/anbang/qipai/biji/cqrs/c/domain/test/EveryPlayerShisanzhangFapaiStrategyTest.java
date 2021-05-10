@@ -21,20 +21,20 @@ public class EveryPlayerShisanzhangFapaiStrategyTest implements FapaiStrategy {
 
         int[] paiId = {3, 7, 11, 15, 19, 23, 29, 36, 46};
         PukePaiMian[] paiMain = {
-                PukePaiMian.heitaoer,
-                PukePaiMian.heitaosan,
-                PukePaiMian.heitaosi,
+                PukePaiMian.meihuaA,
+                PukePaiMian.meihuaer,
+                PukePaiMian.hongxinsan,
+                PukePaiMian.fangkuaisi,
                 PukePaiMian.heitaowu,
-                PukePaiMian.heitaoliu,
-                PukePaiMian.heitaoqi,
-                PukePaiMian.meihuajiu,
-                PukePaiMian.fangkuaiJ,
-                PukePaiMian.hongxinK
+                PukePaiMian.hongxinliu,
+                PukePaiMian.meihuaqi,
+                PukePaiMian.meihuaba,
+                PukePaiMian.meihuajiu
         };
 
         for (int i = 0; i < 9; i++) {
             for (ShisanshuiPlayer player : playerIdPlayerMap.values()) {
-                if (player.getId().equals("675939")) {
+                if (player.getId().equals("730037")) {
                     PukePai pai = new PukePai();
                     pai.setId(paiId[i]);
                     pai.setPaiMian(paiMain[i]);
