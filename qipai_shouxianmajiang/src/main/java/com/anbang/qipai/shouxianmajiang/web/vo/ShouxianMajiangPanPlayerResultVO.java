@@ -34,6 +34,8 @@ public class ShouxianMajiangPanPlayerResultVO {
 
     private int pao;// 非结算炮
 
+    private int lianzhuangCount;
+
     private int hufen;// 非结算胡分
 
     private ShouxianMajiangHufenVO hufenVo;
@@ -63,6 +65,8 @@ public class ShouxianMajiangPanPlayerResultVO {
         if (shouxianmajiangGang != null) {
             gang = shouxianmajiangGang.getValue();
         }
+        pao=panPlayerResult.getPlayerResult().getPaofen();
+        lianzhuangCount=panPlayerResult.getPlayerResult().getLianzhuangfen();
         score = panPlayerResult.getPlayerResult().getScore();
         List<ChichuPaiZu> chichuPaiZuList = panPlayerResult.getPlayer().getChichupaiZuList();
         for (ChichuPaiZu chichuPaiZu : chichuPaiZuList) {
@@ -313,4 +317,11 @@ public class ShouxianMajiangPanPlayerResultVO {
         this.score = score;
     }
 
+    public int getLianzhuangCount() {
+        return lianzhuangCount;
+    }
+
+    public void setLianzhuangCount(int lianzhuangCount) {
+        this.lianzhuangCount = lianzhuangCount;
+    }
 }

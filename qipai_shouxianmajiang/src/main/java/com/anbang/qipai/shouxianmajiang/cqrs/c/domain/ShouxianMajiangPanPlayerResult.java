@@ -8,8 +8,6 @@ public class ShouxianMajiangPanPlayerResult extends PanPlayerResult {
 
     private ShouxianMajiangGang gang;
 
-    private int xiapaoCount = 0;            //个人设定的跑分
-
     private int paofen = 0;                 //跑分实际输赢分数
 
     private int lianzhuangfen = 0;
@@ -53,14 +51,6 @@ public class ShouxianMajiangPanPlayerResult extends PanPlayerResult {
 
     public void setScore(Double score) {
         this.score = score;
-    }
-
-    public int getXiapaoCount() {
-        return xiapaoCount;
-    }
-
-    public void setXiapaoCount(int xiapaoCount) {
-        this.xiapaoCount = xiapaoCount;
     }
 
     public int getPaofen() {
