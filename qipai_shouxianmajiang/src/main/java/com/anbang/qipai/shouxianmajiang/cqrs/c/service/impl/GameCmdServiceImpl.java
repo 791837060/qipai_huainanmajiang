@@ -89,7 +89,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 //        newGame.setPowerLimit(powerLimit);
 //        newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
 //        newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
-//        newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
+//        newGame.setReadyStrategy(new ShouxianMajiangGameReadyStrategy(renshu));
 //        newGame.setLeaveByOfflineStrategyAfterStart(new OfflineGameLeaveStrategy());
 //        newGame.setLeaveByOfflineStrategyBeforeStart(new PlayerGameLeaveStrategy());
 //        newGame.setLeaveByHangupStrategyAfterStart(new OfflineGameLeaveStrategy());
@@ -114,7 +114,7 @@ public class GameCmdServiceImpl extends CmdServiceBase implements GameCmdService
 //        newGame.setPowerLimit(powerLimit);
 //        newGame.setVotePlayersFilter(new OnlineVotePlayersFilter());
 //        newGame.setJoinStrategy(new FixedNumberOfPlayersGameJoinStrategy(renshu));
-//        newGame.setReadyStrategy(new FixedNumberOfPlayersGameReadyStrategy(renshu));
+//        newGame.setReadyStrategy(new ShouxianMajiangGameReadyStrategy(renshu));
 //        newGame.setLeaveByOfflineStrategyAfterStart(new OfflineGameLeaveStrategy());
 //        newGame.setLeaveByOfflineStrategyBeforeStart(new TimeoverQuitGameLeaveStrategy(300000, gameQueryService, gameMsgService, wsNotifier));
 //        newGame.setLeaveByHangupStrategyAfterStart(new OfflineGameLeaveStrategy());

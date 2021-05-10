@@ -13,7 +13,7 @@ import java.util.*;
  * 胡牌提示
  */
 public class ShouxianMajiangHuPaiSolutionsTipsFilter implements HupaiPaixingSolutionFilter {
-    private static OptionalPlay optionalPlay;
+    private OptionalPlay optionalPlay;
 
     /**
      * 胡牌提示 摸牌后
@@ -22,9 +22,10 @@ public class ShouxianMajiangHuPaiSolutionsTipsFilter implements HupaiPaixingSolu
      * @param gouXingPanHu  可胡牌型
      * @return
      */
+    @Override
     public Map<MajiangPai, List<MajiangPai>> hupaiFilter(MajiangPlayer majiangPlayer, GouXingPanHu gouXingPanHu) {
         Map<MajiangPai, List<MajiangPai>> hupaiList = new HashMap<>();
-        MajiangPai guipai = MajiangPai.hongzhong;//如果有鬼牌 鬼牌为红中 没有则就没有红中
+        MajiangPai guipai = MajiangPai.baiban;//如果有鬼牌 鬼牌为红中 没有则就没有红中
         List<MajiangPai> guipaiList = majiangPlayer.findGuipaiList(); //鬼牌集合
 
         for (MajiangPai majiangPai : majiangPlayer.getFangruShoupaiList()) {
@@ -80,10 +81,6 @@ public class ShouxianMajiangHuPaiSolutionsTipsFilter implements HupaiPaixingSolu
                 }
             }
         }
-        Map<MajiangPai, List<MajiangPai>> majiangPaiListMap = calculateShisanyaoMoPaiHupaiTips(majiangPlayer);
-        if (majiangPaiListMap != null) {
-            hupaiList.putAll(majiangPaiListMap);
-        }
         return hupaiList;
     }
 
@@ -94,9 +91,10 @@ public class ShouxianMajiangHuPaiSolutionsTipsFilter implements HupaiPaixingSolu
      * @param gouXingPanHu  可胡牌型
      * @return
      */
+    @Override
     public List<MajiangPai> kehuFilter(MajiangPlayer majiangPlayer, GouXingPanHu gouXingPanHu) {
         List<MajiangPai> hupaiList = new ArrayList<>();
-        MajiangPai guipai = MajiangPai.hongzhong;
+        MajiangPai guipai = MajiangPai.baiban;
         List<MajiangPai> guipaiList = majiangPlayer.findGuipaiList();
         ShoupaiCalculator shoupaiCalculator = majiangPlayer.getShoupaiCalculator();//玩家未公开的手牌
         List<ShoupaiPaiXing> huPaiShoupaiPaiXingList;
@@ -109,10 +107,6 @@ public class ShouxianMajiangHuPaiSolutionsTipsFilter implements HupaiPaixingSolu
                 hupaiList.addAll(kehupai);
             }
         }
-        List<MajiangPai> majiangPais = calculateShisanyaoHupaiTips(majiangPlayer);
-        if (majiangPais != null) {
-            hupaiList.addAll(majiangPais);
-        }
         return hupaiList;
     }
 
@@ -123,9 +117,10 @@ public class ShouxianMajiangHuPaiSolutionsTipsFilter implements HupaiPaixingSolu
      * @param gouXingPanHu
      * @return
      */
+    @Override
     public Map<MajiangPai, List<MajiangPai>> pengHupaiFilter(MajiangPlayer majiangPlayer, GouXingPanHu gouXingPanHu) {
         Map<MajiangPai, List<MajiangPai>> hupaiList = new HashMap<>();
-        MajiangPai guipai = MajiangPai.hongzhong;
+        MajiangPai guipai = MajiangPai.baiban;
         List<MajiangPai> guipaiList = majiangPlayer.findGuipaiList();
         for (MajiangPai majiangPai : majiangPlayer.getFangruShoupaiList()) {
             ShoupaiCalculator shoupaiCalculator = majiangPlayer.getShoupaiCalculator();
@@ -413,9 +408,7 @@ public class ShouxianMajiangHuPaiSolutionsTipsFilter implements HupaiPaixingSolu
         MajiangPai[] xushupaiArray = MajiangPai.xushupaiArray();
         List<MajiangPai> majiangPais = new ArrayList<>();
         Collections.addAll(majiangPais, xushupaiArray);
-        for (int i = 32; i < 34; i++) {
-            majiangPais.add(MajiangPai.valueOf(i));
-        }
+        majiangPais.add(MajiangPai.hongzhong);
         MajiangPai[] paiTypesForGuipaiAct = new MajiangPai[majiangPais.size()];
         majiangPais.toArray(paiTypesForGuipaiAct);
         return paiTypesForGuipaiAct;
@@ -455,95 +448,95 @@ public class ShouxianMajiangHuPaiSolutionsTipsFilter implements HupaiPaixingSolu
         return huPaiShoupaiPaiXingList;
     }
 
-    /**
-     * 计算十三幺胡牌提示
-     *
-     * @param majiangPlayer 麻将玩家
-     * @return
-     */
-    public static List<MajiangPai> calculateShisanyaoHupaiTips(MajiangPlayer majiangPlayer) {
-        List<MajiangPai> hupaiList = new ArrayList<>();
-        List<MajiangPai> shoupai = new ArrayList<>(majiangPlayer.getFangruShoupaiList());
-        int guipaiCount = majiangPlayer.getFangruGuipaiList().size();
-        int[] shisanyaoPaixin = {0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33};
-        int[] shisanyaoPaixin2 = {0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33};
-        int count = 0;//相差数量
-        for (int i = 0; i < shoupai.size(); i++) {//剔除已有麻将牌
-            for (int j = 0; j < shisanyaoPaixin.length; j++) {
-                if (shoupai.get(i).ordinal() == shisanyaoPaixin[j]) {
-                    shisanyaoPaixin[j] = -1;
-                }
-            }
-        }
-        for (int i = 0; i < shisanyaoPaixin.length; i++) {//计算相差牌数
-            if (shisanyaoPaixin[i] >= 0) {
-                hupaiList.add(MajiangPai.valueOf(shisanyaoPaixin[i]));
-                count++;
-            } else {
-                shoupai.remove(MajiangPai.valueOf(shisanyaoPaixin2[i]));
-            }
-        }
-        if (shoupai.size() > 0) {
-            if (hupaiList.size() - guipaiCount <= 1) {
-                return hupaiList;
-            }
-        } else {
-            if (guipaiCount >= count) {//如果十三幺牌型都有 返回所有可胡牌型（差一张牌凑成对子）
-                hupaiList.clear();
-                for (int i : shisanyaoPaixin2) {
-                    hupaiList.add(MajiangPai.valueOf(i));
-                }
-                return hupaiList;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 计算摸牌后十三幺胡牌提示
-     *
-     * @param majiangPlayer 麻将玩家
-     * @return
-     */
-    public static Map<MajiangPai, List<MajiangPai>> calculateShisanyaoMoPaiHupaiTips(MajiangPlayer majiangPlayer) {
-        List<MajiangPai> shoupai = new ArrayList<>(majiangPlayer.getFangruShoupaiList());
-        MajiangPai gangmoShoupai = majiangPlayer.getGangmoShoupai();
-        shoupai.add(gangmoShoupai);
-        List<MajiangPai> hupaiList = new ArrayList<>();
-        int[] shisanyaoPaixin = {0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33};
-        Integer[] shisanyaoPaixin2 = {0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33};
-        for (int i = 0; i < shoupai.size(); i++) {//剔除已有麻将牌
-            for (int j = 0; j < shisanyaoPaixin.length; j++) {
-                if (shoupai.get(i).ordinal() == shisanyaoPaixin[j]) {
-                    shisanyaoPaixin[j] = -1;
-                }
-            }
-        }
-        for (int i = 0; i < shisanyaoPaixin.length; i++) {//计算相差牌数
-            if (shisanyaoPaixin[i] >= 0) {
-                hupaiList.add(MajiangPai.valueOf(shisanyaoPaixin[i]));//提示缺少手牌集合
-            } else {
-                shoupai.remove(MajiangPai.valueOf(shisanyaoPaixin2[i]));//剩余手牌
-            }
-        }
-        Map<MajiangPai, List<MajiangPai>> tips = new HashMap<>();
-        if (shoupai.size() == 2) {
-            List<Integer> ints = Arrays.asList(shisanyaoPaixin2);
-            for (MajiangPai m : shoupai) {
-                if (ints.contains(shoupai.get(0).ordinal()) && ints.contains(shoupai.get(1).ordinal())) {
-                    tips.put(m, hupaiList);
-                } else {
-                    if (ints.contains(shoupai.get(0).ordinal())) {
-                        tips.put(shoupai.get(1), hupaiList);
-                    } else if (ints.contains(shoupai.get(1).ordinal())) {
-                        tips.put(shoupai.get(0), hupaiList);
-                    }
-                }
-            }
-            return tips;
-        }
-        return null;
-    }
+//    /**
+//     * 计算十三幺胡牌提示
+//     *
+//     * @param majiangPlayer 麻将玩家
+//     * @return
+//     */
+//    public static List<MajiangPai> calculateShisanyaoHupaiTips(MajiangPlayer majiangPlayer) {
+//        List<MajiangPai> hupaiList = new ArrayList<>();
+//        List<MajiangPai> shoupai = new ArrayList<>(majiangPlayer.getFangruShoupaiList());
+//        int guipaiCount = majiangPlayer.getFangruGuipaiList().size();
+//        int[] shisanyaoPaixin = {0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33};
+//        int[] shisanyaoPaixin2 = {0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33};
+//        int count = 0;//相差数量
+//        for (int i = 0; i < shoupai.size(); i++) {//剔除已有麻将牌
+//            for (int j = 0; j < shisanyaoPaixin.length; j++) {
+//                if (shoupai.get(i).ordinal() == shisanyaoPaixin[j]) {
+//                    shisanyaoPaixin[j] = -1;
+//                }
+//            }
+//        }
+//        for (int i = 0; i < shisanyaoPaixin.length; i++) {//计算相差牌数
+//            if (shisanyaoPaixin[i] >= 0) {
+//                hupaiList.add(MajiangPai.valueOf(shisanyaoPaixin[i]));
+//                count++;
+//            } else {
+//                shoupai.remove(MajiangPai.valueOf(shisanyaoPaixin2[i]));
+//            }
+//        }
+//        if (shoupai.size() > 0) {
+//            if (hupaiList.size() - guipaiCount <= 1) {
+//                return hupaiList;
+//            }
+//        } else {
+//            if (guipaiCount >= count) {//如果十三幺牌型都有 返回所有可胡牌型（差一张牌凑成对子）
+//                hupaiList.clear();
+//                for (int i : shisanyaoPaixin2) {
+//                    hupaiList.add(MajiangPai.valueOf(i));
+//                }
+//                return hupaiList;
+//            }
+//        }
+//        return null;
+//    }
+//
+//    /**
+//     * 计算摸牌后十三幺胡牌提示
+//     *
+//     * @param majiangPlayer 麻将玩家
+//     * @return
+//     */
+//    public static Map<MajiangPai, List<MajiangPai>> calculateShisanyaoMoPaiHupaiTips(MajiangPlayer majiangPlayer) {
+//        List<MajiangPai> shoupai = new ArrayList<>(majiangPlayer.getFangruShoupaiList());
+//        MajiangPai gangmoShoupai = majiangPlayer.getGangmoShoupai();
+//        shoupai.add(gangmoShoupai);
+//        List<MajiangPai> hupaiList = new ArrayList<>();
+//        int[] shisanyaoPaixin = {0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33};
+//        Integer[] shisanyaoPaixin2 = {0, 8, 9, 17, 18, 26, 27, 28, 29, 30, 31, 32, 33};
+//        for (int i = 0; i < shoupai.size(); i++) {//剔除已有麻将牌
+//            for (int j = 0; j < shisanyaoPaixin.length; j++) {
+//                if (shoupai.get(i).ordinal() == shisanyaoPaixin[j]) {
+//                    shisanyaoPaixin[j] = -1;
+//                }
+//            }
+//        }
+//        for (int i = 0; i < shisanyaoPaixin.length; i++) {//计算相差牌数
+//            if (shisanyaoPaixin[i] >= 0) {
+//                hupaiList.add(MajiangPai.valueOf(shisanyaoPaixin[i]));//提示缺少手牌集合
+//            } else {
+//                shoupai.remove(MajiangPai.valueOf(shisanyaoPaixin2[i]));//剩余手牌
+//            }
+//        }
+//        Map<MajiangPai, List<MajiangPai>> tips = new HashMap<>();
+//        if (shoupai.size() == 2) {
+//            List<Integer> ints = Arrays.asList(shisanyaoPaixin2);
+//            for (MajiangPai m : shoupai) {
+//                if (ints.contains(shoupai.get(0).ordinal()) && ints.contains(shoupai.get(1).ordinal())) {
+//                    tips.put(m, hupaiList);
+//                } else {
+//                    if (ints.contains(shoupai.get(0).ordinal())) {
+//                        tips.put(shoupai.get(1), hupaiList);
+//                    } else if (ints.contains(shoupai.get(1).ordinal())) {
+//                        tips.put(shoupai.get(0), hupaiList);
+//                    }
+//                }
+//            }
+//            return tips;
+//        }
+//        return null;
+//    }
 
     public OptionalPlay getOptionalPlay() {
         return optionalPlay;

@@ -91,7 +91,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
             huPlayerResult.setGang(gang);
             //计算跑分
             huPlayerResult.setPaofen(playerpiaofenMap.get(huPlayer.getId()) + playerpiaofenMap.get(dianPaoPlayerId));
-            huPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? lianZhuangCount : 0);
+            huPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? 1 : 0);
             playerResultList.add(huPlayerResult);
             MajiangPlayer finalHuPlayer = huPlayer;
             ShouxianMajiangHu finalHu = hu;
@@ -116,7 +116,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                     buHuPlayerResult.setGang(gang1);
                     //计算跑分
                     buHuPlayerResult.setPaofen(-playerpiaofenMap.get(playerId) - playerpiaofenMap.get(finalHuPlayer.getId()));
-                    buHuPlayerResult.setLianzhuangfen(finalHuPlayer.getMenFeng().equals(MajiangPosition.dong) ? -lianZhuangCount : 0);
+                    buHuPlayerResult.setLianzhuangfen(finalHuPlayer.getMenFeng().equals(MajiangPosition.dong) ? -1 : 0);
                     playerResultList.add(buHuPlayerResult);
                 } else { //计算非胡玩家分数
                     MajiangPlayer buHuplayer = currentPan.findPlayerById(playerId);
@@ -189,7 +189,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 gang.calculate(playerIdList.size(), fangGangCount);
                 huPlayerResult.setGang(gang);
                 huPlayerResult.setPaofen(playerpiaofenMap.get(huPlayer.getId()) + playerpiaofenMap.get(hu.getDianpaoPlayerId()));
-                huPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? lianZhuangCount : 0);
+                huPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? 1 : 0);
                 playerResultList.add(huPlayerResult);
                 playerIdList.forEach((playerId) -> {
                     if (playerId.equals(huPlayer.getId())) {
@@ -210,7 +210,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                         gang1.calculate(playerIdList.size(), fangGangCount1);
                         buHuPlayerResult.setGang(gang1);
                         buHuPlayerResult.setPaofen(-playerpiaofenMap.get(playerId) - playerpiaofenMap.get(huPlayer.getId()));
-                        buHuPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? -lianZhuangCount : 0);
+                        buHuPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? -1 : 0);
                         playerResultList.add(buHuPlayerResult);
                     } else { //计算非胡玩家分数
                         MajiangPlayer buHuplayer = currentPan.findPlayerById(playerId);
@@ -301,7 +301,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                 ShouxianMajiangGang gang = new ShouxianMajiangGang(huPlayer);
                 gang.calculate(playerIdList.size(), fangGangCount);
                 huPlayerResult.setGang(gang);
-                huPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? lianZhuangCount : 0);
+                huPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? 1 : 0);
                 int tarenpaofen = 0;
                 for (String playerID : playerpiaofenMap.keySet()) {
                     if (!playerID.equals(huPlayer.getId())) {
@@ -331,7 +331,7 @@ public class ShouxianMajiangPanResultBuilder implements CurrentPanResultBuilder 
                         gang1.calculate(playerIdList.size(), fangGangCount1);
                         buHuPlayerResult.setGang(gang1);
                         buHuPlayerResult.setPaofen(-playerpiaofenMap.get(playerId) - playerpiaofenMap.get(huPlayer.getId()));
-                        buHuPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? -lianZhuangCount : 0);
+                        buHuPlayerResult.setLianzhuangfen(huPlayer.getMenFeng().equals(MajiangPosition.dong) ? -1 : 0);
                         playerResultList.add(buHuPlayerResult);
                     }
                 }
