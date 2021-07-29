@@ -1,5 +1,12 @@
 package com.anbang.qipai.zongyangmajiang.cqrs.c.domain;
 
+import com.dml.majiang.pai.MajiangPai;
+import com.dml.majiang.pai.XushupaiCategory;
+import com.dml.majiang.player.MajiangPlayer;
+import com.dml.majiang.player.shoupai.ShoupaiPaiXing;
+
+import java.util.List;
+
 /**
  * 结算规则
  * 自摸：所有人跟胡家结算胡牌牌型分数；杠分单独结算
@@ -20,13 +27,15 @@ public class ZongyangMajiangHushu {
     private boolean qiangganghu;        //抢杠胡
     private boolean qixiaodui;          //七小对
     private boolean haohuaqixiaodui;    //豪华七小对
+    private boolean haohuaqixiaodui1;    //豪华七小对
+    private boolean haohuaqixiaodui2;    //豪华七小对
     private boolean yitiaolong;         //一条龙
     private boolean shisanlan;          //十三烂
     private boolean hongzhongbaiban;    //红中白板
     private double  huapai;             //花牌
     private int value;
 
-    public void calculate(double huapaiCount) {
+    public void calculate(double huapaiCount, MajiangPlayer player) {
         int hushu = 0;
         if (hu || zimoHu) {
             hushu = 2;
@@ -70,11 +79,33 @@ public class ZongyangMajiangHushu {
         if (haohuaqixiaodui) {
             hushu = 10;
         }
+        if (haohuaqixiaodui1){
+            hushu = 15;
+        }
+        if (haohuaqixiaodui2){
+            hushu = 20;
+        }
         if (shisanlan){
             hushu = 25;
         }
         if(paofenggang && gangshangkaihua){
             hushu += 10;
+        }
+        List<MajiangPai> fangruShoupaiList = player.getFangruShoupaiList();
+        if (!fangruShoupaiList.contains(XushupaiCategory.tong) && fangruShoupaiList.contains(XushupaiCategory.tiao)){
+            hushu+=2;
+        }else if (!fangruShoupaiList.contains(XushupaiCategory.wan) && fangruShoupaiList.contains(XushupaiCategory.tong)){
+            hushu+=2;
+        }
+        else if (!fangruShoupaiList.contains(XushupaiCategory.wan) && fangruShoupaiList.contains(XushupaiCategory.tiao)){
+            hushu+=2;
+        }else if (!fangruShoupaiList.contains(XushupaiCategory.wan)){
+            hushu+=1;
+        }
+        else if (!fangruShoupaiList.contains(XushupaiCategory.tiao)){
+            hushu+=1;
+        }else if (!fangruShoupaiList.contains(XushupaiCategory.tong)){
+            hushu+=1;
         }
         huapai = huapaiCount;
         hushu+=huapai;
@@ -236,5 +267,21 @@ public class ZongyangMajiangHushu {
 
     public void setHuapai(double huapai) {
         this.huapai = huapai;
+    }
+
+    public boolean isHaohuaqixiaodui1() {
+        return haohuaqixiaodui1;
+    }
+
+    public void setHaohuaqixiaodui1(boolean haohuaqixiaodui1) {
+        this.haohuaqixiaodui1 = haohuaqixiaodui1;
+    }
+
+    public boolean isHaohuaqixiaodui2() {
+        return haohuaqixiaodui2;
+    }
+
+    public void setHaohuaqixiaodui2(boolean haohuaqixiaodui2) {
+        this.haohuaqixiaodui2 = haohuaqixiaodui2;
     }
 }

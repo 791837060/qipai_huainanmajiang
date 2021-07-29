@@ -26,7 +26,6 @@ public class ZongyangMajiangHuPaiSolutionsTipsFilter implements HupaiPaixingSolu
         Map<MajiangPai, List<MajiangPai>> hupaiList = new HashMap<>();
         MajiangPai guipai = new ArrayList<MajiangPai>(majiangPlayer.getGuipaiTypeSet()).get(0);
         List<MajiangPai> guipaiList = majiangPlayer.findGuipaiList(); //鬼牌集合
-        List<MajiangPai> shoupaiList = majiangPlayer.getFangruShoupaiList();
         for (MajiangPai majiangPai : majiangPlayer.getFangruShoupaiList()) {
             ShoupaiCalculator shoupaiCalculator = majiangPlayer.getShoupaiCalculator();
             List<ShoupaiPaiXing> huPaiShoupaiPaiXingList;

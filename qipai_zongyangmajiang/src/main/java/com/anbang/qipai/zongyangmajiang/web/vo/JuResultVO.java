@@ -13,7 +13,7 @@ public class JuResultVO {
 	private String datuhaoId;
 	private int panshu;
 	private int finishedPanCount;
-	private List<TuiDaoHuJuPlayerResultVO> playerResultList;
+	private List<ZongyangMajiangJuPlayerResultVO> playerResultList;
 
 	private PanResultVO lastPanResult;
 	private long finishTime;
@@ -31,9 +31,9 @@ public class JuResultVO {
 		finishedPanCount = TuiDaoHuJuResult.getFinishedPanCount();
 		playerResultList = new ArrayList<>();
 		if (TuiDaoHuJuResult.getPlayerResultList() != null) {
-			TuiDaoHuJuResult.getPlayerResultList().forEach((juPlayerResult) -> playerResultList.add(new TuiDaoHuJuPlayerResultVO(juPlayerResult, majiangGameDbo.findPlayer(juPlayerResult.getPlayerId()))));
+			TuiDaoHuJuResult.getPlayerResultList().forEach((juPlayerResult) -> playerResultList.add(new ZongyangMajiangJuPlayerResultVO(juPlayerResult, majiangGameDbo.findPlayer(juPlayerResult.getPlayerId()))));
 		} else {
-			majiangGameDbo.getPlayers().forEach((majiangGamePlayerDbo) -> playerResultList.add(new TuiDaoHuJuPlayerResultVO(majiangGamePlayerDbo)));
+			majiangGameDbo.getPlayers().forEach((majiangGamePlayerDbo) -> playerResultList.add(new ZongyangMajiangJuPlayerResultVO(majiangGamePlayerDbo)));
 		}
 	}
 
@@ -53,11 +53,11 @@ public class JuResultVO {
 		this.datuhaoId = datuhaoId;
 	}
 
-	public List<TuiDaoHuJuPlayerResultVO> getPlayerResultList() {
+	public List<ZongyangMajiangJuPlayerResultVO> getPlayerResultList() {
 		return playerResultList;
 	}
 
-	public void setPlayerResultList(List<TuiDaoHuJuPlayerResultVO> playerResultList) {
+	public void setPlayerResultList(List<ZongyangMajiangJuPlayerResultVO> playerResultList) {
 		this.playerResultList = playerResultList;
 	}
 

@@ -46,7 +46,7 @@ public class ShoupaixingWuguanJiesuancanshu {
         allXushupaiInSameCategory = player.allXushupaiInSameCategory(huPai);//全部序数牌
         hasZipai = player.hasZipai();                                       //字牌
         qingyise = (allXushupaiInSameCategory && !hasZipai);                //清一色（都是序数牌 没有字牌）
-        fengyise = !player.hasXushupai();                                   //凤一色（没有序数牌）
+        fengyise = !player.hasXushupai();                                   //风一色（没有序数牌）
         hunyise = (allXushupaiInSameCategory && hasZipai);                  //混一色（都是序数牌 有字牌）
         guipaiShu = player.countGuipai();                                   //鬼牌数量
         chichupaiZuCount = player.countChichupaiZu();                       //吃出牌数量

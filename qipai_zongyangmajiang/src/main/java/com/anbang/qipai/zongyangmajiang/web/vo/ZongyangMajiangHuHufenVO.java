@@ -2,7 +2,7 @@ package com.anbang.qipai.zongyangmajiang.web.vo;
 
 import com.anbang.qipai.zongyangmajiang.cqrs.c.domain.ZongyangMajiangHushu;
 
-public class TuiDaoHuHufenVO {
+public class ZongyangMajiangHuHufenVO {
     private boolean tianhu;             //天胡；
     private boolean dihu;               //地胡；
 
@@ -17,11 +17,11 @@ public class TuiDaoHuHufenVO {
 
     private boolean shisanyao;          //十三幺
 
-    public TuiDaoHuHufenVO() {
+    public ZongyangMajiangHuHufenVO() {
 
     }
 
-    public TuiDaoHuHufenVO(ZongyangMajiangHushu hufen) {
+    public ZongyangMajiangHuHufenVO(ZongyangMajiangHushu hufen) {
       if (hufen.isQingyise()) {
             qingyise = true;
         } else if (hufen.isQiangganghu()) {
@@ -34,8 +34,6 @@ public class TuiDaoHuHufenVO {
             haohuaqixiaodui = true;
         } else if (hufen.isYitiaolong()) {
             yitiaolong = true;
-        } else if (hufen.isPengpenghu()) {
-            pengpenghu = true;
         }
     }
 

@@ -9,7 +9,7 @@ import com.anbang.qipai.zongyangmajiang.cqrs.q.dbo.TuiDaoHuPanPlayerResultDbo;
 
 public class PanResultVO {
 
-    private List<TuiDaoHuPanPlayerResultVO> playerResultList;
+    private List<ZongyangMajiangHuPanPlayerResultVO> playerResultList;
 
     private boolean hu;
 
@@ -30,9 +30,9 @@ public class PanResultVO {
         List<TuiDaoHuPanPlayerResultDbo> list = dbo.getPlayerResultList();
         if (list != null) {
             playerResultList = new ArrayList<>(list.size());
-            list.forEach((panPlayerResult) -> playerResultList.add(new TuiDaoHuPanPlayerResultVO(majiangGameDbo.findPlayer(panPlayerResult.getPlayerId()), dbo.getZhuangPlayerId(), dbo.isZimo(), dbo.getDianpaoPlayerId(), panPlayerResult)));
+            list.forEach((panPlayerResult) -> playerResultList.add(new ZongyangMajiangHuPanPlayerResultVO(majiangGameDbo.findPlayer(panPlayerResult.getPlayerId()), dbo.getZhuangPlayerId(), dbo.isZimo(), dbo.getDianpaoPlayerId(), panPlayerResult)));
         }
-        for (TuiDaoHuPanPlayerResultVO tuiDaoHuPanPlayerResultVO : playerResultList) {
+        for (ZongyangMajiangHuPanPlayerResultVO tuiDaoHuPanPlayerResultVO : playerResultList) {
             if (tuiDaoHuPanPlayerResultVO.getNiaoPaiList().size() > 0) {
                 setNiaoPaiList(tuiDaoHuPanPlayerResultVO.getNiaoPaiList());
             }
@@ -53,7 +53,7 @@ public class PanResultVO {
         this.panActionFrame = panActionFrame;
     }
 
-    public void setPlayerResultList(List<TuiDaoHuPanPlayerResultVO> playerResultList) {
+    public void setPlayerResultList(List<ZongyangMajiangHuPanPlayerResultVO> playerResultList) {
         this.playerResultList = playerResultList;
     }
 
@@ -69,7 +69,7 @@ public class PanResultVO {
         this.finishTime = finishTime;
     }
 
-    public List<TuiDaoHuPanPlayerResultVO> getPlayerResultList() {
+    public List<ZongyangMajiangHuPanPlayerResultVO> getPlayerResultList() {
         return playerResultList;
     }
 

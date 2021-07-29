@@ -1,7 +1,8 @@
 package com.anbang.qipai.game.msg.receiver;
 
 import com.anbang.qipai.game.cqrs.c.service.GameRoomCmdService;
-import com.anbang.qipai.game.msg.channel.sink.ShouxianMajiangGameSink;
+import com.anbang.qipai.game.msg.channel.sink.HongzhongMajiangGameSink;
+import com.anbang.qipai.game.msg.channel.sink.HuainanMajiangGameSink;
 import com.anbang.qipai.game.msg.msjobj.CommonMO;
 import com.anbang.qipai.game.plan.bean.games.Game;
 import com.anbang.qipai.game.plan.bean.games.GameRoom;
@@ -17,8 +18,8 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import java.util.List;
 import java.util.Map;
 
-@EnableBinding(ShouxianMajiangGameSink.class)
-public class ShouxianMajiangGameMsgReveiver {
+@EnableBinding(HuainanMajiangGameSink.class)
+public class HuainanMajiangGameMsgReveiver {
 
     @Autowired
     private GameService gameService;
@@ -34,14 +35,14 @@ public class ShouxianMajiangGameMsgReveiver {
 
     private Gson gson = new Gson();
 
-    @StreamListener(ShouxianMajiangGameSink.SHOUXIANMAJIANGGAME)
+    @StreamListener(HuainanMajiangGameSink.HUAINANMAJIANGGAME)
     public void receive(CommonMO mo) {
         String msg = mo.getMsg();
         if ("playerQuit".equals(msg)) {// 有人退出游戏
             Map data = (Map) mo.getData();
             String gameId = (String) data.get("gameId");
             String playerId = (String) data.get("playerId");
-            GameRoom room = gameService.findRoomByGameAndServerGameGameId(Game.shouxianMajiang, gameId);
+            GameRoom room = gameService.findRoomByGameAndServerGameGameId(Game.huainanmajiang, gameId);
             if (room != null) {
                 List<PlayersRecord> playersRecord = room.getPlayersRecord();
                 for (int i = 0; i < playersRecord.size(); i++) {
@@ -55,13 +56,13 @@ public class ShouxianMajiangGameMsgReveiver {
                 }
                 gameService.saveGameRoom(room);
                 memberLatAndLonService.deleteMemberLatAndLon(playerId);
-                gameService.playerQuitGame(Game.shouxianMajiang,gameId, playerId);
+                gameService.playerQuitGame(Game.huainanmajiang,gameId, playerId);
             }
         }
         if ("ju canceled".equals(msg)) {// 取消游戏
             Map data = (Map) mo.getData();
             String gameId = (String) data.get("gameId");
-            GameRoom gameRoom = gameService.findRoomByGameAndServerGameGameId(Game.shouxianMajiang, gameId);
+            GameRoom gameRoom = gameService.findRoomByGameAndServerGameGameId(Game.huainanmajiang, gameId);
             if (gameRoom != null) {
                 gameRoomCmdService.removeRoom(gameRoom.getNo());
                 List<PlayersRecord> playersRecord = gameRoom.getPlayersRecord();
@@ -74,13 +75,13 @@ public class ShouxianMajiangGameMsgReveiver {
                     }
                     gameService.saveGameRoom(gameRoom);
                 }
-                gameService.gameRoomFinished(Game.shouxianMajiang, gameId);
+                gameService.gameRoomFinished(Game.huainanmajiang, gameId);
             }
         }
         if ("ju finished".equals(msg)) {// 一局游戏结束
             Map data = (Map) mo.getData();
             String gameId = (String) data.get("gameId");
-            GameRoom gameRoom = gameService.findRoomByGameAndServerGameGameId(Game.shouxianMajiang, gameId);
+            GameRoom gameRoom = gameService.findRoomByGameAndServerGameGameId(Game.huainanmajiang, gameId);
             if (gameRoom != null) {
                 gameRoomCmdService.removeRoom(gameRoom.getNo());
                 List<PlayersRecord> playersRecord = gameRoom.getPlayersRecord();
@@ -93,7 +94,7 @@ public class ShouxianMajiangGameMsgReveiver {
                     }
                     gameService.saveGameRoom(gameRoom);
                 }
-                gameService.gameRoomFinished(Game.shouxianMajiang, gameId);
+                gameService.gameRoomFinished(Game.huainanmajiang, gameId);
             }
         }
         if ("pan finished".equals(msg)) {// 一盘游戏结束
@@ -101,15 +102,15 @@ public class ShouxianMajiangGameMsgReveiver {
             String gameId = (String) data.get("gameId");
             int no = (int) data.get("no");
             List playerIds = (List) data.get("playerIds");
-            gameService.panFinished(Game.shouxianMajiang, gameId, no, playerIds);
+            gameService.panFinished(Game.huainanmajiang, gameId, no, playerIds);
         }
         if ("game delay".equals(msg)) {// 游戏延时
             Map data = (Map) mo.getData();
             String gameId = (String) data.get("gameId");
-            GameRoom gameRoom = gameService.findRoomByGameAndServerGameGameId(Game.shouxianMajiang, gameId);
+            GameRoom gameRoom = gameService.findRoomByGameAndServerGameGameId(Game.huainanmajiang, gameId);
             if (gameRoom != null) {
-                // 延时1小时
-                gameService.delayGameRoom(Game.shouxianMajiang, gameId, gameRoom.getDeadlineTime() + 1L * 60 * 60 * 1000);
+                // 延时11小时
+                gameService.delayGameRoom(Game.huainanmajiang, gameId, gameRoom.getDeadlineTime() + 11 * 60 * 60 * 1000);
             }
         }
     }

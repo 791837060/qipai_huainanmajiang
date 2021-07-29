@@ -41,8 +41,6 @@ public class ZongyangMajiangGuipaiDeterminer implements GuipaiDeterminer {
 
         for (MajiangPlayer majiangPlayer : currentPan.getMajiangPlayerIdMajiangPlayerMap().values()) {
             majiangPlayer.addGuipaiType(guipaiType);
-            MajiangPai hongzhong = MajiangPai.hongzhong;
-            hongzhong.equals(guipaiType);
         }
     }
 

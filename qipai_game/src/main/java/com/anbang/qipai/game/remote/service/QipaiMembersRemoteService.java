@@ -12,8 +12,8 @@ import com.anbang.qipai.game.remote.vo.MemberRemoteVO;
  *
  * @author neo
  */
-@FeignClient("qipai-members/members")
-//@FeignClient("qipai-members")
+//@FeignClient("qipai-members/members")
+@FeignClient("qipai-members")
 public interface QipaiMembersRemoteService {
 
     @RequestMapping(value = "/auth/trytoken")

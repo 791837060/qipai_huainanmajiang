@@ -14,7 +14,7 @@ import com.dml.majiang.player.shoupai.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TuiDaoHuPanPlayerResultVO {
+public class ZongyangMajiangHuPanPlayerResultVO {
 
     private String playerId;
     private String nickname;
@@ -40,7 +40,7 @@ public class TuiDaoHuPanPlayerResultVO {
 
     private int hufen;// 非结算胡分
 
-    private TuiDaoHuHufenVO hufenVo;
+    private ZongyangMajiangHuHufenVO hufenVo;
 
     /**
      * 这个是结算分
@@ -49,7 +49,7 @@ public class TuiDaoHuPanPlayerResultVO {
 
     private boolean tongpei;// 通赔
 
-    public TuiDaoHuPanPlayerResultVO(MajiangGamePlayerDbo gamePlayerDbo, String zhuangPlayerId, boolean zimo, String dianpaoPlayerId, TuiDaoHuPanPlayerResultDbo panPlayerResult) {
+    public ZongyangMajiangHuPanPlayerResultVO(MajiangGamePlayerDbo gamePlayerDbo, String zhuangPlayerId, boolean zimo, String dianpaoPlayerId, TuiDaoHuPanPlayerResultDbo panPlayerResult) {
         playerId = gamePlayerDbo.getPlayerId();
         nickname = gamePlayerDbo.getNickname();
         headimgurl = gamePlayerDbo.getHeadimgurl();
@@ -61,7 +61,7 @@ public class TuiDaoHuPanPlayerResultVO {
         tongpei = panPlayerResult.getPlayerResult().isTongpei();
         ZongyangMajiangHushu tuiDaoHuHufen = panPlayerResult.getPlayerResult().getHufen();
         if (tuiDaoHuHufen != null) {
-            hufenVo = new TuiDaoHuHufenVO(tuiDaoHuHufen);
+            hufenVo = new ZongyangMajiangHuHufenVO(tuiDaoHuHufen);
             hufen = tuiDaoHuHufen.getValue();
         }
         ZongyangMajiangGang tuidaohuGang = panPlayerResult.getPlayerResult().getGang();
@@ -318,11 +318,11 @@ public class TuiDaoHuPanPlayerResultVO {
         this.hufen = hufen;
     }
 
-    public TuiDaoHuHufenVO getHufenVo() {
+    public ZongyangMajiangHuHufenVO getHufenVo() {
         return hufenVo;
     }
 
-    public void setHufenVo(TuiDaoHuHufenVO hufenVo) {
+    public void setHufenVo(ZongyangMajiangHuHufenVO hufenVo) {
         this.hufenVo = hufenVo;
     }
 

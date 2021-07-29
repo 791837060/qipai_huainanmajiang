@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.anbang.qipai.zongyangmajiang.cqrs.c.domain.listener.ZongyangMajiangPengGangActionStatisticsListener;
+import com.anbang.qipai.zongyangmajiang.cqrs.c.domain.listener.ZongyangMajiangRandomMustHasDongPlayersMenFengDeterminer;
 import com.anbang.qipai.zongyangmajiang.cqrs.c.domain.test.ZongyangMajiangFaPaiStrategyTest;
 import com.dml.majiang.ju.Ju;
 import com.dml.majiang.ju.finish.FixedPanNumbersJuFinishiDeterminer;
@@ -44,6 +45,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
     private Set<String> xipaiPlayerIds = new HashSet<>();
     private String lianmengId;
     private String createplayId;
+
     /**
      * 洗牌
      *
@@ -66,7 +68,7 @@ public class MajiangGame extends FixedPlayersMultipanAndVotetofinishGame {
         ju = new Ju();
         ju.setStartFirstPanProcess(new HasGuipaiStartFirstPanProcess());  //第一盘开始
         ju.setStartNextPanProcess(new HasGuipaiStartNextPanProcess());    //下一盘开始
-        ju.setPlayersMenFengDeterminerForFirstPan(new ZongyangMajiangPlayersMenFengDeterminer());  //第一盘建房玩家东风
+        ju.setPlayersMenFengDeterminerForFirstPan(new ZongyangMajiangRandomMustHasDongPlayersMenFengDeterminer(currentTime, createplayId));  //第一盘建房玩家东风
         ju.setPlayersMenFengDeterminerForNextPan(new ZongyangMajiangPlayersMenFengDeterminer());                       //下一盘胡牌坐东风
         ju.setZhuangDeterminerForFirstPan(new MenFengDongZhuangDeterminer());   //第一盘东风坐庄
         ju.setZhuangDeterminerForNextPan(new MenFengDongZhuangDeterminer());    //下一盘东风坐庄

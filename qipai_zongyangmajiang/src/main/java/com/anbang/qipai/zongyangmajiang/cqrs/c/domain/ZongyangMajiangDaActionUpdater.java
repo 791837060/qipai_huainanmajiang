@@ -37,7 +37,6 @@ public class ZongyangMajiangDaActionUpdater implements MajiangPlayerDaActionUpda
     public void updateActions(MajiangDaAction daAction, Ju ju) {
         Pan currentPan = ju.getCurrentPan();
         MajiangPlayer daPlayer = currentPan.findPlayerById(daAction.getActionPlayerId());//出牌麻将玩家
-
         TianHuAndDihuOpportunityDetector dianpaoDihuOpportunityDetector = ju.getActionStatisticsListenerManager().findListener(TianHuAndDihuOpportunityDetector.class);//天胡地胡监测器
         boolean couldDihu = dianpaoDihuOpportunityDetector.ifDihuOpportunity(); //是否可以地胡
 
@@ -91,21 +90,18 @@ public class ZongyangMajiangDaActionUpdater implements MajiangPlayerDaActionUpda
                         bestHu.setDianpaoPlayerId(daPlayer.getId());
                         xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), bestHu));
                     } else {
-//                        //非胡牌型特殊胡---十三幺(听胡)
-//                        boolean shisanyaoPaixing = TuiDaoHuJiesuanCalculator.isShisanyaoPaixing(xiajiaPlayer,daAction.getPai());
-//                        if (shisanyaoPaixing) {
-//                            TuiDaoHuHushu hufen = new TuiDaoHuHushu();
-//                            hufen.setHu(true);
-//                            hufen.setShisanyao(true);
-//                            hufen.calculate();
-//                            if (!optionalPlay.isKeyidahu()){
-//                                hufen.setValue(3);
-//                            }
-//                            TuiDaoHuHu tuiDaoHuHu = new TuiDaoHuHu(hufen);
-//                            tuiDaoHuHu.setDianpao(true);
-//                            tuiDaoHuHu.setDianpaoPlayerId(daPlayer.getId());
-//                            xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), tuiDaoHuHu));
-//                        }
+                        //非胡牌型特殊胡---十三烂
+                        boolean shisanlan = ZongyangMajiangJiesuanCalculator.isshisanlan(xiajiaPlayer,daAction.getPai());
+                        if (shisanlan){
+                            ZongyangMajiangHushu hufen = new ZongyangMajiangHushu();
+                            hufen.setHu(true);
+                            hufen.setShisanlan(true);
+                            hufen.calculate(daPlayer.getPublicPaiList().size(),daPlayer);
+                            ZongyangMajiangHuHu zongyangMajiangHuHu = new ZongyangMajiangHuHu(hufen);
+                            zongyangMajiangHuHu.setDianpao(true);
+                            zongyangMajiangHuHu.setDianpaoPlayerId(daPlayer.getId());
+                            xiajiaPlayer.addActionCandidate(new MajiangHuAction(xiajiaPlayer.getId(), zongyangMajiangHuHu));
+                        }
                     }
                 }
                 xiajiaPlayer.checkAndGenerateGuoCandidateAction();

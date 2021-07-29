@@ -53,15 +53,28 @@ public class ZongyangMajiangMoActionUpdater implements MajiangPlayerMoActionUpda
             ZongyangMajiangHushu hufen = new ZongyangMajiangHushu();
             hufen.setZimoHu(true);
             hufen.setHu(true);
-            hufen.calculate(player.getPublicPaiList().size());
+            hufen.calculate(player.getPublicPaiList().size(),player);
             ZongyangMajiangHuHu sancaishenHu = new ZongyangMajiangHuHu(hufen);
             sancaishenHu.setZimo(true);
             player.addActionCandidate(new MajiangHuAction(player.getId(), sancaishenHu));
         }else {
-            ZongyangMajiangHuHu bestHu = ZongyangMajiangJiesuanCalculator.calculateBestZimoHu(couldTianhu, gouXingPanHu, player, moAction,optionalPlay);//计算时候胡牌
+            ZongyangMajiangHuHu bestHu = ZongyangMajiangJiesuanCalculator.calculateBestZimoHu(gouXingPanHu, player, moAction,optionalPlay,player.getGangmoShoupai());//计算时候胡牌
             if (bestHu != null) {
                 bestHu.setZimo(true);
                 player.addActionCandidate(new MajiangHuAction(player.getId(), bestHu));
+            }else {
+                //非胡牌型特殊胡---十三烂
+                boolean shisanlan = ZongyangMajiangJiesuanCalculator.isshisanlan(player,gangmoShoupai);
+                if (shisanlan){
+                    ZongyangMajiangHushu hufen = new ZongyangMajiangHushu();
+                    hufen.setHu(true);
+                    hufen.setShisanlan(true);
+                    hufen.calculate(player.getPublicPaiList().size(),player);
+                    ZongyangMajiangHuHu zongyangMajiangHuHu = new ZongyangMajiangHuHu(hufen);
+                    zongyangMajiangHuHu.setDianpao(true);
+                    zongyangMajiangHuHu.setDianpaoPlayerId(player.getId());
+                    player.addActionCandidate(new MajiangHuAction(player.getId(), zongyangMajiangHuHu));
+                }
             }
         }
 
