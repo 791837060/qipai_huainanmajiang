@@ -165,7 +165,7 @@ public class GamePlayController {
         Map data = new HashMap();
         GameRoom gameRoom;
         try {
-            gameRoom = gameService.buildGameRoom(Game.zongyangMajiang, memberId, lawNames);
+            gameRoom = gameService.buildGameRoom(Game.yangzhouMajiang, memberId, lawNames);
         } catch (IllegalGameLawsException e) {
             vo.setSuccess(false);
             vo.setMsg("IllegalGameLawsException");
