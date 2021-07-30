@@ -63,6 +63,9 @@ public class GamePlayController {
     private YangzhouMajiangGameRoomMsgService yangzhouMajiangGameRoomMsgService;
 
     @Autowired
+    private ZongyangMajiangGameRoomMsgService zongyangMajiangGameRoomMsgService;
+
+    @Autowired
     private YizhengMajiangGameRoomMsgService yizhengMajiangGameRoomMsgService;
 
     @Autowired
@@ -162,7 +165,7 @@ public class GamePlayController {
         Map data = new HashMap();
         GameRoom gameRoom;
         try {
-            gameRoom = gameService.buildGameRoom(Game.yangzhouMajiang, memberId, lawNames);
+            gameRoom = gameService.buildGameRoom(Game.zongyangMajiang, memberId, lawNames);
         } catch (IllegalGameLawsException e) {
             vo.setSuccess(false);
             vo.setMsg("IllegalGameLawsException");
@@ -172,7 +175,7 @@ public class GamePlayController {
             vo.setMsg("NoServerAvailableForGameException");
             return vo;
         }
-        YzmjLawsFB fb = new YzmjLawsFB(lawNames);
+        ZymjLawsFB fb = new ZymjLawsFB(lawNames);
         // 普通会员每日开房（vip房）金币价格
         int gold = fb.payForCreateRoom();
         // 房主玩家记录
@@ -193,14 +196,6 @@ public class GamePlayController {
         req.param("renshu", fb.getRenshu());
         req.param("voice", fb.getVoice());
         req.param("gps", fb.getGps());
-        req.param("yitiaolongliufen", fb.getYitiaolongliufen());
-        req.param("sipeihusibei", fb.getSipeihusibei());
-        req.param("budaibanzihu", fb.getBudaibanzihu());
-        req.param("peiziwanfa", fb.getPeiziwanfa());
-        req.param("qidui", fb.getQidui());
-        req.param("fengyise", fb.getFengyise());
-        req.param("dihu", fb.getDihu());
-        req.param("jinyuanzi", fb.getJinyuanzi());
         req.param("yuanzifen", yuanzifen);
         req.param("tuoguan", fb.getTuoguan());
         req.param("tuoguanjiesan", fb.getTuoguanjiesan());
@@ -209,7 +204,6 @@ public class GamePlayController {
         req.param("lixianshichang", lixianshichang);
         req.param("difen", "1");
         req.param("powerLimit", "0");
-
         req.param("zidongzhunbei", "false");
         req.param("zidongkaishi", zidongkaishi.toString());
         req.param("zidongkaishiTime", zidongkaishiTime.toString());
@@ -304,7 +298,7 @@ public class GamePlayController {
         Map data = new HashMap();
         GameRoom gameRoom;
         try {
-            gameRoom = gameService.buildGameRoom(Game.yangzhouMajiang, memberId, lawNames);
+            gameRoom = gameService.buildGameRoom(Game.zongyangMajiang, memberId, lawNames);
         } catch (IllegalGameLawsException e) {
             vo.setSuccess(false);
             vo.setMsg("IllegalGameLawsException");
@@ -344,7 +338,6 @@ public class GamePlayController {
         req.param("lixianshichang", lixianshichang);
         req.param("difen", "1");
         req.param("powerLimit", "0");
-
         req.param("zidongzhunbei", "false");
         req.param("zidongkaishi", zidongkaishi.toString());
         req.param("zidongkaishiTime", zidongkaishiTime.toString());
@@ -2504,6 +2497,8 @@ public class GamePlayController {
             gold = new PdkLawsFB(lawNames).payForJoinRoom();
         } else if (gameRoom.getGame().equals(Game.yangzhouMajiang)) {
             gold = new YzmjLawsFB(lawNames).payForJoinRoom();
+        }else if (gameRoom.getGame().equals(Game.zongyangMajiang)) {
+            gold = new ZymjLawsFB(lawNames).payForJoinRoom();
         } else if (gameRoom.getGame().equals(Game.doudizhu)) {
             gold = new DdzLawsFB(lawNames).payForJoinRoom();
         } else if (gameRoom.getGame().equals(Game.yizhengMajiang)) {
@@ -2775,6 +2770,7 @@ public class GamePlayController {
         }
         paodekuaiGameRoomMsgService.removeGameRoom(gameIdMap.get(Game.paodekuai));
         yangzhouMajiangGameRoomMsgService.removeGameRoom(gameIdMap.get(Game.yangzhouMajiang));
+        zongyangMajiangGameRoomMsgService.removeGameRoom(gameIdMap.get(Game.zongyangMajiang));
         doudizhuGameRoomMsgService.removeGameRoom(gameIdMap.get(Game.doudizhu));
         yizhengMajiangGameRoomMsgService.removeGameRoom(gameIdMap.get(Game.yizhengMajiang));
         bijiGameRoomMsgService.removeGameRoom(gameIdMap.get(Game.biji));

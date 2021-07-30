@@ -38,4 +38,6 @@ public enum Game {
 
     huainanmajiang,     //淮南麻将
 
+    zongyangMajiang,   //枞阳麻将
+
 }
